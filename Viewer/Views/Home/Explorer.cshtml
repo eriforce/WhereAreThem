@@ -1,0 +1,65 @@
+﻿@using PureLib.Common
+@using WhereIsThem.Model
+@using WhereIsThem.Viewer.Models
+@model Folder
+@{
+    string machineName = ViewBag.MachineName;
+    List<Folder> stack = ViewBag.Stack;
+    ViewBag.Title = (stack == null) ? Extensions.Explorer : "{0} - {1} - {2}".FormatWith(Extensions.Explorer, machineName, string.Join("\\", stack.Select(f => f.Name)));
+}
+
+<div class="navigation">
+    <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName })">
+        <span class="iconText">@machineName</span>
+    </a>
+    @if (stack != null) {
+        foreach (Folder f in stack) {
+            <span class="icon separator"></span>
+            <div class="navigationItem">
+                <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = f.GetFullPath(stack.Take(stack.IndexOf(f)).ToList()) })">
+                    <span class="icon folder"></span><span class="iconText">@f.Name</span>
+                </a>
+            </div>
+        }
+    }
+</div>
+<table class="explorer">
+    <thead>
+        <tr>
+            <th class="name">Name</th>
+            <th class="size">Size</th>
+            <th class="datetime">Created</th>
+            <th class="datetime">Modified</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Folders != null) {
+            foreach (Folder f in Model.Folders) {
+            <tr>
+                <td>
+                    <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = stack == null ? f.Name : f.GetFullPath(stack) })">
+                        <span class="icon folder"></span><span class="iconText">@f.Name</span>
+                    </a>
+                </td>
+                <td></td>
+                <td>@f.CreatedDateUtc.ToLocalTimeString()</td>
+                <td></td>
+            </tr>
+            }
+        }
+        @if (Model.Files != null) {
+            foreach (WhereIsThem.Model.File f in Model.Files) {
+            <tr>
+                <td>
+                    <a href="#">
+                        <span class="icon file"></span><span class="iconText">@f.Name</span>
+                    </a>
+                </td>
+                <td>@Utility.ToFriendlyString(f.Size)</td>
+                <td>@f.CreatedDateUtc.ToLocalTimeString()</td>
+                <td>@f.ModifiedDateUtc.ToLocalTimeString()</td>
+            </tr>
+            }
+        }
+    </tbody>
+</table>

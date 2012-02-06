@@ -1,0 +1,13 @@
+﻿@using WhereIsThem.Viewer.Models
+@model string[]
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<ul>
+    @foreach (string name in Model) {
+        <li>@Html.ActionLink(name, Extensions.Explorer, new { machineName = name })</li>
+    }
+</ul>
+
+
