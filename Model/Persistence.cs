@@ -7,9 +7,13 @@ using System.Text;
 namespace WhereIsThem.Model {
     public static class Persistence {
         public static void Save(this Folder folder, string path) {
-            using (StreamWriter sw = new FileInfo(path).CreateText()) {
+            string tempFile = Path.ChangeExtension(path, "tmp");
+            using (StreamWriter sw = new FileInfo(tempFile).CreateText()) {
                 Save(folder, 0, sw);
             }
+            if (System.IO.File.Exists(path))
+                System.IO.File.Delete(path);
+            System.IO.File.Move(tempFile, path);
         }
 
         public static Folder Load(string path) {

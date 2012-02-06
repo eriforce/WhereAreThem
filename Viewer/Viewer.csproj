@@ -36,7 +36,7 @@
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="PureLib.Client">
-      <HintPath>D:\Backup\svn\PureLib\Build\PureLib.Client.dll</HintPath>
+      <HintPath>..\..\PureLib\Build\PureLib.Client.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />

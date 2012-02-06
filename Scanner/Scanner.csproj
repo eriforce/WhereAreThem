@@ -35,7 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PureLib.Client">
-      <HintPath>D:\Backup\svn\PureLib\Build\PureLib.Client.dll</HintPath>
+      <HintPath>..\..\PureLib\Build\PureLib.Client.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
