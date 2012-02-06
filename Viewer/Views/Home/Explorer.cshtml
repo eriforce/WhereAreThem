@@ -9,15 +9,13 @@
 }
 
 <div class="navigation">
-    <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName })">
-        <span class="iconText">@machineName</span>
-    </a>
+    <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName })">@machineName</a>
     @if (stack != null) {
         for (int i = 0; i < stack.Count;i++ ) {
             <span id="@i" class="icon separator"></span>
             <div class="navigationItem">
                 <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = stack[i].GetFullPath(stack) })">
-                    <span class="icon folder"></span><span class="iconText">@stack[i].Name</span>
+                    <span class="icon folder iconText">@stack[i].Name</span>
                 </a>
             </div>
             if (i > 0) {
@@ -25,7 +23,7 @@
                     @foreach (Folder f in stack[i - 1].Folders) {
                         <li class="@(f == stack[i] ? "current" : string.Empty)">
                             <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = f.GetFullPath(stack.Take(i).ToList()) })">
-                                <span class="icon folder"></span><span class="iconText">@f.Name</span>
+                                <span class="icon folder iconText">@f.Name</span>
                             </a>
                         </li>
                     }
@@ -49,7 +47,7 @@
             <tr>
                 <td>
                     <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = stack == null ? f.Name : f.GetFullPath(stack) })">
-                        <span class="icon folder"></span><span class="iconText">@f.Name</span>
+                        <span class="icon folder iconText">@f.Name</span>
                     </a>
                 </td>
                 <td></td>
@@ -62,9 +60,7 @@
             foreach (WhereIsThem.Model.File f in Model.Files) {
             <tr>
                 <td>
-                    <a href="#">
-                        <span class="icon file"></span><span class="iconText">@f.Name</span>
-                    </a>
+                    <span class="icon file iconText">@f.Name</span>
                 </td>
                 <td>@Utility.ToFriendlyString(f.Size)</td>
                 <td>@f.CreatedDateUtc.ToLocalTimeString()</td>

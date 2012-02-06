@@ -1,8 +1,8 @@
 $(document).ready(function () {
     $('table.explorer').addClass('columnHover').columnHover();
 
-    $('table.explorer tbody tr').click(function () {
-        $(this).find('td a')[0].click();
+    $('span.iconText').each(function () {
+        $(this).attr('title', $(this).text());
     });
 
     $('span.separator').each(function () {
