@@ -56,7 +56,6 @@ table.columnHover tbody tr:hover, table.columnHover tbody tr:hover td a, div.nav
 
 .contextMenu {
     position: absolute;
-    width: 120px;
     z-index: 99999;
     border: solid 1px #333;
     background: #EEE;
@@ -81,6 +80,7 @@ table.columnHover tbody tr:hover, table.columnHover tbody tr:hover td a, div.nav
     background-repeat: no-repeat;
     outline: none;
     padding: 4px;
+    padding-right: 6px;
 }
 
 .contextMenu LI.current {

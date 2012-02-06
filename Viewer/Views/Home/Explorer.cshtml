@@ -24,7 +24,7 @@
                 <ul id="@string.Format("stack_{0}", i)" class="contextMenu">
                     @foreach (Folder f in stack[i - 1].Folders) {
                         <li class="@(f == stack[i] ? "current" : string.Empty)">
-                            <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = f.GetFullPath(stack) })">
+                            <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = f.GetFullPath(stack.Take(i).ToList()) })">
                                 <span class="icon folder"></span><span class="iconText">@f.Name</span>
                             </a>
                         </li>

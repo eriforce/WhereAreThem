@@ -11,6 +11,8 @@ $(document).ready(function () {
             $(this).css('cursor', 'pointer');
             $(this).contextMenu({
                 menu: 'stack_' + index
+            }, function (action, el, pos) {
+                window.location = action;
             });
         }
     });
