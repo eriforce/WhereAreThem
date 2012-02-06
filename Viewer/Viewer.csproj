@@ -73,6 +73,7 @@
   <ItemGroup>
     <Content Include="Content\images\Icons_20.png" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\jquery.contextMenu.js" />
     <Content Include="Scripts\jquery.explorer.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">

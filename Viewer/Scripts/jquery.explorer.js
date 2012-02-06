@@ -4,6 +4,16 @@ $(document).ready(function () {
     $('table.explorer tbody tr').click(function () {
         $(this).find('td a')[0].click();
     });
+
+    $('span.separator').each(function () {
+        var index = parseInt($(this).attr('id'));
+        if (index > 0) {
+            $(this).css('cursor', 'pointer');
+            $(this).contextMenu({
+                menu: 'stack_' + index
+            });
+        }
+    });
 });
 
 /*

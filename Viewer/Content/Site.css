@@ -49,6 +49,62 @@ table.explorer tbody tr td a {
     text-decoration: none;
 }
 
+table.columnHover tbody tr:hover, table.columnHover tbody tr:hover td a, div.navigationItem:hover a {
+    background-color: #666;
+    color: #fff;
+}
+
+.contextMenu {
+    position: absolute;
+    width: 120px;
+    z-index: 99999;
+    border: solid 1px #333;
+    background: #EEE;
+    padding: 0px;
+    margin: 0px;
+    display: none;
+}
+
+.contextMenu LI {
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+}
+
+.contextMenu A, .contextMenu A:link, .contextMenu A:visited {
+    color: #333;
+    text-decoration: none;
+    display: block;
+    line-height: 20px;
+    height: 20px;
+    background-position: 6px center;
+    background-repeat: no-repeat;
+    outline: none;
+    padding: 4px;
+}
+
+.contextMenu LI.current {
+    font-weight: bold;
+}
+
+.contextMenu LI.hover A {
+    color: #fff;
+    background-color: #666;
+}
+
+.contextMenu LI.disabled A {
+    color: #AAA;
+    cursor: default;
+}
+
+.contextMenu LI.hover.disabled A {
+    background-color: transparent;
+}
+
+.contextMenu LI.separator {
+    border-top: solid 1px #CCC;
+}
+
 span.icon {
     display: inline-block;
     vertical-align: top;
@@ -131,11 +187,6 @@ span.file {
 
 span.share {
     background-position: 0px -320px;
-}
-
-table.columnHover tbody tr:hover, table.columnHover tbody tr:hover td a, div.navigationItem:hover a {
-    background-color: #666;
-    color: white;
 }
 
 /*----------------------------------------------------------

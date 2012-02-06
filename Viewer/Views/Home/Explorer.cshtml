@@ -13,13 +13,24 @@
         <span class="iconText">@machineName</span>
     </a>
     @if (stack != null) {
-        foreach (Folder f in stack) {
-            <span class="icon separator"></span>
+        for (int i = 0; i < stack.Count;i++ ) {
+            <span id="@i" class="icon separator"></span>
             <div class="navigationItem">
-                <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = f.GetFullPath(stack.Take(stack.IndexOf(f)).ToList()) })">
-                    <span class="icon folder"></span><span class="iconText">@f.Name</span>
+                <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = stack[i].GetFullPath(stack) })">
+                    <span class="icon folder"></span><span class="iconText">@stack[i].Name</span>
                 </a>
             </div>
+            if (i > 0) {
+                <ul id="@string.Format("stack_{0}", i)" class="contextMenu">
+                    @foreach (Folder f in stack[i - 1].Folders) {
+                        <li class="@(f == stack[i] ? "current" : string.Empty)">
+                            <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = f.GetFullPath(stack) })">
+                                <span class="icon folder"></span><span class="iconText">@f.Name</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            }
         }
     }
 </div>
