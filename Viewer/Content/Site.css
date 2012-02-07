@@ -1,24 +1,23 @@
 ﻿div.navigation {
-    height: 24px;
-    line-height: 24px;
-    padding: 0px 4px;
+    height: 26px;
+    line-height: 26px;
     border-top: 2px solid #666;
     border-bottom: 2px solid #666;
     overflow: auto;
 }
 
-div.navigationItem {
+div.machineName, div.navigationItem {
     display: inline-block;
 }
 
 div.navigationItem a {
     display: block;
-    padding: 2px 4px;
+    padding: 0px 4px;
     margin: 0px -2px;
 }
 
 table.explorer {
-    margin-top: 20px;
+    margin-top: 10px;
     width: 100%;
     border-style: none;
 }
@@ -29,7 +28,6 @@ table.explorer thead tr th {
     border-bottom: 2px dashed #aaa;
     color: #222;
     background-color: #fff;
-    padding-bottom: 8px;
 }
 
 table.explorer thead tr th.size {
@@ -42,11 +40,18 @@ table.explorer thead tr th.datetime {
 
 table.explorer tbody tr td {
     border-style: none;
+    padding: 3px 5px;
 }
 
 table.explorer tbody tr td a, div.navigationItem a {
     color: #333;
     text-decoration: none;
+}
+
+div.empty {
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
 }
 
 table.columnHover tbody tr:hover, table.columnHover tbody tr:hover td a, div.navigationItem:hover a {
@@ -155,7 +160,7 @@ span.folder {
 }
 
 span.separator {
-    margin: 2px 0px;
+    margin: 3px 0px;
     background-position: 0px -160px;
 }
 
@@ -199,7 +204,7 @@ to use a different color start by replacing all instances of
 body {
     background-color: #5c87b2;
     font-size: .85em;
-    font-family: "Trebuchet MS", Verdana, Helvetica, Sans-Serif;
+    font-family: "Microsoft YaHei", "Trebuchet MS", Verdana, Helvetica, Sans-Serif;
     margin: 0;
     padding: 0;
     color: #333;

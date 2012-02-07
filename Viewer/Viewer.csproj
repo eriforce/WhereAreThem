@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -73,7 +74,6 @@
   <ItemGroup>
     <Content Include="Content\images\Icons_20.png" />
     <Content Include="Global.asax" />
-    <Content Include="Scripts\jquery.contextMenu.js" />
     <Content Include="Scripts\jquery.explorer.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -118,7 +118,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>54590</DevelopmentServerPort>
+          <DevelopmentServerPort>58732</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

@@ -9,10 +9,14 @@
 }
 
 <div class="navigation">
-    <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName })">@machineName</a>
+    <div class="machineName">
+        <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName })">@machineName</a>
+    </div>
     @if (stack != null) {
         for (int i = 0; i < stack.Count;i++ ) {
-            <span id="@i" class="icon separator"></span>
+            <div class="navigationItem">
+                <span id="@i" class="icon separator"></span>
+            </div>
             <div class="navigationItem">
                 <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = stack[i].GetFullPath(stack) })">
                     <span class="icon folder iconText">@stack[i].Name</span>
@@ -42,6 +46,11 @@
         </tr>
     </thead>
     <tbody>
+        @if (Model.Folders == null && Model.Files == null) {
+            <tr>
+                <td colspan="4"><div class="empty">Empty</div></td>
+            </tr>
+        }
         @if (Model.Folders != null) {
             foreach (Folder f in Model.Folders) {
             <tr>
