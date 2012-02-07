@@ -5,7 +5,7 @@
 @{
     string machineName = ViewBag.MachineName;
     List<Folder> stack = ViewBag.Stack;
-    ViewBag.Title = (stack == null) ? Extensions.Explorer : "{0} - {1} - {2}".FormatWith(Extensions.Explorer, machineName, string.Join("\\", stack.Select(f => f.Name)));
+    ViewBag.Title = (stack == null) ? Extensions.Explorer : "{0} - {1} | {2}".FormatWith(Extensions.Explorer, Model.GetFullPath(stack), machineName);
 }
 
 <div class="navigation">
