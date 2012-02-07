@@ -8,8 +8,9 @@ using WhereIsThem.Model;
 using WhereIsThem.Viewer.Models;
 
 namespace WhereIsThem.Viewer.Controllers {
+    [Authorize]
     public class HomeController : Controller {
-        public ViewResult Index() {
+        public ViewResult Index(string id) {
             return View(List.MachineNames);
         }
 
