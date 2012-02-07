@@ -36,12 +36,16 @@ namespace WhereIsThem.Viewer.Models {
             if (!_machineCache.ContainsKey(machineName) && Directory.Exists(machinePath))
                 _machineCache.Add(machineName, new Folder() { Name = machineName, Folders = new List<Folder>() });
 
-            string listPath = Path.Combine(machinePath, Path.ChangeExtension(drive.First().ToString(), Constant.ListExt));
+            string listFileName = Path.ChangeExtension(drive.Substring(0, drive.IndexOf(':')), Constant.ListExt);
+            string listPath = Path.Combine(machinePath, listFileName);
             Folder machine = _machineCache[machineName];
             if (!machine.Folders.Any(d => d.Name == drive) && System.IO.File.Exists(listPath))
                 machine.Folders.Add(Persistence.Load(listPath));
 
-            return machine.Folders.Single(d => d.Name == drive);
+            Folder driveFolder = machine.Folders.SingleOrDefault(d => d.Name == drive);
+            if (driveFolder == null)
+                throw new FileLoadException("File name of '{0}' is incorrect.".FormatWith(listFileName));
+            return driveFolder;
         }
     }
 }

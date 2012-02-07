@@ -110,6 +110,5 @@ namespace WhereIsThem.Model {
         private static string GetName(string[] lineParts) {
             return lineParts[1];
         }
-
     }
 }

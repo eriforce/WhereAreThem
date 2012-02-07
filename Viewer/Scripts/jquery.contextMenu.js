@@ -37,7 +37,7 @@ if(jQuery)( function() {
 						e.stopPropagation();
 						var srcElement = $(this);
 						$(this).unbind('mouseup');
-						if (evt.button == 0 || evt.button == 2) {
+						if (evt.button == 0) {
 							// Hide context menus that may be showing
 							$(".contextMenu").hide();
 							// Get this context menu
@@ -69,7 +69,7 @@ if(jQuery)( function() {
 							
 							// Show the menu
 							$(document).unbind('click');
-							$(menu).css({ top: el.offset().top - 3 /* border and margin of UL */, left: el.offset().left + el.outerWidth() }).fadeIn(o.inSpeed);
+							$(menu).css({ top: offset.top - 3 /* border and margin of UL */, left: offset.left + el.outerWidth() }).fadeIn(o.inSpeed);
 							// Hover events
 							$(menu).find('A').mouseover( function() {
 								$(menu).find('LI.hover').removeClass('hover');
@@ -135,9 +135,10 @@ if(jQuery)( function() {
 					$('#' + o.menu).each( function() { $(this).bind('selectstart.disableTextSelect', function() { return false; }); });
 				} else {
 					$('#' + o.menu).each(function() { $(this).bind('mousedown.disableTextSelect', function() { return false; }); });
-				}
+	            }
+
 				// Disable browser context menu (requires both selectors to work in IE/Safari + FF/Chrome)
-				$(el).add($('UL.contextMenu')).bind('contextmenu', function() { return false; });
+				//$(el).add($('UL.contextMenu')).bind('contextmenu', function() { return false; });
 				
 			});
 			return $(this);
