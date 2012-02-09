@@ -1,6 +1,6 @@
 ﻿@using PureLib.Common
-@using WhereIsThem.Model
-@using WhereIsThem.Viewer.Models
+@using WhereAreThem.Model
+@using WhereAreThem.Viewer.Models
 @model Folder
 @{
     string machineName = ViewBag.MachineName;
@@ -66,7 +66,7 @@
             }
         }
         @if (Model.Files != null) {
-            foreach (WhereIsThem.Model.File f in Model.Files) {
+            foreach (WhereAreThem.Model.File f in Model.Files) {
             <tr>
                 <td>
                     <span class="icon file iconText">@f.Name</span>

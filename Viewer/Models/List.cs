@@ -5,13 +5,18 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using PureLib.Common;
-using WhereIsThem.Model;
+using WhereAreThem.Model;
 
-namespace WhereIsThem.Viewer.Models {
+namespace WhereAreThem.Viewer.Models {
     public static class List {
         private static string _path {
             get {
                 return ConfigurationManager.AppSettings["path"].WrapPath();
+            }
+        }
+        private static IPersistence _persistence {
+            get {
+                return Constant.GetPersistence(Type.GetType(ConfigurationManager.AppSettings["persistence"]));
             }
         }
         private static Dictionary<string, Folder> _machineCache = new Dictionary<string, Folder>();
@@ -40,7 +45,7 @@ namespace WhereIsThem.Viewer.Models {
             string listPath = Path.Combine(machinePath, listFileName);
             Folder machine = _machineCache[machineName];
             if (!machine.Folders.Any(d => d.Name == drive) && System.IO.File.Exists(listPath))
-                machine.Folders.Add(Persistence.Load(listPath));
+                machine.Folders.Add(_persistence.Load(listPath));
 
             Folder driveFolder = machine.Folders.SingleOrDefault(d => d.Name == drive);
             if (driveFolder == null)

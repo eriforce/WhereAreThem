@@ -4,10 +4,10 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using PureLib.Common;
-using WhereIsThem.Model;
-using WhereIsThem.Viewer.Models;
+using WhereAreThem.Model;
+using WhereAreThem.Viewer.Models;
 
-namespace WhereIsThem.Viewer.Controllers {
+namespace WhereAreThem.Viewer.Controllers {
     [Authorize]
     public class HomeController : Controller {
         public ViewResult Index(string id) {

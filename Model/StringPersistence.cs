@@ -4,9 +4,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace WhereIsThem.Model {
-    public static class Persistence {
-        public static void Save(this Folder folder, string path) {
+namespace WhereAreThem.Model {
+    public class StringPersistence : IPersistence {
+        private const char columnSeparator = '|';
+        private const char folderFileSeparator = '.';
+        private const string rowFormat = "{0}{1}{2}";
+        private const string folderFormat = "{1}{0}{2}";
+        private const string fileFormat = "{1}{0}{2}{0}{3}{0}{4}";
+
+        public void Save(Folder folder, string path) {
             string tempFile = Path.ChangeExtension(path, "tmp");
             using (StreamWriter sw = new FileInfo(tempFile).CreateText()) {
                 Save(folder, 0, sw);
@@ -16,10 +22,38 @@ namespace WhereIsThem.Model {
             System.IO.File.Move(tempFile, path);
         }
 
-        public static Folder Load(string path) {
+        private void Save(Folder folder, int level, StreamWriter sw) {
+            sw.WriteLine(GetRow(level++, GetFolderString(folder)));
+            if (folder.Folders != null)
+                foreach (Folder f in folder.Folders) {
+                    Save(f, level, sw);
+                }
+            sw.WriteLine(GetRow(level, folderFileSeparator.ToString()));
+            if (folder.Files != null)
+                foreach (File f in folder.Files) {
+                    sw.WriteLine(GetRow(level, GetFileString(f)));
+                }
+        }
+
+        private string GetRow(int level, string itemString) {
+            return string.Format(rowFormat, level, columnSeparator, itemString);
+        }
+
+
+        private string GetFolderString(Folder folder) {
+            return string.Format(folderFormat, columnSeparator,
+                folder.Name, folder.CreatedDateUtc.Ticks);
+        }
+
+        private string GetFileString(File file) {
+            return string.Format(fileFormat, columnSeparator,
+                file.Name, file.Size, file.CreatedDateUtc.Ticks, file.ModifiedDateUtc.Ticks);
+        }
+
+        public Folder Load(string path) {
             using (StreamReader sr = new FileInfo(path).OpenText()) {
                 string line = sr.ReadLine();
-                string[] parts = line.Split(Constant.ColumnSeparator);
+                string[] parts = line.Split(columnSeparator);
                 Dictionary<int, Folder> recentFolders = new Dictionary<int, Folder>() {
                     { 0, GetFolder(parts) }
                 };
@@ -30,11 +64,11 @@ namespace WhereIsThem.Model {
                     line = sr.ReadLine();
                     if (string.IsNullOrEmpty(line))
                         continue;
-                    parts = line.Split(Constant.ColumnSeparator);
+                    parts = line.Split(columnSeparator);
 
                     int currentLevel = GetLevel(parts);
                     if (currentLevel == prevLevel) {
-                        if (GetName(parts) == Constant.FolderFileSeparator.ToString())
+                        if (GetName(parts) == folderFileSeparator.ToString())
                             isFile = true;
                         else if (!isFile)
                             AddFolder(parts, recentFolders, currentLevel);
@@ -46,7 +80,7 @@ namespace WhereIsThem.Model {
                         }
                     }
                     else {
-                        if (GetName(parts) == Constant.FolderFileSeparator.ToString())
+                        if (GetName(parts) == folderFileSeparator.ToString())
                             isFile = true;
                         else
                             AddFolder(parts, recentFolders, currentLevel);
@@ -57,24 +91,7 @@ namespace WhereIsThem.Model {
             }
         }
 
-        private static void Save(Folder folder, int level, StreamWriter sw) {
-            sw.WriteLine(GetRow(level++, folder));
-            if (folder.Folders != null)
-                foreach (Folder f in folder.Folders) {
-                    Save(f, level, sw);
-                }
-            sw.WriteLine(GetRow(level, Constant.FolderFileSeparator));
-            if (folder.Files != null)
-                foreach (File f in folder.Files) {
-                    sw.WriteLine(GetRow(level, f));
-                }
-        }
-
-        private static string GetRow(int level, object item) {
-            return string.Format(Constant.RowFormat, level, Constant.ColumnSeparator, item.ToString());
-        }
-
-        private static void AddFolder(string[] parts, Dictionary<int, Folder> recentFolders, int currentLevel) {
+        private void AddFolder(string[] parts, Dictionary<int, Folder> recentFolders, int currentLevel) {
             int parent = currentLevel - 1;
             Folder f = GetFolder(parts);
             if (recentFolders[parent].Folders == null)
@@ -87,14 +104,14 @@ namespace WhereIsThem.Model {
                 recentFolders.Add(currentLevel, f);
         }
 
-        private static Folder GetFolder(string[] lineParts) {
+        private Folder GetFolder(string[] lineParts) {
             return new Folder() {
                 Name = GetName(lineParts),
                 CreatedDateUtc = new DateTime(long.Parse(lineParts[2]))
             };
         }
 
-        private static File GetFile(string[] lineParts) {
+        private File GetFile(string[] lineParts) {
             return new File() {
                 Name = GetName(lineParts),
                 Size = long.Parse(lineParts[2]),
@@ -103,11 +120,11 @@ namespace WhereIsThem.Model {
             };
         }
 
-        private static int GetLevel(string[] lineParts) {
+        private int GetLevel(string[] lineParts) {
             return int.Parse(lineParts[0]);
         }
 
-        private static string GetName(string[] lineParts) {
+        private string GetName(string[] lineParts) {
             return lineParts[1];
         }
     }

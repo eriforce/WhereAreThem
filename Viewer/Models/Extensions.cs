@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
-using WhereIsThem.Model;
+using WhereAreThem.Model;
 
-namespace WhereIsThem.Viewer.Models {
+namespace WhereAreThem.Viewer.Models {
     public static class Extensions {
         public const string Explorer = "Explorer";
 

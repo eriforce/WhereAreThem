@@ -5,19 +5,20 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using PureLib.Common;
-using WhereIsThem.Model;
+using WhereAreThem.Model;
 
-namespace WhereIsThem {
+namespace WhereAreThem {
     class Program {
         private const FileAttributes filter = FileAttributes.Hidden | FileAttributes.System;
 
         static void Main(string[] args) {
+            IPersistence persistence = Constant.GetPersistence(Type.GetType(ConfigurationManager.AppSettings["persistence"]));
             string outputPath = Path.Combine(ConfigurationManager.AppSettings["outputPath"], Environment.MachineName);
             if (!Directory.Exists(outputPath))
                 Directory.CreateDirectory(outputPath);
             foreach (string letter in ConfigurationManager.AppSettings["drives"].ToUpper().Split(',')) {
                 Folder f = GetDirectory(new DirectoryInfo("{0}:\\".FormatWith(letter)));
-                f.Save(Path.Combine(outputPath, Path.ChangeExtension(letter, Constant.ListExt)));
+                persistence.Save(f, Path.Combine(outputPath, Path.ChangeExtension(letter, Constant.ListExt)));
             }
             Console.WriteLine("List saved.");
             Console.ReadLine();
@@ -31,7 +32,7 @@ namespace WhereIsThem {
             try {
                 folder.Files = directory.GetFiles()
                      .Where(f => !f.Attributes.HasFlag(filter))
-                     .Select(f => new WhereIsThem.Model.File() {
+                     .Select(f => new WhereAreThem.Model.File() {
                          Name = f.Name,
                          Size = f.Length,
                          CreatedDateUtc = f.CreationTimeUtc,
