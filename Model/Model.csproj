@@ -41,7 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BinaryPersistence.cs" />
     <Compile Include="Constant.cs" />
     <Compile Include="File.cs" />
     <Compile Include="Folder.cs" />
