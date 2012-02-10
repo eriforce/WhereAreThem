@@ -1,5 +1,5 @@
 ﻿div.header {
-    width: 26px;
+    height: 26px;
     border-top: 2px solid #666;
     border-bottom: 2px solid #666;
 }
@@ -65,7 +65,7 @@ table.explorer thead tr th.datetime {
 }
 
 table.explorer thead tr th.location {
-    width: 400px;
+    width: 60%;
 }
 
 table.explorer tbody tr td {
@@ -153,17 +153,13 @@ span.icon {
     background-repeat: no-repeat;
 }
 
-span.item, span.iconText {
+span.item {
     display: inline-block;
     width: auto;
     height: 20px;
     line-height: 20px;
     vertical-align: top;
     overflow: hidden;
-}
-
-span.item {
-    width: 390px;
 }
 
 span.iconText {

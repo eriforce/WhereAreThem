@@ -45,7 +45,7 @@
                         Folder f = (Folder)p.Key;
                         <td>
                             <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = "{0}{1}{2}".FormatWith(p.Value, p.Value.EndsWith("\\") ? string.Empty : "\\", f.Name) })">
-                                <span class="icon folder iconText">@f.Name</span>
+                                <span class="icon folder item iconText">@f.Name</span>
                             </a>
                         </td>
                         <td></td>
@@ -53,7 +53,7 @@
                     else {
                         WhereAreThem.Model.File f = (WhereAreThem.Model.File)p.Key;
                         <td>
-                            <span class="icon file iconText">@f.Name</span>
+                            <span class="icon file item iconText">@f.Name</span>
                         </td>
                         <td class="nowrap">@Utility.ToFriendlyString(f.Size)</td>
                     }
@@ -71,6 +71,6 @@
 <script type="text/javascript">
     $(document).ready(function () {
         var location = getUrlParameter('path');
-        $('div.navigationItem:last').append('<a href="' + location + '"><span>' + location + '</span></a>');
+        $('div.navigationItem:last').append('<a href="@Url.Action(Extensions.Explorer)?machineName=@machineName&path=' + location + '"><span>' + location + '</span></a>');
     });
 </script>

@@ -24,7 +24,7 @@
                     </div>
                     <div class="navigationItem">
                         <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = stack[i].GetFullPath(stack) })">
-                            <span class="icon folder iconText">@stack[i].Name</span>
+                            <span class="icon folder item iconText">@stack[i].Name</span>
                         </a>
                     </div>
                     if (i > 0) {
@@ -32,7 +32,7 @@
                             @foreach (Folder f in stack[i - 1].Folders) {
                                 <li class="@(f == stack[i] ? "current" : string.Empty)">
                                     <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = f.GetFullPath(stack.Take(i).ToList()) })">
-                                        <span class="icon folder iconText">@f.Name</span>
+                                        <span class="icon folder item iconText">@f.Name</span>
                                     </a>
                                 </li>
                             }
@@ -64,7 +64,7 @@
             <tr>
                 <td>
                     <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = stack == null ? f.Name : f.GetFullPath(stack) })">
-                        <span class="icon folder iconText">@f.Name</span>
+                        <span class="icon folder item iconText">@f.Name</span>
                     </a>
                 </td>
                 <td></td>
@@ -77,7 +77,7 @@
             foreach (WhereAreThem.Model.File f in Model.Files) {
             <tr>
                 <td>
-                    <span class="icon file iconText">@f.Name</span>
+                    <span class="icon file item iconText">@f.Name</span>
                 </td>
                 <td class="nowrap">@Utility.ToFriendlyString(f.Size)</td>
                 <td class="nowrap">@f.CreatedDateUtc.ToLocalTimeString()</td>

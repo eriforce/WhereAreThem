@@ -1,5 +1,7 @@
 $(document).ready(function () {
-    $('table.explorer span').each(function () {
+    $('table.explorer span.item').each(function () {
+        var zws = '&#8203;';
+        $(this).html($(this).text().split('').join(zws));
         $(this).attr('title', $(this).text());
     });
 
