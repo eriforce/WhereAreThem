@@ -4,7 +4,15 @@ $(document).ready(function () {
     });
 
     var watermarkClassName = 'watermark';
-    $('input[type="text"].search').focus(function () {
+    $('input[type="text"].search').keydown(function (event) {
+        if (event.keyCode == 13) {
+            var form = $(this);
+            while (form.get(0).tagName.toLowerCase() != 'form') {
+                form = form.parent();
+            }
+            form.submit();
+        }
+    }).focus(function () {
         if ($(this).hasClass(watermarkClassName)) {
             $(this).removeClass(watermarkClassName);
             $(this).val('');
@@ -30,6 +38,17 @@ $(document).ready(function () {
 
     $('table.explorer').addClass('columnHover').columnHover();
 });
+
+var getUrlParameter = function (paramName) {
+    var allParams = document.location.search.substr(1).split('&');
+    for (var i = 0; i < allParams.length; i++) {
+        var paramPair = allParams[i].split('=');
+        if (paramName == decodeURIComponent(paramPair[0])) {
+            return decodeURIComponent(paramPair[1]).replace(/\+/g, ' ');
+        }
+    }
+    return '';
+};
 
 // jQuery Context Menu Plugin
 //

@@ -10,7 +10,9 @@
 
 @using (Html.BeginForm()) {
     <div class="header">
-        @Html.TextBox("text", null, new { @class = "search" })
+        @if (stack != null) {
+            @Html.TextBox("searchPattern", null, new { @class = "search" })
+        }
         <div class="navigation">
             <div class="machineName">
                 <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName })">@machineName</a>

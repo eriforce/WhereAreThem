@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using PureLib.Common;
 using WhereAreThem.Model;
 using WhereAreThem.Viewer.Models;
+using System.Text.RegularExpressions;
 
 namespace WhereAreThem.Viewer.Controllers {
     [Authorize]
@@ -14,33 +15,40 @@ namespace WhereAreThem.Viewer.Controllers {
             return View(List.MachineNames);
         }
 
-        public ViewResult Explorer(string machineName, string path) {
-            ViewBag.MachineName = machineName;
-            string machine = List.MachineNames.SingleOrDefault(n => n == machineName);
-            if (machine.IsNullOrEmpty())
+        public ViewResult Explorer(string machineName, string path, string searchPattern) {
+            if (!List.MachineNames.Any(n => n == machineName))
                 return null;
 
-            Folder folder = null;
-            if (path.IsNullOrEmpty())
-                folder = new Folder() {
-                    Name = machineName,
-                    Folders = List.GetDrives(machineName)
-                };
-            else {
-                string[] parts = path.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
-                Folder drive = List.GetDrive(machineName, "{0}\\".FormatWith(parts.First()));
-                if (drive == null)
-                    return null;
-
-                List<Folder> stack = new List<Folder>();
-                stack.Add(drive);
-                for (int i = 1; i < parts.Length; i++) {
-                    stack.Add(stack.Last().Folders.Single(f => f.Name == parts[i]));
-                }
-                ViewBag.Stack = stack;
-                folder = stack.Last();
+            ViewBag.MachineName = machineName;
+            List<Folder> stack = null;
+            Folder folder = List.GetFolder(machineName, path, out stack);
+            if (searchPattern.IsNullOrEmpty()) {
+                if (stack != null)
+                    ViewBag.Stack = stack;
+                return (folder == null) ? null : View(folder);
             }
-            return View(folder);
+            else {
+                Dictionary<object, string> result = new Dictionary<object, string>();
+                SearchInFolder(folder, stack, searchPattern.WildcardToRegex(), result);
+                return View(Extensions.SearchResult, result);
+            }
+        }
+
+        private void SearchInFolder(Folder folder, List<Folder> folderStack, string pattern, Dictionary<object, string> result) {
+            if (folder.Files != null)
+                foreach (File f in folder.Files) {
+                    if (Regex.IsMatch(f.Name, pattern, RegexOptions.IgnoreCase))
+                        result.Add(f, folder.GetFullPath(folderStack));
+                }
+            if (folder.Folders != null) {
+                List<Folder> stack = new List<Folder>(folderStack);
+                stack.Add(folder);
+                foreach (Folder f in folder.Folders) {
+                    if (Regex.IsMatch(f.Name, pattern, RegexOptions.IgnoreCase))
+                        result.Add(f, folder.GetFullPath(folderStack));
+                    SearchInFolder(f, stack, pattern, result);
+                }
+            }
         }
     }
 }

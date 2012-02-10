@@ -1,0 +1,75 @@
+﻿@using PureLib.Common
+@using WhereAreThem.Model
+@using WhereAreThem.Viewer.Models
+@model Dictionary<object, string>
+@{
+    string machineName = ViewBag.MachineName;
+    ViewBag.Title = Extensions.SearchResult;
+}
+
+@using (Html.BeginForm()) {
+    <div class="header">
+        @Html.TextBox("searchPattern", null, new { @class = "search" })
+        <div class="navigation">
+            <div class="machineName">
+                <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName })">@machineName</a>
+            </div>
+            <div class="navigationItem">
+                <span class="icon separator"></span>
+            </div>
+            <div class="navigationItem">
+                Search Results in 
+            </div>
+        </div>
+    </div>
+}
+
+<table class="explorer">
+    <thead>
+        <tr>
+            <th class="name">Name</th>
+            <th class="size">Size</th>
+            <th class="location">Location</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count == 0) {
+            <tr>
+                <td colspan="4"><div class="empty">Empty</div></td>
+            </tr>
+        }
+        else {
+            foreach (var p in Model) {
+                <tr>
+                    @if (p.Key is Folder) {
+                        Folder f = (Folder)p.Key;
+                        <td>
+                            <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = "{0}/{1}".FormatWith(p.Value, f.Name) })">
+                                <span class="icon folder iconText">@f.Name</span>
+                            </a>
+                        </td>
+                        <td></td>
+                    }
+                    else {
+                        WhereAreThem.Model.File f = (WhereAreThem.Model.File)p.Key;
+                        <td>
+                            <span class="icon file iconText">@f.Name</span>
+                        </td>
+                        <td>@Utility.ToFriendlyString(f.Size)</td>
+                    }
+                    <td>
+                        <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = p.Value })">
+                            @p.Value
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('div.navigationItem:last').append(getUrlParameter('path'));
+    });
+</script>
