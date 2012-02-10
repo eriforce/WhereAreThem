@@ -68,7 +68,7 @@
                     </a>
                 </td>
                 <td></td>
-                <td>@f.CreatedDateUtc.ToLocalTimeString()</td>
+                <td class="nowrap">@f.CreatedDateUtc.ToLocalTimeString()</td>
                 <td></td>
             </tr>
             }
@@ -79,9 +79,9 @@
                 <td>
                     <span class="icon file iconText">@f.Name</span>
                 </td>
-                <td>@Utility.ToFriendlyString(f.Size)</td>
-                <td>@f.CreatedDateUtc.ToLocalTimeString()</td>
-                <td>@f.ModifiedDateUtc.ToLocalTimeString()</td>
+                <td class="nowrap">@Utility.ToFriendlyString(f.Size)</td>
+                <td class="nowrap">@f.CreatedDateUtc.ToLocalTimeString()</td>
+                <td class="nowrap">@f.ModifiedDateUtc.ToLocalTimeString()</td>
             </tr>
             }
         }

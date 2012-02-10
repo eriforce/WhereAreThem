@@ -32,7 +32,7 @@ div.machineName, div.navigationItem {
 }
 
 div.navigationItem a {
-    display: block;
+    display: inline-block;
     padding: 0px 4px;
     margin: 0px -2px;
 }
@@ -71,6 +71,10 @@ table.explorer tbody tr td {
 table.explorer tbody tr td a, div.navigationItem a {
     color: #333;
     text-decoration: none;
+}
+
+td.nowrap {
+    white-space: nowrap;
 }
 
 div.empty {
@@ -144,11 +148,14 @@ span.icon {
     background-repeat: no-repeat;
 }
 
-span.iconText {
+span.item, span.iconText {
     width: auto;
     line-height: 20px;
-    padding-left: 22px;
     overflow: hidden;
+}
+
+span.iconText {
+    padding-left: 22px;
 }
 
 span.upload {

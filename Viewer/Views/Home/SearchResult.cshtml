@@ -55,11 +55,11 @@
                         <td>
                             <span class="icon file iconText">@f.Name</span>
                         </td>
-                        <td>@Utility.ToFriendlyString(f.Size)</td>
+                        <td class="nowrap">@Utility.ToFriendlyString(f.Size)</td>
                     }
-                    <td>
+                    <td class="location">
                         <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = p.Value })">
-                            @p.Value
+                            <span class="item">@p.Value</span>
                         </a>
                     </td>
                 </tr>
@@ -70,6 +70,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $('div.navigationItem:last').append(getUrlParameter('path'));
+        var location = getUrlParameter('path');
+        $('div.navigationItem:last').append('<a href="' + location + '"><span>' + location + '</span></a>');
     });
 </script>
