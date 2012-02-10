@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    $('span.iconText').each(function () {
+    $('table.explorer span').each(function () {
         $(this).attr('title', $(this).text());
     });
 
