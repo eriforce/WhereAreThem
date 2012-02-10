@@ -1,9 +1,30 @@
-﻿div.navigation {
-    height: 26px;
-    line-height: 26px;
+﻿div.header {
     border-top: 2px solid #666;
     border-bottom: 2px solid #666;
+}
+
+div.navigation {
+    display: inline-block;
+    width: 80%;
+    height: 26px;
+    line-height: 26px;
     overflow: auto;
+}
+
+input[type="text"].search {
+    display: inline-block;
+    float: right;
+    width: 19.5%;
+    height: 26px;
+    line-height: 26px;
+    padding: 0px;
+    border-style: none;
+    border-left: 2px solid #666;
+}
+
+input[type="text"].watermark {
+    color: #999;
+    font-style: italic;
 }
 
 div.machineName, div.navigationItem {
@@ -276,6 +297,7 @@ h5, h6 {
 page width. Or, you can specify an exact pixel width. */
 .page {
     width: 90%;
+    min-width: 720px;
     margin-left: auto;
     margin-right: auto;
 }

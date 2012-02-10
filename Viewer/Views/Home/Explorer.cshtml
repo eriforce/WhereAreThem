@@ -8,34 +8,40 @@
     ViewBag.Title = (stack == null) ? Extensions.Explorer : "{0} - {1} | {2}".FormatWith(Extensions.Explorer, Model.GetFullPath(stack), machineName);
 }
 
-<div class="navigation">
-    <div class="machineName">
-        <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName })">@machineName</a>
-    </div>
-    @if (stack != null) {
-        for (int i = 0; i < stack.Count;i++ ) {
-            <div class="navigationItem">
-                <span id="@i" class="icon separator"></span>
+@using (Html.BeginForm()) {
+    <div class="header">
+        @Html.TextBox("text", null, new { @class = "search" })
+        <div class="navigation">
+            <div class="machineName">
+                <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName })">@machineName</a>
             </div>
-            <div class="navigationItem">
-                <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = stack[i].GetFullPath(stack) })">
-                    <span class="icon folder iconText">@stack[i].Name</span>
-                </a>
-            </div>
-            if (i > 0) {
-                <ul id="@string.Format("stack_{0}", i)" class="contextMenu">
-                    @foreach (Folder f in stack[i - 1].Folders) {
-                        <li class="@(f == stack[i] ? "current" : string.Empty)">
-                            <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = f.GetFullPath(stack.Take(i).ToList()) })">
-                                <span class="icon folder iconText">@f.Name</span>
-                            </a>
-                        </li>
+            @if (stack != null) {
+                for (int i = 0; i < stack.Count;i++ ) {
+                    <div class="navigationItem">
+                        <span id="@i" class="icon separator"></span>
+                    </div>
+                    <div class="navigationItem">
+                        <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = stack[i].GetFullPath(stack) })">
+                            <span class="icon folder iconText">@stack[i].Name</span>
+                        </a>
+                    </div>
+                    if (i > 0) {
+                        <ul id="@string.Format("stack_{0}", i)" class="contextMenu">
+                            @foreach (Folder f in stack[i - 1].Folders) {
+                                <li class="@(f == stack[i] ? "current" : string.Empty)">
+                                    <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = f.GetFullPath(stack.Take(i).ToList()) })">
+                                        <span class="icon folder iconText">@f.Name</span>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
                     }
-                </ul>
+                }
             }
-        }
-    }
-</div>
+        </div>
+    </div>
+}
+
 <table class="explorer">
     <thead>
         <tr>
