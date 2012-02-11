@@ -55,7 +55,7 @@
                         <td>
                             <span class="icon file item iconText">@f.Name</span>
                         </td>
-                        <td class="nowrap">@Utility.ToFriendlyString(f.Size)</td>
+                        <td class="size nowrap">@Utility.ToFriendlyString(f.Size)</td>
                     }
                     <td class="location">
                         <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = p.Value })">

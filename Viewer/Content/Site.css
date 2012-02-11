@@ -57,15 +57,11 @@ table.explorer thead tr th {
 }
 
 table.explorer thead tr th.size {
-    width: 70px;
+    width: 80px;
 }
 
 table.explorer thead tr th.datetime {
     width: 140px;
-}
-
-table.explorer thead tr th.location {
-    width: 60%;
 }
 
 table.explorer tbody tr td {
@@ -76,6 +72,11 @@ table.explorer tbody tr td {
 table.explorer tbody tr td a, div.navigationItem a {
     color: #333;
     text-decoration: none;
+}
+
+table.explorer tbody tr td.size {
+    text-align: right;
+    padding-right: 20px;
 }
 
 td.nowrap {
