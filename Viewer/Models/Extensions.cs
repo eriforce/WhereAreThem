@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
-using WhereAreThem.Model;
 using System.Text.RegularExpressions;
+using System.Web;
+using PureLib.Common;
+using WhereAreThem.Model;
 
 namespace WhereAreThem.Viewer.Models {
     public static class Extensions {
@@ -27,6 +28,10 @@ namespace WhereAreThem.Viewer.Models {
 
         public static string WildcardToRegex(this string pattern) {
             return Regex.Escape(pattern).Replace("\\*", ".*").Replace("\\?", ".");
+        }
+
+        public static string GetTitle(this string titleName, string path, string machineName) {
+            return "{0} - {1} | {2}".FormatWith(titleName, path, machineName);
         }
     }
 }

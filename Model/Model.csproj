@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Constant.cs" />
     <Compile Include="File.cs" />
+    <Compile Include="FileSystemItem.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="IPersistence.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -22,7 +22,7 @@ $(document).ready(function () {
     }).blur(function () {
         if ($(this).val() == '') {
             $(this).addClass(watermarkClassName);
-            $(this).val('Search...');
+            $(this).val('Search ...');
         }
     }).blur();
 
@@ -31,7 +31,10 @@ $(document).ready(function () {
         if (index > 0) {
             $(this).css('cursor', 'pointer');
             $(this).contextMenu({
-                menu: 'ul#stack_' + index
+                menu: 'ul#stack_' + index,
+                isContextMenu: false,
+                top: -parseInt($(this).css('margin-top').replace('px', '')) - 1, // border and margin of UL
+                left: $(this).outerWidth()
             }, function (action, el, pos) {
                 window.location = action;
             });
@@ -72,6 +75,9 @@ if (jQuery) (function () {
         contextMenu: function (o, callback) {
             // Defaults
             if (o.menu == undefined) return false;
+            if (o.isContextMenu == undefined) return true;
+            if (o.top == undefined) return 0;
+            if (o.left == undefined) return 0;
             if (o.inSpeed == undefined) o.inSpeed = 150;
             if (o.outSpeed == undefined) o.outSpeed = 75;
             // 0 needs to be -1 for expected results (no fade)
@@ -93,42 +99,49 @@ if (jQuery) (function () {
                         e.stopPropagation();
                         var srcElement = $(this);
                         $(this).unbind('mouseup');
-                        if (evt.button == 0) {
+                        if ((!o.isContextMenu && evt.button == 0) || (o.isContextMenu && evt.button == 2)) {
                             // Hide context menus that may be showing
                             $(".contextMenu").hide();
 
                             if ($(el).hasClass('disabled')) return false;
 
                             // Detect mouse position
-                            /*
-                            var d = {}, x, y;
-                            if( self.innerHeight ) {
-                            d.pageYOffset = self.pageYOffset;
-                            d.pageXOffset = self.pageXOffset;
-                            d.innerHeight = self.innerHeight;
-                            d.innerWidth = self.innerWidth;
-                            } else if( document.documentElement &&
-                            document.documentElement.clientHeight ) {
-                            d.pageYOffset = document.documentElement.scrollTop;
-                            d.pageXOffset = document.documentElement.scrollLeft;
-                            d.innerHeight = document.documentElement.clientHeight;
-                            d.innerWidth = document.documentElement.clientWidth;
-                            } else if( document.body ) {
-                            d.pageYOffset = document.body.scrollTop;
-                            d.pageXOffset = document.body.scrollLeft;
-                            d.innerHeight = document.body.clientHeight;
-                            d.innerWidth = document.body.clientWidth;
+                            if (o.isContextMenu) {
+                                var d = {}, x, y;
+                                if (self.innerHeight) {
+                                    d.pageYOffset = self.pageYOffset;
+                                    d.pageXOffset = self.pageXOffset;
+                                    d.innerHeight = self.innerHeight;
+                                    d.innerWidth = self.innerWidth;
+                                } else if (document.documentElement && document.documentElement.clientHeight) {
+                                    d.pageYOffset = document.documentElement.scrollTop;
+                                    d.pageXOffset = document.documentElement.scrollLeft;
+                                    d.innerHeight = document.documentElement.clientHeight;
+                                    d.innerWidth = document.documentElement.clientWidth;
+                                } else if (document.body) {
+                                    d.pageYOffset = document.body.scrollTop;
+                                    d.pageXOffset = document.body.scrollLeft;
+                                    d.innerHeight = document.body.clientHeight;
+                                    d.innerWidth = document.body.clientWidth;
+                                }
+                                (e.pageX) ? x = e.pageX : x = e.clientX + d.scrollLeft;
+                                (e.pageY) ? y = e.pageY : y = e.clientY + d.scrollTop;
+
+                                $(menu).css({
+                                    top: y,
+                                    left: x
+                                });
                             }
-                            (e.pageX) ? x = e.pageX : x = e.clientX + d.scrollLeft;
-                            (e.pageY) ? y = e.pageY : y = e.clientY + d.scrollTop;
-                            */
+                            else {
+                                $(menu).css({
+                                    top: offset.top + o.top,
+                                    left: offset.left + el.outerWidth()
+                                });
+                            }
 
                             // Show the menu
                             $(document).unbind('click');
-                            $(menu).css({
-                                top: offset.top - parseInt(el.css('margin-top').replace('px', '')) - 1 /* border and margin of UL */,
-                                left: offset.left + el.outerWidth()
-                            }).fadeIn(o.inSpeed);
+                            $(menu).fadeIn(o.inSpeed);
                             // Hover events
                             $(menu).find('A').mouseover(function () {
                                 $(menu).find('LI.hover').removeClass('hover');
@@ -197,7 +210,8 @@ if (jQuery) (function () {
                 }
 
                 // Disable browser context menu (requires both selectors to work in IE/Safari + FF/Chrome)
-                //$(el).add($('UL.contextMenu')).bind('contextmenu', function() { return false; });
+                if (o.isContextMenu)
+                    $(el).add($('UL.contextMenu')).bind('contextmenu', function () { return false; });
 
             });
             return $(this);

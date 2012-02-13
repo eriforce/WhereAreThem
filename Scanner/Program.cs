@@ -34,13 +34,15 @@ namespace WhereAreThem {
                      .Where(f => !f.Attributes.HasFlag(filter))
                      .Select(f => new WhereAreThem.Model.File() {
                          Name = f.Name,
-                         Size = f.Length,
+                         FileSize = f.Length,
                          CreatedDateUtc = f.CreationTimeUtc,
                          ModifiedDateUtc = f.LastWriteTimeUtc
                      }).ToList();
                 folder.Folders = directory.GetDirectories()
                         .Where(d => !d.Attributes.HasFlag(filter))
                         .Select(d => GetDirectory(d)).ToList();
+                folder.Files.Sort();
+                folder.Folders.Sort();
             }
             catch (Exception) { }
             return folder;

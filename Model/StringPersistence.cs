@@ -95,7 +95,7 @@ namespace WhereAreThem.Model {
         private File GetFile(string[] lineParts) {
             return new File() {
                 Name = GetName(lineParts),
-                Size = long.Parse(lineParts[2]),
+                FileSize = long.Parse(lineParts[2]),
                 CreatedDateUtc = new DateTime(long.Parse(lineParts[3])),
                 ModifiedDateUtc = new DateTime(long.Parse(lineParts[4]))
             };

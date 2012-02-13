@@ -16,25 +16,57 @@ namespace WhereAreThem.Viewer.Controllers {
         }
 
         public ViewResult Explorer(string machineName, string path, string searchPattern) {
-            if (!List.MachineNames.Any(n => n == machineName))
-                return null;
-
-            ViewBag.MachineName = machineName;
             List<Folder> stack = null;
-            Folder folder = List.GetFolder(machineName, path, out stack);
+            Folder folder = GetFolder(machineName, path, out stack);
+
             if (searchPattern.IsNullOrEmpty()) {
                 if (stack != null)
                     ViewBag.Stack = stack;
                 return (folder == null) ? null : View(folder);
             }
             else {
-                Dictionary<object, string> result = new Dictionary<object, string>();
+                Dictionary<FileSystemItem, string> result = new Dictionary<FileSystemItem, string>();
                 SearchInFolder(folder, stack, searchPattern.WildcardToRegex(), result);
                 return View(Extensions.SearchResult, result);
             }
         }
 
-        private void SearchInFolder(Folder folder, List<Folder> folderStack, string pattern, Dictionary<object, string> result) {
+        public JsonResult GetProperty(string machineName, string path, string[] selectedItems) {
+            List<Folder> stack = null;
+            Folder folder = GetFolder(machineName, path, out stack);
+
+            List<File> files = folder.Files == null ? new List<File>() :
+                folder.Files.Where(i => selectedItems.Contains(i.Name)).ToList();
+            List<Folder> folders = folder.Folders == null ? new List<Folder>() :
+                folder.Folders.Where(i => selectedItems.Contains(i.Name)).ToList();
+            PropertyInfo info = new PropertyInfo() {
+                FileCount = files.Count + folders.Sum(f => GetFileCount(f)),
+                FolderCount = folders.Count + folders.Sum(f => GetFolderCount(f)),
+                TotalSize = files.Sum(f => f.Size) + folders.Sum(f => f.Size)
+            };
+            return Json(info);
+        }
+
+        private int GetFileCount(Folder folder) {
+            int count = folder.Files == null ? 0 : folder.Files.Count;
+            if (folder.Folders != null)
+                count += folder.Folders.Sum(f => GetFileCount(f));
+            return count;
+        }
+
+        private int GetFolderCount(Folder folder) {
+            return folder.Folders == null ? 0 : (folder.Files.Count + folder.Folders.Sum(f => GetFolderCount(f)));
+        }
+
+        private Folder GetFolder(string machineName, string path, out List<Folder> stack) {
+            if (!List.MachineNames.Any(n => n == machineName))
+                throw new ArgumentException("Machine name '{0}' cannot be found.".FormatWith(machineName));
+
+            ViewBag.MachineName = machineName;
+            return List.GetFolder(machineName, path, out stack);
+        }
+
+        private void SearchInFolder(Folder folder, List<Folder> folderStack, string pattern, Dictionary<FileSystemItem, string> result) {
             if (folder.Files != null)
                 foreach (File f in folder.Files) {
                     if (Regex.IsMatch(f.Name, pattern, RegexOptions.IgnoreCase))

@@ -1,7 +1,7 @@
 ﻿@using PureLib.Common
 @using WhereAreThem.Model
 @using WhereAreThem.Viewer.Models
-@model Dictionary<object, string>
+@model Dictionary<FileSystemItem, string>
 @{
     string machineName = ViewBag.MachineName;
     ViewBag.Title = Extensions.SearchResult;
@@ -71,6 +71,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         var location = getUrlParameter('path');
+        document.title += @Html.Raw("'".GetTitle("' + location + '", machineName))';
         $('div.navigationItem:last').append('<a href="@Url.Action(Extensions.Explorer)?machineName=@machineName&path=' + location + '"><span>' + location + '</span></a>');
     });
 </script>
