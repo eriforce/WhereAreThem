@@ -69,31 +69,30 @@ $(document).ready(function () {
     allRows.click(function () {
         if (isCtrlDown) {
             if ($(this).hasClass(selectedClassName)) {
-                $(this).removeClass(selectedClassName);
+                $(this).removeClass(selectedClassName).disableContextMenu();
                 if ($('table.explorer tbody tr.selected').length == 0)
                     allRows.enableContextMenu();
             }
             else {
-                if ($('table.explorer tbody tr.selected').length == 0)
-                    allRows.disableContextMenu();
-                $(this).addClass(selectedClassName);
-                $(this).enableContextMenu();
+                $(this).addClass(selectedClassName).enableContextMenu();
             }
         }
         else if (isShiftDown) {
-            $('table.explorer tbody tr.selected').removeClass(selectedClassName);
+            $('table.explorer tbody tr.selected').removeClass(selectedClassName).disableContextMenu();
             var selectedIndex = allRows.index(lastClicked);
             var clickedIndex = allRows.index($(this));
             var startIndex = Math.min(selectedIndex, clickedIndex);
             var endIndex = Math.max(selectedIndex, clickedIndex);
             for (; startIndex <= endIndex; startIndex++) {
-                $(allRows.get(startIndex)).addClass(selectedClassName);
+                $(allRows.get(startIndex)).addClass(selectedClassName).enableContextMenu();
             }
         }
         else {
-            $('table.explorer tbody tr.selected').removeClass(selectedClassName);
-            $(this).addClass(selectedClassName);
+            $('table.explorer tbody tr.selected').removeClass(selectedClassName).disableContextMenu();
+            $(this).addClass(selectedClassName).enableContextMenu();
         }
+        if ($('table.explorer tbody tr.selected').length > 0)
+            $('table.explorer tbody tr:not(.selected)').disableContextMenu();
         lastClicked = $(this);
     }).contextMenu({
         menu: 'ul#explorerContextMenu',
