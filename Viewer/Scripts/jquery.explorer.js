@@ -55,6 +55,9 @@ $(document).ready(function () {
         isContextMenu: true
     }, function (action, el, pos) {
         switch (action) {
+            case "#open":
+                window.location = el.find('a:first').attr('href');
+                break;
             case "#properties":
                 var selectedItems = new Array();
                 var i = 0;
@@ -81,10 +84,10 @@ $(document).ready(function () {
                         alert(String.format(
                             '{5}\n\n' +
                             'Location:\t{0}\n' +
-                            'Size:\t{1} ({2} bytes)\n'+
+                            'Size:\t{1} ({2} bytes)\n' +
                             'Contains:\t{3} File(s), {4} Folder(s)',
-                            getUrlParameter('path'), response.TotalSizeString, response.TotalSizeInByte,
-                            response.FileCount, response.FolderCount, selectedItems.join(', ')));
+                            getUrlParameter('path'), response.TotalSizeFriendlyString, response.TotalSizeString,
+                            response.FileCountString, response.FolderCountString, selectedItems.join(', ')));
                     }
                 });
                 break;

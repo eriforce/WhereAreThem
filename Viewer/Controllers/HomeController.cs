@@ -40,10 +40,12 @@ namespace WhereAreThem.Viewer.Controllers {
             List<Folder> folders = folder.Folders == null ? new List<Folder>() :
                 folder.Folders.Where(i => selectedItems.Contains(i.Name)).ToList();
             PropertyInfo info = new PropertyInfo() {
-                FileCount = files.Count + folders.Sum(f => GetFileCount(f)),
-                FolderCount = folders.Count + folders.Sum(f => GetFolderCount(f)),
+                FileCount = folders.Sum(f => GetFileCount(f)) + files.Count,
+                FolderCount = folders.Sum(f => GetFolderCount(f)),
                 TotalSize = files.Sum(f => f.Size) + folders.Sum(f => f.Size)
             };
+            if (selectedItems.Length > 1)
+                info.FolderCount += folders.Count;
             return Json(info);
         }
 
