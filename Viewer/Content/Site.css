@@ -64,6 +64,10 @@ table.explorer thead tr th.datetime {
     width: 140px;
 }
 
+table.explorer tbody tr.selected {
+    background-color: #E1F0FF;
+}
+
 table.explorer tbody tr td {
     border-style: none;
     padding: 3px 5px;

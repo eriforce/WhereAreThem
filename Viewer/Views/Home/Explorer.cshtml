@@ -67,7 +67,7 @@
                         <span class="icon folder item iconText">@f.Name</span>
                     </a>
                 </td>
-                <td></td>
+                <td class="size nowrap">@Utility.ToFriendlyString(f.Size)</td>
                 <td class="nowrap">@f.CreatedDateUtc.ToLocalTimeString()</td>
                 <td></td>
             </tr>
@@ -87,3 +87,4 @@
         }
     </tbody>
 </table>
+@Html.Partial("_ContextMenu")

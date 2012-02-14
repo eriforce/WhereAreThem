@@ -1,10 +1,13 @@
 $(document).ready(function () {
+    var zwsp = '&#8203;';
+
+    // add zero width space to break line
     $('table.explorer span.item').each(function () {
-        var zws = '&#8203;';
-        $(this).html($(this).text().split('').join(zws));
         $(this).attr('title', $(this).text());
+        $(this).html($(this).text().split('').join(zwsp));
     });
 
+    // add watermark to search box
     var watermarkClassName = 'watermark';
     $('input[type="text"].search').keydown(function (event) {
         if (event.keyCode == 13) {
@@ -26,6 +29,10 @@ $(document).ready(function () {
         }
     }).blur();
 
+    // enable column hover
+    $('table.explorer').addClass('columnHover').columnHover();
+
+    // enable menu on navigation bar
     $('span.separator').each(function () {
         var index = parseInt($(this).attr('id'));
         if (index > 0) {
@@ -41,7 +48,62 @@ $(document).ready(function () {
         }
     });
 
-    $('table.explorer').addClass('columnHover').columnHover();
+    // enable context menu on items
+    var allRows = $('table.explorer tbody tr');
+    allRows.contextMenu({
+        menu: 'ul#explorerContextMenu',
+        isContextMenu: true
+    }, function (action, el, pos) {
+        switch (action) {
+            case "#properties":
+                var selectedItems = new Array();
+                var i = 0;
+
+                var selectedRows = $('table.explorer tbody tr.selected');
+                if (selectedRows.length > 0)
+                    selectedRows.each(function () {
+                        selectedItems[i++] = $(this).find('span.item:first').attr('title');
+                    });
+                else
+                    selectedItems[i] = el.find('span.item:first').attr('title');
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/GetProperties",
+                    traditional: true,
+                    dataType: "json",
+                    data: {
+                        machineName: getUrlParameter('machineName'),
+                        path: getUrlParameter('path'),
+                        selectedItems: selectedItems
+                    },
+                    success: function (response) {
+                        alert(String.format(
+                            '{5}\n\n' +
+                            'Location:\t{0}\n' +
+                            'Size:\t{1} ({2} bytes)\n'+
+                            'Contains:\t{3} File(s), {4} Folder(s)',
+                            getUrlParameter('path'), response.TotalSizeString, response.TotalSizeInByte,
+                            response.FileCount, response.FolderCount, selectedItems.join(', ')));
+                    }
+                });
+                break;
+        }
+    });
+    allRows.click(function () {
+        var selectedClassName = 'selected';
+        if ($(this).hasClass(selectedClassName)) {
+            $(this).removeClass(selectedClassName);
+            if ($('table.explorer tbody tr.selected').length == 0)
+                allRows.enableContextMenu();
+        }
+        else {
+            if ($('table.explorer tbody tr.selected').length == 0)
+                allRows.disableContextMenu();
+            $(this).addClass(selectedClassName);
+            $(this).enableContextMenu();
+        }
+    });
 });
 
 var getUrlParameter = function (paramName) {
@@ -53,6 +115,16 @@ var getUrlParameter = function (paramName) {
         }
     }
     return '';
+};
+
+String.format = function () {
+    var s = arguments[0];
+    for (var i = 0; i < arguments.length - 1; i++) {
+        var reg = new RegExp("\\{" + i + "\\}", "gm");
+        s = s.replace(reg, arguments[i + 1]);
+    }
+
+    return s;
 };
 
 // jQuery Context Menu Plugin
@@ -69,15 +141,16 @@ var getUrlParameter = function (paramName) {
 // This plugin is dual-licensed under the GNU General Public License
 //   and the MIT License and is copyright A Beautiful Site, LLC.
 //
+var sourceClassName = 'contextMenuSource';
 if (jQuery) (function () {
     $.extend($.fn, {
 
         contextMenu: function (o, callback) {
             // Defaults
             if (o.menu == undefined) return false;
-            if (o.isContextMenu == undefined) return true;
-            if (o.top == undefined) return 0;
-            if (o.left == undefined) return 0;
+            if (o.isContextMenu == undefined) o.isContextMenu = true;
+            if (o.top == undefined) o.top = 0;
+            if (o.left == undefined) o.left = 0;
             if (o.inSpeed == undefined) o.inSpeed = 150;
             if (o.outSpeed == undefined) o.outSpeed = 75;
             // 0 needs to be -1 for expected results (no fade)
@@ -87,6 +160,8 @@ if (jQuery) (function () {
             $(this).each(function () {
                 var el = $(this);
                 var offset = $(el).offset();
+                if (!el.hasClass(sourceClassName))
+                    el.addClass(sourceClassName);
                 // Get this context menu
                 var menu = $(o.menu);
                 // Add contextMenu class
@@ -211,7 +286,7 @@ if (jQuery) (function () {
 
                 // Disable browser context menu (requires both selectors to work in IE/Safari + FF/Chrome)
                 if (o.isContextMenu)
-                    $(el).add($('UL.contextMenu')).bind('contextmenu', function () { return false; });
+                    $(el).add($('UL.contextMenu')).bind('contextmenu', function () { return el.hasClass('disabled'); });
 
             });
             return $(this);
@@ -276,9 +351,14 @@ if (jQuery) (function () {
             // Destroy specified context menus
             $(this).each(function () {
                 // Disable action
+                $(this).removeClass(sourceClassName);
                 $(this).unbind('mousedown').unbind('mouseup');
             });
             return ($(this));
+        },
+
+        isContextMenuBuilt: function () {
+            return $(this).hasClass(sourceClassName);
         }
 
     });

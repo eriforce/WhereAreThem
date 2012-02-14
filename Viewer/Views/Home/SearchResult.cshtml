@@ -48,15 +48,14 @@
                                 <span class="icon folder item iconText">@f.Name</span>
                             </a>
                         </td>
-                        <td></td>
                     }
                     else {
                         WhereAreThem.Model.File f = (WhereAreThem.Model.File)p.Key;
                         <td>
                             <span class="icon file item iconText">@f.Name</span>
                         </td>
-                        <td class="size nowrap">@Utility.ToFriendlyString(f.Size)</td>
                     }
+                    <td class="size nowrap">@Utility.ToFriendlyString(p.Key.Size)</td>
                     <td class="location">
                         <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = p.Value })">
                             <span class="item">@p.Value</span>
@@ -67,6 +66,7 @@
         }
     </tbody>
 </table>
+@Html.Partial("_ContextMenu")
 
 <script type="text/javascript">
     $(document).ready(function () {

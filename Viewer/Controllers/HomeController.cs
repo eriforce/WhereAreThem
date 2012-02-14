@@ -31,7 +31,7 @@ namespace WhereAreThem.Viewer.Controllers {
             }
         }
 
-        public JsonResult GetProperty(string machineName, string path, string[] selectedItems) {
+        public JsonResult GetProperties(string machineName, string path, string[] selectedItems) {
             List<Folder> stack = null;
             Folder folder = GetFolder(machineName, path, out stack);
 
@@ -55,7 +55,7 @@ namespace WhereAreThem.Viewer.Controllers {
         }
 
         private int GetFolderCount(Folder folder) {
-            return folder.Folders == null ? 0 : (folder.Files.Count + folder.Folders.Sum(f => GetFolderCount(f)));
+            return folder.Folders == null ? 0 : (folder.Folders.Count + folder.Folders.Sum(f => GetFolderCount(f)));
         }
 
         private Folder GetFolder(string machineName, string path, out List<Folder> stack) {
