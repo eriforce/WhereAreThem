@@ -42,13 +42,13 @@ div.navigationItem span {
     margin: 3px 0px;
 }
 
-table.explorer {
+table.viewer {
     margin-top: 10px;
     width: 100%;
     border-style: none;
 }
 
-table.explorer thead tr th {
+table.viewer thead tr th {
     text-align: left;
     border-style: none;
     border-bottom: 2px dashed #aaa;
@@ -56,29 +56,29 @@ table.explorer thead tr th {
     background-color: #fff;
 }
 
-table.explorer thead tr th.size {
+table.viewer thead tr th.size {
     width: 80px;
 }
 
-table.explorer thead tr th.datetime {
+table.viewer thead tr th.datetime {
     width: 140px;
 }
 
-table.explorer tbody tr.selected {
+table.viewer tbody tr.selected {
     background-color: #E1F0FF;
 }
 
-table.explorer tbody tr td {
+table.viewer tbody tr td {
     border-style: none;
     padding: 3px 5px;
 }
 
-table.explorer tbody tr td a, div.navigationItem a {
+table.viewer tbody tr td a, div.navigationItem a {
     color: #333;
     text-decoration: none;
 }
 
-table.explorer tbody tr td.size {
+table.viewer tbody tr td.size {
     text-align: right;
     padding-right: 20px;
 }

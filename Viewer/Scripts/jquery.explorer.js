@@ -2,7 +2,7 @@ $(document).ready(function () {
     var zwsp = '&#8203;';
 
     // add zero width space to break line
-    $('table.explorer span.item').each(function () {
+    $('table.viewer span.item').each(function () {
         $(this).attr('title', $(this).text());
         $(this).html($(this).text().split('').join(zwsp));
     });
@@ -30,7 +30,7 @@ $(document).ready(function () {
     }).blur();
 
     // enable column hover
-    $('table.explorer').addClass('columnHover').columnHover();
+    $('table.viewer').addClass('columnHover').columnHover();
 
     // enable menu on navigation bar
     $('span.separator').each(function () {
@@ -42,8 +42,6 @@ $(document).ready(function () {
                 isContextMenu: false,
                 top: -parseInt($(this).css('margin-top').replace('px', '')) - 1, // border and margin of UL
                 left: $(this).outerWidth()
-            }, function (action, el, pos) {
-                window.location = action;
             });
         }
     });
@@ -56,7 +54,7 @@ $(document).ready(function () {
     }, function (action, el, pos) {
         switch (action) {
             case "#open":
-                window.location = el.find('a:first').attr('href');
+                window.location = el.find('span.iconText').parent().attr('href');
                 break;
             case "#properties":
                 var selectedItems = new Array();
@@ -65,10 +63,10 @@ $(document).ready(function () {
                 var selectedRows = $('table.explorer tbody tr.selected');
                 if (selectedRows.length > 0)
                     selectedRows.each(function () {
-                        selectedItems[i++] = $(this).find('span.item:first').attr('title');
+                        selectedItems[i++] = $(this).find('span.iconText').attr('title');
                     });
                 else
-                    selectedItems[i] = el.find('span.item:first').attr('title');
+                    selectedItems[i] = el.find('span.iconText').attr('title');
 
                 $.ajax({
                     type: "POST",
@@ -92,6 +90,11 @@ $(document).ready(function () {
                 });
                 break;
         }
+    }, function (el, menu) {
+        if (el.find('span.iconText').hasClass('folder'))
+            menu.enableContextMenuItems('#open');
+        else
+            menu.disableContextMenuItems('#open');
     });
     allRows.click(function () {
         var selectedClassName = 'selected';
@@ -126,7 +129,6 @@ String.format = function () {
         var reg = new RegExp("\\{" + i + "\\}", "gm");
         s = s.replace(reg, arguments[i + 1]);
     }
-
     return s;
 };
 
@@ -145,10 +147,11 @@ String.format = function () {
 //   and the MIT License and is copyright A Beautiful Site, LLC.
 //
 var sourceClassName = 'contextMenuSource';
+var disabledClassName = 'disabled';
 if (jQuery) (function () {
     $.extend($.fn, {
 
-        contextMenu: function (o, callback) {
+        contextMenu: function (o, callback, onShowing) {
             // Defaults
             if (o.menu == undefined) return false;
             if (o.isContextMenu == undefined) o.isContextMenu = true;
@@ -181,7 +184,11 @@ if (jQuery) (function () {
                             // Hide context menus that may be showing
                             $(".contextMenu").hide();
 
-                            if ($(el).hasClass('disabled')) return false;
+                            if ($(el).hasClass(disabledClassName)) return false;
+
+                            // Show the menu
+                            if (onShowing)
+                                onShowing(el, menu);
 
                             // Detect mouse position
                             if (o.isContextMenu) {
@@ -217,7 +224,6 @@ if (jQuery) (function () {
                                 });
                             }
 
-                            // Show the menu
                             $(document).unbind('click');
                             $(menu).fadeIn(o.inSpeed);
                             // Hover events
@@ -258,12 +264,19 @@ if (jQuery) (function () {
 
                             // When items are selected
                             $(menu).find('A').unbind('click');
-                            $(menu).find('LI:not(.disabled) A').click(function () {
+                            $(menu).find('LI A').click(function () {
+                                if ($(this).parent().hasClass(disabledClassName))
+                                    return false;
+
                                 $(document).unbind('click').unbind('keypress');
                                 $(".contextMenu").hide();
                                 // Callback
-                                if (callback) callback($(this).attr('href'), $(srcElement), { x: x - offset.left, y: y - offset.top, docX: x, docY: y });
-                                return false;
+                                if (callback) {
+                                    callback($(this).attr('href'), $(srcElement), { x: x - offset.left, y: y - offset.top, docX: x, docY: y });
+                                    return false;
+                                }
+                                else
+                                    return true;
                             });
 
                             // Hide bindings
@@ -299,14 +312,14 @@ if (jQuery) (function () {
         disableContextMenuItems: function (o) {
             if (o == undefined) {
                 // Disable all
-                $(this).find('LI').addClass('disabled');
+                $(this).find('LI').addClass(disabledClassName);
                 return ($(this));
             }
             $(this).each(function () {
                 if (o != undefined) {
                     var d = o.split(',');
                     for (var i = 0; i < d.length; i++) {
-                        $(this).find('A[href="' + d[i] + '"]').parent().addClass('disabled');
+                        $(this).find('A[href="' + d[i] + '"]').parent().addClass(disabledClassName);
 
                     }
                 }
@@ -318,14 +331,14 @@ if (jQuery) (function () {
         enableContextMenuItems: function (o) {
             if (o == undefined) {
                 // Enable all
-                $(this).find('LI.disabled').removeClass('disabled');
+                $(this).find('LI.disabled').removeClass(disabledClassName);
                 return ($(this));
             }
             $(this).each(function () {
                 if (o != undefined) {
                     var d = o.split(',');
                     for (var i = 0; i < d.length; i++) {
-                        $(this).find('A[href="' + d[i] + '"]').parent().removeClass('disabled');
+                        $(this).find('A[href="' + d[i] + '"]').parent().removeClass(disabledClassName);
 
                     }
                 }
@@ -336,7 +349,7 @@ if (jQuery) (function () {
         // Disable context menu(s)
         disableContextMenu: function () {
             $(this).each(function () {
-                $(this).addClass('disabled');
+                $(this).addClass(disabledClassName);
             });
             return ($(this));
         },
@@ -344,7 +357,7 @@ if (jQuery) (function () {
         // Enable context menu(s)
         enableContextMenu: function () {
             $(this).each(function () {
-                $(this).removeClass('disabled');
+                $(this).removeClass(disabledClassName);
             });
             return ($(this));
         },
