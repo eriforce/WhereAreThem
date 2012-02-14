@@ -47,8 +47,55 @@ $(document).ready(function () {
     });
 
     // enable context menu on items
+    var selectedClassName = 'selected';
     var allRows = $('table.explorer tbody tr');
-    allRows.contextMenu({
+    var isCtrlDown = false;
+    var isShiftDown = false;
+    var lastClicked;
+    document.onselectstart = function () {
+        return !isCtrlDown && !isShiftDown;
+    };
+    $(document).keydown(function (e) {
+        if (e.keyCode == 17)
+            isCtrlDown = true;
+        else if (e.keyCode == 16)
+            isShiftDown = true;
+    }).keyup(function (e) {
+        if (e.keyCode == 17)
+            isCtrlDown = false;
+        else if (e.keyCode == 16)
+            isShiftDown = false;
+    });
+    allRows.click(function () {
+        if (isCtrlDown) {
+            if ($(this).hasClass(selectedClassName)) {
+                $(this).removeClass(selectedClassName);
+                if ($('table.explorer tbody tr.selected').length == 0)
+                    allRows.enableContextMenu();
+            }
+            else {
+                if ($('table.explorer tbody tr.selected').length == 0)
+                    allRows.disableContextMenu();
+                $(this).addClass(selectedClassName);
+                $(this).enableContextMenu();
+            }
+        }
+        else if (isShiftDown) {
+            $('table.explorer tbody tr.selected').removeClass(selectedClassName);
+            var selectedIndex = allRows.index(lastClicked);
+            var clickedIndex = allRows.index($(this));
+            var startIndex = Math.min(selectedIndex, clickedIndex);
+            var endIndex = Math.max(selectedIndex, clickedIndex);
+            for (; startIndex <= endIndex; startIndex++) {
+                $(allRows.get(startIndex)).addClass(selectedClassName);
+            }
+        }
+        else {
+            $('table.explorer tbody tr.selected').removeClass(selectedClassName);
+            $(this).addClass(selectedClassName);
+        }
+        lastClicked = $(this);
+    }).contextMenu({
         menu: 'ul#explorerContextMenu',
         isContextMenu: true
     }, function (action, el, pos) {
@@ -95,20 +142,6 @@ $(document).ready(function () {
             menu.enableContextMenuItems('#open');
         else
             menu.disableContextMenuItems('#open');
-    });
-    allRows.click(function () {
-        var selectedClassName = 'selected';
-        if ($(this).hasClass(selectedClassName)) {
-            $(this).removeClass(selectedClassName);
-            if ($('table.explorer tbody tr.selected').length == 0)
-                allRows.enableContextMenu();
-        }
-        else {
-            if ($('table.explorer tbody tr.selected').length == 0)
-                allRows.disableContextMenu();
-            $(this).addClass(selectedClassName);
-            $(this).enableContextMenu();
-        }
     });
 });
 
