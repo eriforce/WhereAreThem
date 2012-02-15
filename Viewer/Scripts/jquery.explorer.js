@@ -125,9 +125,9 @@ $(document).ready(function () {
                     success: function (response) {
                         alert(String.format(
                             '{5}\n\n' +
-                            'Location: \n{0}\n\n' +
-                            'Size: \n{1} ({2} bytes)\n\n' +
-                            'Contains: \n{3} File(s), {4} Folder(s)',
+                            'Location: \n    {0}\n\n' +
+                            'Size: \n    {1} ({2} bytes)\n\n' +
+                            'Contains: \n    {3} File(s), {4} Folder(s)',
                             getUrlParameter('path'), response.TotalSizeFriendlyString, response.TotalSizeString,
                             response.FileCountString, response.FolderCountString, selectedItems.join(', ')));
                     }
@@ -217,8 +217,7 @@ if (jQuery) (function () {
                             if ($(el).hasClass(disabledClassName)) return false;
 
                             // Show the menu
-                            if (onShowing)
-                                onShowing(el, menu);
+                            if (onShowing) onShowing(el, menu);
 
                             // Detect mouse position
                             if (o.isContextMenu) {
