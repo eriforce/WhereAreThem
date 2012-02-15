@@ -49,6 +49,14 @@ $(document).ready(function () {
     document.onselectstart = function () {
         return !isCtrlDown && !isShiftDown;
     };
+    $('table.explorer thead tr').click(function () {
+        var selected = $('table.explorer tbody tr.selected');
+        if (selected.length > 0) {
+            $('table.explorer tbody tr:not(.selected)').enableContextMenu();
+            selected.removeClass(selectedClassName);
+            lastClicked = undefined;
+        }
+    });
     $(document).keydown(function (e) {
         if (e.keyCode == 17)
             isCtrlDown = true;
@@ -71,7 +79,7 @@ $(document).ready(function () {
             var startIndex = Math.min(selectedIndex, clickedIndex);
             var endIndex = Math.max(selectedIndex, clickedIndex);
             for (; startIndex <= endIndex; startIndex++) {
-                $(allRows.get(startIndex)).addClass(selectedClassName).enableContextMenu();
+                allRows.eq(startIndex).addClass(selectedClassName).enableContextMenu();
             }
         }
         else if (isCtrlDown) {
@@ -80,7 +88,7 @@ $(document).ready(function () {
                 if ($('table.explorer tbody tr.selected').length == 0) {
                     allRows.enableContextMenu();
                     lastClicked = undefined;
-                } 
+                }
             }
             else {
                 $(this).addClass(selectedClassName).enableContextMenu();
@@ -331,7 +339,9 @@ if (jQuery) (function () {
 
                 // Disable browser context menu (requires both selectors to work in IE/Safari + FF/Chrome)
                 if (o.isContextMenu)
-                    $(el).add($('UL.contextMenu')).bind('contextmenu', function () { return el.hasClass('disabled'); });
+                    $(el).add($('UL.contextMenu')).bind('contextmenu', function () {
+                        return el.hasClass(disabledClassName); 
+                    });
 
             });
             return $(this);
