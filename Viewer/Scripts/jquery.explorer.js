@@ -3,8 +3,7 @@ $(document).ready(function () {
 
     // add zero width space to break line
     $('table.viewer span.item').each(function () {
-        $(this).attr('title', $(this).text());
-        $(this).html($(this).text().split('').join(zwsp));
+        $(this).attr('title', $(this).text()).html($(this).text().split('').join(zwsp));
     });
 
     // add watermark to search box
@@ -18,15 +17,11 @@ $(document).ready(function () {
             form.submit();
         }
     }).focus(function () {
-        if ($(this).hasClass(watermarkClassName)) {
-            $(this).removeClass(watermarkClassName);
-            $(this).val('');
-        }
+        if ($(this).hasClass(watermarkClassName))
+            $(this).removeClass(watermarkClassName).val('');
     }).blur(function () {
-        if ($(this).val() == '') {
-            $(this).addClass(watermarkClassName);
-            $(this).val('Search ...');
-        }
+        if ($(this).val() == '')
+            $(this).addClass(watermarkClassName).val('Search ...');
     }).blur();
 
     // enable column hover
@@ -36,8 +31,7 @@ $(document).ready(function () {
     $('span.separator').each(function () {
         var index = parseInt($(this).attr('id'));
         if (index > 0) {
-            $(this).css('cursor', 'pointer');
-            $(this).contextMenu({
+            $(this).css('cursor', 'pointer').contextMenu({
                 menu: 'ul#stack_' + index,
                 isContextMenu: false,
                 top: -parseInt($(this).css('margin-top').replace('px', '')) - 1, // border and margin of UL
@@ -67,17 +61,10 @@ $(document).ready(function () {
             isShiftDown = false;
     });
     allRows.click(function () {
-        if (isCtrlDown) {
-            if ($(this).hasClass(selectedClassName)) {
-                $(this).removeClass(selectedClassName).disableContextMenu();
-                if ($('table.explorer tbody tr.selected').length == 0)
-                    allRows.enableContextMenu();
-            }
-            else {
-                $(this).addClass(selectedClassName).enableContextMenu();
-            }
-        }
-        else if (isShiftDown) {
+        if (lastClicked == undefined)
+            allRows.disableContextMenu();
+
+        if (isShiftDown && (lastClicked != undefined)) {
             $('table.explorer tbody tr.selected').removeClass(selectedClassName).disableContextMenu();
             var selectedIndex = allRows.index(lastClicked);
             var clickedIndex = allRows.index($(this));
@@ -87,13 +74,24 @@ $(document).ready(function () {
                 $(allRows.get(startIndex)).addClass(selectedClassName).enableContextMenu();
             }
         }
+        else if (isCtrlDown) {
+            if ($(this).hasClass(selectedClassName)) {
+                $(this).removeClass(selectedClassName).disableContextMenu();
+                if ($('table.explorer tbody tr.selected').length == 0) {
+                    allRows.enableContextMenu();
+                    lastClicked = undefined;
+                } 
+            }
+            else {
+                $(this).addClass(selectedClassName).enableContextMenu();
+                lastClicked = $(this);
+            }
+        }
         else {
             $('table.explorer tbody tr.selected').removeClass(selectedClassName).disableContextMenu();
             $(this).addClass(selectedClassName).enableContextMenu();
+            lastClicked = $(this);
         }
-        if ($('table.explorer tbody tr.selected').length > 0)
-            $('table.explorer tbody tr:not(.selected)').disableContextMenu();
-        lastClicked = $(this);
     }).contextMenu({
         menu: 'ul#explorerContextMenu',
         isContextMenu: true
@@ -127,9 +125,9 @@ $(document).ready(function () {
                     success: function (response) {
                         alert(String.format(
                             '{5}\n\n' +
-                            'Location:\t{0}\n' +
-                            'Size:\t{1} ({2} bytes)\n' +
-                            'Contains:\t{3} File(s), {4} Folder(s)',
+                            'Location: \n{0}\n\n' +
+                            'Size: \n{1} ({2} bytes)\n\n' +
+                            'Contains: \n{3} File(s), {4} Folder(s)',
                             getUrlParameter('path'), response.TotalSizeFriendlyString, response.TotalSizeString,
                             response.FileCountString, response.FolderCountString, selectedItems.join(', ')));
                     }
