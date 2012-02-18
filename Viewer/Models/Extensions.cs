@@ -12,6 +12,7 @@ namespace WhereAreThem.Viewer.Models {
         public const string Home = "Home";
         public const string Explorer = "Explorer";
         public const string SearchResult = "SearchResult";
+        public const string DetailsViewSessionName = "DetailsView";
 
         public static string ToLocalTimeString(this DateTime utcTime) {
             DateTimeOffset offset = new DateTimeOffset(utcTime, TimeZoneInfo.Utc.GetUtcOffset(utcTime));

@@ -6,6 +6,7 @@
     string machineName = ViewBag.MachineName;
     List<Folder> stack = ViewBag.Stack;
     ViewBag.Title = (stack == null) ? Extensions.Explorer : Extensions.Explorer.GetTitle(Model.GetFullPath(stack), machineName);
+    const int rowCount = 15;
 }
 
 @using (Html.BeginForm()) {
@@ -18,7 +19,7 @@
                 <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName })">@machineName</a>
             </div>
             @if (stack != null) {
-                for (int i = 0; i < stack.Count;i++ ) {
+                for (int i = 0; i < stack.Count; i++) {
                     <div class="navigationItem">
                         <span id="@i" class="icon separator"></span>
                     </div>
@@ -44,49 +45,86 @@
     </div>
 }
 
-<table class="viewer explorer">
-    <thead>
-        <tr>
-            <th class="name">Name</th>
-            <th class="size">Size</th>
-            <th class="datetime">Created</th>
-            <th class="datetime">Modified</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model.Folders == null && Model.Files == null) {
-            <tr>
-                <td colspan="4"><div class="empty">Empty</div></td>
-            </tr>
-        }
+<div class="explorerContainer">
+    @if (Session[Extensions.DetailsViewSessionName] == null) {
+        int count = 0;
+        <table class="viewer explorer list"><tbody>
         @if (Model.Folders != null) {
             foreach (Folder f in Model.Folders) {
-            <tr>
-                <td>
-                    <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = stack == null ? f.Name : f.GetFullPath(stack) })">
-                        <span class="icon folder item iconText">@f.Name</span>
-                    </a>
-                </td>
-                <td class="size nowrap">@Utility.ToFriendlyString(f.Size)</td>
-                <td class="nowrap">@f.CreatedDateUtc.ToLocalTimeString()</td>
-                <td></td>
-            </tr>
+                if ((count > 0) && ((count % rowCount) == 0)) {
+                    @Html.Raw("</tbody></table><table class=\"viewer explorer list\"><tbody>")
+                }
+                <tr>
+                    <td>
+                        <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = stack == null ? f.Name : f.GetFullPath(stack) })">
+                            <span class="icon folder item iconText">@f.Name</span>
+                        </a>
+                    </td>
+                </tr>
+                count++;
             }
         }
         @if (Model.Files != null) {
             foreach (WhereAreThem.Model.File f in Model.Files) {
-            <tr>
-                <td>
-                    <span class="icon file item iconText">@f.Name</span>
-                </td>
-                <td class="size nowrap">@Utility.ToFriendlyString(f.Size)</td>
-                <td class="nowrap">@f.CreatedDateUtc.ToLocalTimeString()</td>
-                <td class="nowrap">@f.ModifiedDateUtc.ToLocalTimeString()</td>
-            </tr>
+                if ((count > 0) && ((count % rowCount) == 0)) {
+                    @Html.Raw("</tbody></table><table class=\"viewer explorer list\"><tbody>")
+                }
+                <tr>
+                    <td>
+                        <span class="icon file item iconText">@f.Name</span>
+                    </td>
+                </tr>
+                count++;
             }
         }
-    </tbody>
-</table>
+        </tbody></table>
+    }
+    else {
+        <table class="viewer explorer">
+            <thead>
+                <tr>
+                    <th class="name">Name</th>
+                    <th class="size">Size</th>
+                    <th class="datetime">Created</th>
+                    <th class="datetime">Modified</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Folders == null && Model.Files == null) {
+                    <tr>
+                        <td colspan="4"><div class="empty">Empty</div></td>
+                    </tr>
+                }
+                @if (Model.Folders != null) {
+                    foreach (Folder f in Model.Folders) {
+                    <tr>
+                        <td>
+                            <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = stack == null ? f.Name : f.GetFullPath(stack) })">
+                                <span class="icon folder item iconText">@f.Name</span>
+                            </a>
+                        </td>
+                        <td class="size nowrap">@Utility.ToFriendlyString(f.Size)</td>
+                        <td class="nowrap">@f.CreatedDateUtc.ToLocalTimeString()</td>
+                        <td></td>
+                    </tr>
+                    }
+                }
+                @if (Model.Files != null) {
+                    foreach (WhereAreThem.Model.File f in Model.Files) {
+                    <tr>
+                        <td>
+                            <span class="icon file item iconText">@f.Name</span>
+                        </td>
+                        <td class="size nowrap">@Utility.ToFriendlyString(f.Size)</td>
+                        <td class="nowrap">@f.CreatedDateUtc.ToLocalTimeString()</td>
+                        <td class="nowrap">@f.ModifiedDateUtc.ToLocalTimeString()</td>
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
+</div>
 
 <ul id="explorerContextMenu" class="contextMenu">
     <li>

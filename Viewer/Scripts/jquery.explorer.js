@@ -46,17 +46,6 @@ $(document).ready(function () {
     var isCtrlDown = false;
     var isShiftDown = false;
     var lastClicked;
-    document.onselectstart = function () {
-        return !isCtrlDown && !isShiftDown;
-    };
-    $('table.explorer thead tr').click(function () {
-        var selected = $('table.explorer tbody tr.selected');
-        if (selected.length > 0) {
-            $('table.explorer tbody tr:not(.selected)').enableContextMenu();
-            selected.removeClass(selectedClassName);
-            lastClicked = undefined;
-        }
-    });
     $(document).keydown(function (e) {
         if (e.keyCode == 17)
             isCtrlDown = true;
@@ -67,6 +56,19 @@ $(document).ready(function () {
             isCtrlDown = false;
         else if (e.keyCode == 16)
             isShiftDown = false;
+    });
+    $('table.explorer').each(function () {
+        this.onselectstart = function () {
+            return !isCtrlDown && !isShiftDown;
+        }
+    });
+    $('table.explorer thead tr').click(function () {
+        var selected = $('table.explorer tbody tr.selected');
+        if (selected.length > 0) {
+            $('table.explorer tbody tr:not(.selected)').enableContextMenu();
+            selected.removeClass(selectedClassName);
+            lastClicked = undefined;
+        }
     });
     allRows.click(function () {
         if (lastClicked == undefined)
@@ -131,13 +133,16 @@ $(document).ready(function () {
                         selectedItems: selectedItems
                     },
                     success: function (response) {
+                        var lenLimit = 40;
+                        var items = selectedItems.join(', ');
+                        var header = items.length > lenLimit ? (items.substr(0, lenLimit) + ' ...') : items;
                         alert(String.format(
                             '{5}\n\n' +
                             'Location: \n    {0}\n\n' +
                             'Size: \n    {1} ({2} bytes)\n\n' +
                             'Contains: \n    {3} File(s), {4} Folder(s)',
                             getUrlParameter('path'), response.TotalSizeFriendlyString, response.TotalSizeString,
-                            response.FileCountString, response.FolderCountString, selectedItems.join(', ')));
+                            response.FileCountString, response.FolderCountString, header));
                     }
                 });
                 break;
@@ -340,7 +345,7 @@ if (jQuery) (function () {
                 // Disable browser context menu (requires both selectors to work in IE/Safari + FF/Chrome)
                 if (o.isContextMenu)
                     $(el).add($('UL.contextMenu')).bind('contextmenu', function () {
-                        return el.hasClass(disabledClassName); 
+                        return el.hasClass(disabledClassName);
                     });
 
             });

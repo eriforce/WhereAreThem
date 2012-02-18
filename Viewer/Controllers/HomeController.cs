@@ -15,6 +15,14 @@ namespace WhereAreThem.Viewer.Controllers {
             return View(List.MachineNames);
         }
 
+        public RedirectResult ToggleView() {
+            if (Session[Extensions.DetailsViewSessionName] == null)
+                Session[Extensions.DetailsViewSessionName] = new object();
+            else
+                Session[Extensions.DetailsViewSessionName] = null;
+            return Redirect(Request.UrlReferrer.AbsoluteUri);
+        }
+
         public ViewResult Explorer(string machineName, string path, string searchPattern) {
             List<Folder> stack = null;
             Folder folder = GetFolder(machineName, path, out stack);
