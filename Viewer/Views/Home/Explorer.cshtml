@@ -71,7 +71,9 @@
                 }
                 <tr>
                     <td>
-                        <span class="icon file item iconText">@f.Name</span>
+                        <a href="#" click="javascript:return false;">
+                            <span class="icon file item iconText">@f.Name</span>
+                        </a>
                     </td>
                 </tr>
                 count++;
@@ -113,7 +115,9 @@
                     foreach (WhereAreThem.Model.File f in Model.Files) {
                     <tr>
                         <td>
-                            <span class="icon file item iconText">@f.Name</span>
+                            <a href="#" click="javascript:return false;">
+                                <span class="icon file item iconText">@f.Name</span>
+                            </a>
                         </td>
                         <td class="size nowrap">@Utility.ToFriendlyString(f.Size)</td>
                         <td class="nowrap">@f.CreatedDateUtc.ToLocalTimeString()</td>

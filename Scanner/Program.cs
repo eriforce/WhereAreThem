@@ -20,11 +20,13 @@ namespace WhereAreThem {
                 Folder f = GetDirectory(new DirectoryInfo("{0}:\\".FormatWith(letter)));
                 persistence.Save(f, Path.Combine(outputPath, Path.ChangeExtension(letter, Constant.ListExt)));
             }
+            Console.WriteLine();
             Console.WriteLine("List saved.");
             Console.ReadLine();
         }
 
         private static Folder GetDirectory(DirectoryInfo directory) {
+            Console.WriteLine(directory.FullName);
             Folder folder = new Folder() {
                 Name = directory.Name,
                 CreatedDateUtc = directory.CreationTimeUtc,
