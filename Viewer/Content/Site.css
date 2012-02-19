@@ -56,7 +56,7 @@ table.explorer tbody tr:hover a, table.explorer tbody tr:hover span.item {
 }
 
 table.explorer tbody tr.selected span.item {
-    background-color: #c1dbfc;
+    background-color: #d8e8fc;
     border-color: #e9f2fd;
 }
 
