@@ -28,42 +28,6 @@ input[type="text"].watermark {
     font-style: italic;
 }
 
-table.explorer tbody tr a {
-    display: inline-block;
-}
-
-table.explorer tbody tr:hover, table.explorer tbody tr:not(.selected):hover a, div.navigationItem:hover a {
-    background-color: #666;
-    color: #fff;
-}
-
-table.viewer tbody tr td a, div.navigationItem a {
-    color: #333;
-    text-decoration: none;
-}
-
-table.explorer tbody tr span.item {
-    padding-right: 2px;
-}
-
-table.explorer tbody tr a, table.explorer tbody tr span.item {
-    border: 1px solid #fff;
-    border-radius: 3px;
-}
-
-table.explorer tbody tr:hover a, table.explorer tbody tr:hover span.item {
-    border-color: #666;
-}
-
-table.explorer tbody tr.selected span.item {
-    background-color: #d8e8fc;
-    border-color: #e9f2fd;
-}
-
-table.explorer tbody tr.selected a {
-    border-color: #7da2ce;
-}
-
 div.machineName, div.navigationItem {
     display: inline-block;
 }
@@ -117,20 +81,9 @@ table.viewer tbody tr td.size {
     padding-right: 20px;
 }
 
-table.list {
-    display: inline-block;
-    width: auto;
-    height: 390px;
-    margin-right: 4px;
-}
-
-table.result {
-    margin-top: 10px;
-}
-
-table.result tbody tr td {
-    padding-top: 3px;
-    padding-bottom: 3px;
+table.viewer tbody tr td a, div.navigationItem a {
+    color: #333;
+    text-decoration: none;
 }
 
 td.nowrap {
@@ -141,6 +94,54 @@ div.empty {
     font-weight: bold;
     text-align: center;
     padding: 10px;
+}
+
+table.explorer tbody tr a {
+    display: inline-block;
+}
+
+table.explorer tbody tr:hover, table.explorer tbody tr:not(.selected):hover a, div.navigationItem:hover a {
+    background-color: #666;
+    color: #fff;
+}
+
+table.explorer tbody tr span.item {
+    padding-right: 2px;
+}
+
+table.explorer tbody tr a, table.explorer tbody tr span.item {
+    border: 1px solid #fff;
+    border-radius: 3px;
+}
+
+table.explorer tbody tr:hover a, table.explorer tbody tr:hover span.item {
+    border-color: #666;
+}
+
+table.explorer tbody tr.selected span.item {
+    background-color: #d8e8fc;
+    border-color: #e9f2fd;
+}
+
+table.explorer tbody tr.selected a {
+    border-color: #7da2ce;
+}
+
+table.list {
+    display: inline-block;
+    width: auto;
+    max-height: 390px;
+    vertical-align: top;
+    margin-right: 4px;
+}
+
+table.result {
+    margin-top: 10px;
+}
+
+table.result tbody tr td {
+    padding-top: 3px;
+    padding-bottom: 3px;
 }
 
 .contextMenu {

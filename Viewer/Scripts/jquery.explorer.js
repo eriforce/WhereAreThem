@@ -51,6 +51,10 @@ $(document).ready(function () {
             isCtrlDown = true;
         else if (e.keyCode == 16)
             isShiftDown = true;
+        else if (isCtrlDown && (e.keyCode == 65 || e.keyCode == 97)) {
+            allRows.addClass(selectedClassName).enableContextMenu();
+            return false;
+        }
     }).keyup(function (e) {
         if (e.keyCode == 17)
             isCtrlDown = false;
