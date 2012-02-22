@@ -50,6 +50,12 @@ div.explorerContainer {
     white-space: nowrap;
 }
 
+div.selection {
+    position: absolute;
+    border: 1px solid #3399ff;
+    background-color: rgba(51, 153, 255, 0.5);
+}
+
 table.viewer {
     width: 100%;
     border-style: none;
