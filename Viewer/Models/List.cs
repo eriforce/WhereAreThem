@@ -20,11 +20,11 @@ namespace WhereAreThem.Viewer.Models {
             }
         }
         private static Dictionary<string, Folder> _machineCache = new Dictionary<string, Folder>();
+        private static object _listLock = new object();
 
         public static string[] MachineNames {
             get {
-                return Directory.GetDirectories(_path)
-                    .Select(p => Path.GetFileName(p)).ToArray();
+                return Directory.GetDirectories(_path).Select(p => Path.GetFileName(p)).ToArray();
             }
         }
 
@@ -43,13 +43,23 @@ namespace WhereAreThem.Viewer.Models {
 
             string listFileName = Path.ChangeExtension(drive.Substring(0, drive.IndexOf(':')), Constant.ListExt);
             string listPath = Path.Combine(machinePath, listFileName);
-            Folder machine = _machineCache[machineName];
-            if (!machine.Folders.Any(d => d.Name == drive) && System.IO.File.Exists(listPath))
-                machine.Folders.Add(_persistence.Load(listPath));
 
-            Folder driveFolder = machine.Folders.SingleOrDefault(d => d.Name == drive);
-            if (driveFolder == null)
-                throw new FileLoadException("File name of '{0}' is incorrect.".FormatWith(listFileName));
+            if (!System.IO.File.Exists(listPath))
+                throw new FileNotFoundException("List {0} cannot be found.".FormatWith(listPath));
+
+            Folder machine = _machineCache[machineName];
+            Folder driveFolder;
+            lock (_listLock) {
+                DateTime listTimestamp = new FileInfo(listPath).LastWriteTimeUtc;
+                driveFolder = machine.Folders.SingleOrDefault(d => d.Name == drive);
+                if ((driveFolder == null) || (driveFolder.CreatedDateUtc != listTimestamp)) {
+                    machine.Folders.Remove(driveFolder);
+                    driveFolder = _persistence.Load(listPath);
+                    driveFolder.CreatedDateUtc = listTimestamp;
+                    machine.Folders.Add(driveFolder);
+                }
+            }
+
             return driveFolder;
         }
 
@@ -62,7 +72,7 @@ namespace WhereAreThem.Viewer.Models {
                 };
             else {
                 string[] parts = path.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
-                Folder drive = List.GetDrive(machineName, "{0}\\".FormatWith(parts.First()));
+                Folder drive = GetDrive(machineName, "{0}\\".FormatWith(parts.First()));
                 if (drive == null)
                     return null;
 
