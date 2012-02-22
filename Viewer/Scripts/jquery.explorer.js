@@ -172,9 +172,9 @@ $(document).ready(function () {
             var borderWidth = parseInt($(this).css("border-left-width"));
             $(document).mousemove(function (moveEvent) {
                 var left = Math.min(downEvent.pageX, Math.max(moveEvent.pageX, container.offsetLeft + borderWidth));
-                var width = Math.max(downEvent.pageX, Math.min(moveEvent.pageX, container.offsetLeft + Math.min(container.offsetWidth, container.scrollWidth) - (borderWidth * 3))) - left;
+                var width = Math.max(downEvent.pageX, Math.min(moveEvent.pageX, container.offsetLeft + container.offsetWidth - (borderWidth * 3))) - left;
                 var top = Math.min(downEvent.pageY, Math.max(moveEvent.pageY, container.offsetTop + borderWidth));
-                var height = Math.max(downEvent.pageY, Math.min(moveEvent.pageY, container.offsetTop + Math.min(container.offsetHeight, container.scrollHeight) - (borderWidth * 3))) - top;
+                var height = Math.max(downEvent.pageY, Math.min(moveEvent.pageY, container.offsetTop + container.offsetHeight - (borderWidth * 3))) - top;
                 $('div.selection').css('left', left).css('top', top).css('width', width).css('height', height);
             }).mouseup(function (e) {
                 $(document).unbind('mousemove');
