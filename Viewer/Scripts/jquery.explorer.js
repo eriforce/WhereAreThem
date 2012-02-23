@@ -81,7 +81,7 @@ $(document).ready(function () {
         else
             lastClickTimestamp = e.timeStamp;
     });
-    $('table.explorer:not(.list) tbody tr, table.list tbody tr td a').click(function () {
+    $('table.explorer:not(.list) tbody tr, table.list tbody tr td a').click(function (e) {
         var tr = $(this).get(0).tagName.toLowerCase() == 'a' ? $(this).parent().parent() : $(this);
         if (lastClicked == undefined)
             allRows.disableContextMenu();
@@ -115,7 +115,8 @@ $(document).ready(function () {
             lastClicked = tr;
         }
         return false;
-    }).contextMenu({
+    });
+    allRows.contextMenu({
         menu: 'ul#explorerContextMenu',
         isContextMenu: true
     }, function (action, el, pos) {
