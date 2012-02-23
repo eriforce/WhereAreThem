@@ -45,6 +45,7 @@ $(document).ready(function () {
     var allRows = $('table.explorer tbody tr');
     var isCtrlDown = false;
     var isShiftDown = false;
+    var lastClickTimestamp;
     var lastClicked;
     $(document).keydown(function (e) {
         if (e.keyCode == 17)
@@ -74,7 +75,13 @@ $(document).ready(function () {
             lastClicked = undefined;
         }
     });
-    $('table.explorer:not(.list) tbody tr, table.explorer tbody tr td a').click(function () {
+    $('table.list tbody tr td a').click(function (e) {
+        if ((e.timeStamp - lastClickTimestamp) < 500)
+            window.location = $(this).attr('href');
+        else
+            lastClickTimestamp = e.timeStamp;
+    });
+    $('table.explorer:not(.list) tbody tr, table.list tbody tr td a').click(function () {
         var tr = $(this).get(0).tagName.toLowerCase() == 'a' ? $(this).parent().parent() : $(this);
         if (lastClicked == undefined)
             allRows.disableContextMenu();
