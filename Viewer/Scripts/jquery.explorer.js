@@ -75,7 +75,7 @@ $(document).ready(function () {
             lastClicked = undefined;
         }
     });
-    $('table.list tbody tr td a').click(function (e) {
+    $('table.explorer tbody tr td a').click(function (e) {
         if ((e.timeStamp - lastClickTimestamp) < 300)
             window.location = $(this).attr('href');
         else
