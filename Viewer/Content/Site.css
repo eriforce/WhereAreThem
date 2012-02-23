@@ -56,32 +56,6 @@ div.selection {
     background-color: rgba(51, 153, 255, 0.5);
 }
 
-table.list {
-    display: inline-block;
-    width: auto;
-    max-height: 390px;
-    vertical-align: top;
-    margin-right: 4px;
-}
-
-table.list tbody tr a:hover {
-    border-color: rgba(125, 162, 206, 0.5);
-}
-
-table.list tbody tr span.item:hover {
-    border-color: rgba(233, 242, 253, 0.5);
-    background-color: rgba(216, 232, 252, 0.5);
-}
-
-table.result {
-    margin-top: 10px;
-}
-
-table.result tbody tr td {
-    padding-top: 3px;
-    padding-bottom: 3px;
-}
-
 table.viewer {
     width: 100%;
     border-style: none;
@@ -141,6 +115,32 @@ table.explorer tbody tr a, table.explorer tbody tr span.item {
     border-radius: 3px;
 }
 
+table.explorer:not(.list) tbody tr:hover, table.explorer:not(.list) tbody tr:not(.selected):hover a, div.navigationItem:hover a {
+    background-color: #666;
+    color: #fff;
+}
+
+table.explorer:not(.list) tbody tr:hover a, table.explorer:not(.list) tbody tr:hover span.item {
+    border-color: #666;
+}
+
+table.list {
+    display: inline-block;
+    width: auto;
+    max-height: 390px;
+    vertical-align: top;
+    margin-right: 4px;
+}
+
+table.list tbody tr a:hover {
+    border-color: rgba(125, 162, 206, 0.5);
+}
+
+table.list tbody tr span.item:hover {
+    border-color: rgba(233, 242, 253, 0.5);
+    background-color: rgba(216, 232, 252, 0.5);
+}
+
 table.explorer tbody tr.selected span.item {
     background-color: #d8e8fc;
     border-color: #e9f2fd;
@@ -150,13 +150,13 @@ table.explorer tbody tr.selected a {
     border-color: #7da2ce;
 }
 
-table.explorer:not(.list) tbody tr:hover, table.explorer:not(.list) tbody tr:not(.selected):hover a, div.navigationItem:hover a {
-    background-color: #666;
-    color: #fff;
+table.result {
+    margin-top: 10px;
 }
 
-table.explorer:not(.list) tbody tr:hover a, table.explorer:not(.list) tbody tr:hover span.item {
-    border-color: #666;
+table.result tbody tr td {
+    padding-top: 3px;
+    padding-bottom: 3px;
 }
 
 .contextMenu {

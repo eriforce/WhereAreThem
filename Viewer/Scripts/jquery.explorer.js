@@ -40,10 +40,6 @@ $(document).ready(function () {
         }
     });
 
-    $('table.explorer tbody tr td a').click(function () {
-        return false;
-    })
-
     // enable context menu on items
     var selectedClassName = 'selected';
     var allRows = $('table.explorer tbody tr');
@@ -78,7 +74,7 @@ $(document).ready(function () {
             lastClicked = undefined;
         }
     });
-    $('table.explorer:not(.list) tbody tr, table.list tbody tr td a').click(function () {
+    $('table.explorer:not(.list) tbody tr, table.explorer tbody tr td a').click(function () {
         var tr = $(this).get(0).tagName.toLowerCase() == 'a' ? $(this).parent().parent() : $(this);
         if (lastClicked == undefined)
             allRows.disableContextMenu();
@@ -111,6 +107,7 @@ $(document).ready(function () {
             tr.addClass(selectedClassName).enableContextMenu();
             lastClicked = tr;
         }
+        return false;
     }).contextMenu({
         menu: 'ul#explorerContextMenu',
         isContextMenu: true
@@ -162,13 +159,22 @@ $(document).ready(function () {
         else
             menu.disableContextMenuItems('#open');
     });
-    $('table.explorer tbody tr td a').click(function () {
-        $(this).parent().parent().click();
-        return false;
-    });
 
     // add explorer selection
     var isSelecting = false;
+    var hasCommon = function (l1p1, l1p2, l2p1, l2p2) {
+        return (l2p1 < l1p2) && (l2p2 > l1p1);
+    };
+    function getOffset(el) {
+        var _x = 0;
+        var _y = 0;
+        while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
+            _x += el.offsetLeft - el.scrollLeft;
+            _y += el.offsetTop - el.scrollTop;
+            el = el.offsetParent;
+        }
+        return { top: _y, left: _x };
+    };
     document.onselectstart = function () {
         return !isSelecting;
     };
@@ -185,6 +191,15 @@ $(document).ready(function () {
                 var top = Math.max(Math.min(downEvent.pageY, moveEvent.pageY), container.offsetTop + borderWidth);
                 var height = Math.min(Math.max(downEvent.pageY, moveEvent.pageY), container.offsetTop + container.offsetHeight - (borderWidth * 2)) - top - borderWidth;
                 $('div.selection').css('left', left).css('top', top).css('width', width).css('height', height);
+                $('table.list tbody tr td a').each(function () {
+                    var tr = $(this).parent().parent();
+                    var offset = getOffset(this);
+                    if (hasCommon(offset.left, offset.left + this.offsetWidth, Math.min(downEvent.pageX, moveEvent.pageX), Math.max(downEvent.pageX, moveEvent.pageX))
+                        && hasCommon(offset.top, offset.top + this.offsetHeight, Math.min(downEvent.pageY, moveEvent.pageY), Math.max(downEvent.pageY, moveEvent.pageY)))
+                        tr.addClass(selectedClassName).enableContextMenu();
+                    else
+                        tr.removeClass(selectedClassName).disableContextMenu();
+                });
             }).mouseup(function (e) {
                 $('div.selection').remove();
                 isSelecting = false;
