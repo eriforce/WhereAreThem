@@ -90,6 +90,7 @@ table.viewer tbody tr td.size {
 table.viewer tbody tr td a, div.navigationItem a {
     color: #333;
     text-decoration: none;
+    cursor: default;
 }
 
 td.nowrap {

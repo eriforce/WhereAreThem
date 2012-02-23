@@ -76,7 +76,7 @@ $(document).ready(function () {
         }
     });
     $('table.list tbody tr td a').click(function (e) {
-        if ((e.timeStamp - lastClickTimestamp) < 500)
+        if ((e.timeStamp - lastClickTimestamp) < 300)
             window.location = $(this).attr('href');
         else
             lastClickTimestamp = e.timeStamp;
