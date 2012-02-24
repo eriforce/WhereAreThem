@@ -121,7 +121,7 @@ table.explorer:not(.list) tbody tr:hover, table.explorer:not(.list) tbody tr:not
     color: #fff;
 }
 
-table.explorer:not(.list) tbody tr:hover a, table.explorer:not(.list) tbody tr:hover span.item {
+table.explorer:not(.list) tbody tr:not(.selected):hover a, table.explorer:not(.list) tbody tr:not(.selected):hover span.item {
     border-color: #666;
 }
 
