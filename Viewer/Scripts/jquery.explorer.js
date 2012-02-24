@@ -47,6 +47,12 @@ $(document).ready(function () {
     var isShiftDown = false;
     var lastClickTimestamp;
     var lastClicked;
+    var checkIfUnselectedAll = function () {
+        if ($('table.explorer tbody tr.selected').length == 0) {
+            allRows.enableContextMenu();
+            lastClicked = undefined;
+        }
+    };
     $(document).keydown(function (e) {
         if (e.keyCode == 17)
             isCtrlDown = true;
@@ -99,10 +105,7 @@ $(document).ready(function () {
         else if (isCtrlDown) {
             if (tr.hasClass(selectedClassName)) {
                 tr.removeClass(selectedClassName).disableContextMenu();
-                if ($('table.explorer tbody tr.selected').length == 0) {
-                    allRows.enableContextMenu();
-                    lastClicked = undefined;
-                }
+                checkIfUnselectedAll();
             }
             else {
                 tr.addClass(selectedClassName).enableContextMenu();
@@ -187,33 +190,40 @@ $(document).ready(function () {
         return !isSelecting;
     };
     $('div.explorerContainer').mousedown(function (downEvent) {
-        var container = this;
-        if (!isSelecting && (downEvent.pageX <= (container.offsetLeft + container.scrollWidth))
+        if (downEvent.button == 0) {
+            $('ul#explorerContextMenu').fadeOut(75);
+            allRows.removeClass(selectedClassName);
+            checkIfUnselectedAll();
+
+            var container = this;
+            if (!isSelecting && (downEvent.pageX <= (container.offsetLeft + container.scrollWidth))
             && (downEvent.pageY <= (container.offsetTop + container.scrollHeight))) {
-            isSelecting = true;
-            $(container).append('<div class="selection"></div>');
-            var borderWidth = parseInt($(container).css("border-left-width"));
-            $(document).mousemove(function (moveEvent) {
-                var left = Math.max(Math.min(downEvent.pageX, moveEvent.pageX), container.offsetLeft + borderWidth);
-                var width = Math.min(Math.max(downEvent.pageX, moveEvent.pageX), container.offsetLeft + container.offsetWidth - (borderWidth * 2)) - left - borderWidth;
-                var top = Math.max(Math.min(downEvent.pageY, moveEvent.pageY), container.offsetTop + borderWidth);
-                var height = Math.min(Math.max(downEvent.pageY, moveEvent.pageY), container.offsetTop + container.offsetHeight - (borderWidth * 2)) - top - borderWidth;
-                $('div.selection').css('left', left).css('top', top).css('width', width).css('height', height);
-                $('table.list tbody tr td a').each(function () {
-                    var tr = $(this).parent().parent();
-                    var offset = getOffset(this);
-                    if (hasCommon(offset.left, offset.left + this.offsetWidth, Math.min(downEvent.pageX, moveEvent.pageX), Math.max(downEvent.pageX, moveEvent.pageX))
+                isSelecting = true;
+                $(container).append('<div class="selection"></div>');
+                var borderWidth = parseInt($(container).css("border-left-width"));
+                $(document).mousemove(function (moveEvent) {
+                    var left = Math.max(Math.min(downEvent.pageX, moveEvent.pageX), container.offsetLeft + borderWidth);
+                    var width = Math.min(Math.max(downEvent.pageX, moveEvent.pageX), container.offsetLeft + container.offsetWidth - (borderWidth * 2)) - left - borderWidth;
+                    var top = Math.max(Math.min(downEvent.pageY, moveEvent.pageY), container.offsetTop + borderWidth);
+                    var height = Math.min(Math.max(downEvent.pageY, moveEvent.pageY), container.offsetTop + container.offsetHeight - (borderWidth * 2)) - top - borderWidth;
+                    $('div.selection').css('left', left).css('top', top).css('width', width).css('height', height);
+                    $('table.list tbody tr td a').each(function () {
+                        var tr = $(this).parent().parent();
+                        var offset = getOffset(this);
+                        if (hasCommon(offset.left, offset.left + this.offsetWidth, Math.min(downEvent.pageX, moveEvent.pageX), Math.max(downEvent.pageX, moveEvent.pageX))
                         && hasCommon(offset.top, offset.top + this.offsetHeight, Math.min(downEvent.pageY, moveEvent.pageY), Math.max(downEvent.pageY, moveEvent.pageY)))
-                        tr.addClass(selectedClassName).enableContextMenu();
-                    else
-                        tr.removeClass(selectedClassName).disableContextMenu();
+                            tr.addClass(selectedClassName).enableContextMenu();
+                        else
+                            tr.removeClass(selectedClassName).disableContextMenu();
+                    });
+                }).mouseup(function (e) {
+                    $('div.selection').remove();
+                    isSelecting = false;
+                    checkIfUnselectedAll();
+                    $(document).unbind('mousemove');
+                    $(document).unbind('mouseup');
                 });
-            }).mouseup(function (e) {
-                $('div.selection').remove();
-                isSelecting = false;
-                $(document).unbind('mousemove');
-                $(document).unbind('mouseup');
-            });
+            } 
         }
     });
 });
