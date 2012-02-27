@@ -14,6 +14,7 @@ namespace WhereAreThem {
         private const string updateArgumentName = "u";
         private const FileAttributes filter = FileAttributes.Hidden | FileAttributes.System;
 
+        [STAThread]
         static void Main(string[] args) {
             IPersistence persistence = Constant.GetPersistence(Type.GetType(ConfigurationManager.AppSettings["persistence"]));
             string outputPath = Path.Combine(ConfigurationManager.AppSettings["outputPath"], Environment.MachineName);
