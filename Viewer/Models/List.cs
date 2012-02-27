@@ -31,7 +31,7 @@ namespace WhereAreThem.Viewer.Models {
         public static List<Folder> GetDrives(string machineName) {
             return Directory.GetFiles(Path.Combine(_path, machineName), "*.{0}".FormatWith(Constant.ListExt))
                 .Select(p => new Folder() {
-                    Name = "{0}:\\".FormatWith(Path.GetFileNameWithoutExtension(p)),
+                    Name = "{0}{1}{2}".FormatWith(Path.GetFileNameWithoutExtension(p), Path.VolumeSeparatorChar, Path.DirectorySeparatorChar),
                     CreatedDateUtc = new FileInfo(p).LastWriteTimeUtc
                 }).ToList();
         }
@@ -41,7 +41,8 @@ namespace WhereAreThem.Viewer.Models {
             if (!_machineCache.ContainsKey(machineName) && Directory.Exists(machinePath))
                 _machineCache.Add(machineName, new Folder() { Name = machineName, Folders = new List<Folder>() });
 
-            string listFileName = Path.ChangeExtension(drive.Substring(0, drive.IndexOf(':')), Constant.ListExt);
+            string driveLetter = drive.Substring(0, drive.IndexOf(Path.VolumeSeparatorChar));
+            string listFileName = Path.ChangeExtension(driveLetter, Constant.ListExt);
             string listPath = Path.Combine(machinePath, listFileName);
 
             if (!System.IO.File.Exists(listPath))
@@ -71,8 +72,8 @@ namespace WhereAreThem.Viewer.Models {
                     Folders = List.GetDrives(machineName)
                 };
             else {
-                string[] parts = path.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
-                Folder drive = GetDrive(machineName, "{0}\\".FormatWith(parts.First()));
+                string[] parts = path.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+                Folder drive = GetDrive(machineName, parts.First());
                 if (drive == null)
                     return null;
 
