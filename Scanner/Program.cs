@@ -39,7 +39,7 @@ namespace WhereAreThem {
             }
             else {
                 foreach (string letter in ConfigurationManager.AppSettings["drives"].ToUpper().Split(',')) {
-                    Folder f = GetFolder(new DirectoryInfo("{0}{1}".FormatWith(letter, Path.VolumeSeparatorChar)));
+                    Folder f = GetFolder(new DirectoryInfo("{0}{1}{2}".FormatWith(letter, Path.VolumeSeparatorChar, Path.DirectorySeparatorChar)));
                     f.CreatedDateUtc = DateTime.UtcNow;
                     persistence.Save(f, Path.Combine(outputPath, Path.ChangeExtension(letter, Constant.ListExt)));
                 }
@@ -68,7 +68,7 @@ namespace WhereAreThem {
                     folder.Folders = new List<Folder>();
                 Folder current = folder.Folders.SingleOrDefault(f => f.Name.Equals(pathParts[i], StringComparison.OrdinalIgnoreCase));
                 if (current == null) {
-                    current = GetFolder(new DirectoryInfo(Path.Combine(pathParts.Take(i).ToArray())));
+                    current = GetFolder(new DirectoryInfo(string.Join(Path.DirectorySeparatorChar.ToString(), pathParts.Take(i + 1))));
                     folder.Folders.Add(current);
                     folder.Folders.Sort();
                     return;
@@ -76,7 +76,7 @@ namespace WhereAreThem {
                 else
                     folder = current;
             }
-            Folder newFolder = GetFolder(new DirectoryInfo(Path.Combine(pathParts)));
+            Folder newFolder = GetFolder(new DirectoryInfo(string.Join(Path.DirectorySeparatorChar.ToString(), pathParts)));
             folder.Name = newFolder.Name;
             folder.CreatedDateUtc = newFolder.CreatedDateUtc;
             folder.Folders = newFolder.Folders;
