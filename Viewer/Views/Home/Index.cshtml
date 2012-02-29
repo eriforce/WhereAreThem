@@ -6,7 +6,7 @@
 
 <ul>
     @foreach (string name in Model) {
-        <li>@Html.ActionLink(name, Extensions.Explorer, new { machineName = name })</li>
+        <li>@Html.ActionLink(name, Extensions.ActionExplorer, new { machineName = name })</li>
     }
 </ul>
 

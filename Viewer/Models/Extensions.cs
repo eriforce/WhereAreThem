@@ -9,9 +9,10 @@ using WhereAreThem.Model;
 
 namespace WhereAreThem.Viewer.Models {
     public static class Extensions {
-        public const string Home = "Home";
-        public const string Explorer = "Explorer";
-        public const string SearchResult = "SearchResult";
+        public const string ControllerHome = "Home";
+        public const string ActionIndex = "Index";
+        public const string ActionExplorer = "Explorer";
+        public const string ActionSearchResult = "SearchResult";
         public const string DetailsViewSessionName = "DetailsView";
 
         public static string ToLocalTimeString(this DateTime utcTime) {

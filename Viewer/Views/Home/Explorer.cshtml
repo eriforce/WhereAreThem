@@ -5,7 +5,7 @@
 @{
     string machineName = ViewBag.MachineName;
     List<Folder> stack = ViewBag.Stack;
-    ViewBag.Title = (stack == null) ? Extensions.Explorer : Extensions.Explorer.GetTitle(Model.GetFullPath(stack), machineName);
+    ViewBag.Title = (stack == null) ? Extensions.ActionExplorer : Extensions.ActionExplorer.GetTitle(Model.GetFullPath(stack), machineName);
     const int rowCount = 15;
 }
 
@@ -16,7 +16,7 @@
         }
         <div class="navigation">
             <div class="machineName">
-                <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName })">@machineName</a>
+                <a href="@Url.Action(Extensions.ActionExplorer, new { machineName = machineName })">@machineName</a>
             </div>
             @if (stack != null) {
                 for (int i = 0; i < stack.Count; i++) {
@@ -24,7 +24,7 @@
                         <span id="@i" class="icon separator"></span>
                     </div>
                     <div class="navigationItem">
-                        <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = stack[i].GetFullPath(stack) })">
+                        <a href="@Url.Action(Extensions.ActionExplorer, new { machineName = machineName, path = stack[i].GetFullPath(stack) })">
                             <span class="icon folder item iconText">@stack[i].Name</span>
                         </a>
                     </div>
@@ -32,7 +32,7 @@
                         <ul id="@string.Format("stack_{0}", i)" class="contextMenu">
                             @foreach (Folder f in stack[i - 1].Folders) {
                                 <li class="@(f == stack[i] ? "current" : string.Empty)">
-                                    <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = f.GetFullPath(stack.Take(i).ToList()) })">
+                                    <a href="@Url.Action(Extensions.ActionExplorer, new { machineName = machineName, path = f.GetFullPath(stack.Take(i).ToList()) })">
                                         <span class="icon folder item iconText">@f.Name</span>
                                     </a>
                                 </li>
@@ -56,7 +56,7 @@
                 }
                 <tr>
                     <td>
-                        <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = stack == null ? f.Name : f.GetFullPath(stack) })">
+                        <a href="@Url.Action(Extensions.ActionExplorer, new { machineName = machineName, path = stack == null ? f.Name : f.GetFullPath(stack) })">
                             <span class="icon folder item iconText">@f.Name</span>
                         </a>
                     </td>
@@ -101,7 +101,7 @@
                     foreach (Folder f in Model.Folders) {
                     <tr>
                         <td>
-                            <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = stack == null ? f.Name : f.GetFullPath(stack) })">
+                            <a href="@Url.Action(Extensions.ActionExplorer, new { machineName = machineName, path = stack == null ? f.Name : f.GetFullPath(stack) })">
                                 <span class="icon folder item iconText">@f.Name</span>
                             </a>
                         </td>

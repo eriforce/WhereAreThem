@@ -4,7 +4,7 @@
 @model Dictionary<FileSystemItem, string>
 @{
     string machineName = ViewBag.MachineName;
-    ViewBag.Title = Extensions.SearchResult;
+    ViewBag.Title = Extensions.ActionSearchResult;
 }
 
 @using (Html.BeginForm()) {
@@ -12,7 +12,7 @@
         @Html.TextBox("searchPattern", null, new { @class = "search" })
         <div class="navigation">
             <div class="machineName">
-                <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName })">@machineName</a>
+                <a href="@Url.Action(Extensions.ActionExplorer, new { machineName = machineName })">@machineName</a>
             </div>
             <div class="navigationItem">
                 <span class="icon separator"></span>
@@ -44,7 +44,7 @@
                     @if (p.Key is Folder) {
                         Folder f = (Folder)p.Key;
                         <td>
-                            <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = "{0}{1}{2}".FormatWith(p.Value, p.Value.EndsWith("\\") ? string.Empty : "\\", f.Name) })">
+                            <a href="@Url.Action(Extensions.ActionExplorer, new { machineName = machineName, path = "{0}{1}{2}".FormatWith(p.Value, p.Value.EndsWith("\\") ? string.Empty : "\\", f.Name) })">
                                 <span class="icon folder item iconText">@f.Name</span>
                             </a>
                         </td>
@@ -57,7 +57,7 @@
                     }
                     <td class="size nowrap">@Utility.ToFriendlyString(p.Key.Size)</td>
                     <td class="location">
-                        <a href="@Url.Action(Extensions.Explorer, new { machineName = machineName, path = p.Value })">
+                        <a href="@Url.Action(Extensions.ActionExplorer, new { machineName = machineName, path = p.Value })">
                             <span class="item">@p.Value</span>
                         </a>
                     </td>
@@ -71,6 +71,6 @@
     $(document).ready(function () {
         var location = getUrlParameter('path');
         document.title += @Html.Raw("'".GetTitle("' + location + '", machineName))';
-        $('div.navigationItem:last').append('<a href="@Url.Action(Extensions.Explorer)?machineName=@machineName&path=' + location + '"><span>' + location + '</span></a>');
+        $('div.navigationItem:last').append('<a href="@Url.Action(Extensions.ActionExplorer)?machineName=@machineName&path=' + location + '"><span>' + location + '</span></a>');
     });
 </script>

@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 namespace WhereAreThem.Viewer.Controllers {
     [Authorize]
     public class HomeController : Controller {
-        public ViewResult Index(string id) {
+        public ViewResult Index() {
             return View(List.MachineNames);
         }
 
@@ -35,7 +35,7 @@ namespace WhereAreThem.Viewer.Controllers {
             else {
                 Dictionary<FileSystemItem, string> result = new Dictionary<FileSystemItem, string>();
                 SearchInFolder(folder, stack, searchPattern.WildcardToRegex(), result);
-                return View(Extensions.SearchResult, result);
+                return View(Extensions.ActionSearchResult, result);
             }
         }
 
