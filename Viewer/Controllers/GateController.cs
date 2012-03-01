@@ -12,8 +12,7 @@ namespace WhereAreThem.Viewer.Controllers {
     public class GateController : Controller {
         public ActionResult Login() {
             if ((Request.ClientCertificate == null) || !Request.ClientCertificate.IsValid
-                    || Request.ClientCertificate.Issuer.IsNullOrEmpty()
-                    || (Request.ClientCertificate.Issuer != Request.ClientCertificate.ServerIssuer))
+                    || Request.ClientCertificate.Issuer.IsNullOrEmpty())
                 return new HttpStatusCodeResult((int)HttpStatusCode.Unauthorized);
 
             FormsAuthentication.SetAuthCookie(Request.ClientCertificate.Subject.Substring(3), false);
