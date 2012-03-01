@@ -29,24 +29,29 @@ namespace WhereAreThem {
                 if (!Directory.Exists(path))
                     throw new ArgumentException("Path '{0}' cannot be found.".FormatWith(path));
                 string[] parts = path.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+                parts[0] += Path.DirectorySeparatorChar;
                 string driveLetter = parts[0].Substring(0, parts[0].IndexOf(Path.VolumeSeparatorChar));
                 string listPath = Path.Combine(outputPath, Path.ChangeExtension(driveLetter, Constant.ListExt));
                 if (!System.IO.File.Exists(listPath))
                     throw new FileNotFoundException("List '{0}' cannot be found.".FormatWith(listPath));
-                Folder root = persistence.Load(listPath);
-                UpdateFolder(root, parts);
-                persistence.Save(root, listPath);
+                Folder drive = persistence.Load(listPath);
+                UpdateFolder(drive, parts);
+                Save(persistence, listPath, drive);
             }
             else {
                 foreach (string letter in ConfigurationManager.AppSettings["drives"].ToUpper().Split(',')) {
-                    Folder f = GetFolder(new DirectoryInfo("{0}{1}{2}".FormatWith(letter, Path.VolumeSeparatorChar, Path.DirectorySeparatorChar)));
-                    f.CreatedDateUtc = DateTime.UtcNow;
-                    persistence.Save(f, Path.Combine(outputPath, Path.ChangeExtension(letter, Constant.ListExt)));
+                    Folder drive = GetFolder(new DirectoryInfo("{0}{1}{2}".FormatWith(letter, Path.VolumeSeparatorChar, Path.DirectorySeparatorChar)));
+                    Save(persistence, Path.Combine(outputPath, Path.ChangeExtension(letter, Constant.ListExt)), drive);
                 }
             }
             Console.WriteLine();
             Console.WriteLine("List saved.");
             Console.ReadLine();
+        }
+
+        private static void Save(IPersistence persistence, string listPath, Folder drive) {
+            drive.CreatedDateUtc = DateTime.UtcNow;
+            persistence.Save(drive, listPath);
         }
 
         private static string ChooseDirectory() {
@@ -68,7 +73,7 @@ namespace WhereAreThem {
                     folder.Folders = new List<Folder>();
                 Folder current = folder.Folders.SingleOrDefault(f => f.Name.Equals(pathParts[i], StringComparison.OrdinalIgnoreCase));
                 if (current == null) {
-                    current = GetFolder(new DirectoryInfo(string.Join(Path.DirectorySeparatorChar.ToString(), pathParts.Take(i + 1))));
+                    current = GetFolder(new DirectoryInfo(Path.Combine(pathParts.Take(i + 1).ToArray())));
                     folder.Folders.Add(current);
                     folder.Folders.Sort();
                     return;
@@ -76,8 +81,7 @@ namespace WhereAreThem {
                 else
                     folder = current;
             }
-            Folder newFolder = GetFolder(new DirectoryInfo(string.Join(Path.DirectorySeparatorChar.ToString(), pathParts)));
-            folder.Name = newFolder.Name;
+            Folder newFolder = GetFolder(new DirectoryInfo(Path.Combine(pathParts)));
             folder.CreatedDateUtc = newFolder.CreatedDateUtc;
             folder.Folders = newFolder.Folders;
             folder.Files = newFolder.Files;
