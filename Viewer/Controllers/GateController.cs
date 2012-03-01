@@ -5,17 +5,19 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using PureLib.Common;
 using WhereAreThem.Viewer.Models;
 
 namespace WhereAreThem.Viewer.Controllers {
     public class GateController : Controller {
         public ActionResult Login() {
-            if ((Request.ClientCertificate != null) && Request.ClientCertificate.IsValid
-                    && (Request.ClientCertificate.Issuer == Request.ClientCertificate.ServerIssuer)) {
-                FormsAuthentication.SetAuthCookie(Request.ClientCertificate.Subject.Substring(3), true);
-                return RedirectToAction(Extensions.ActionIndex, Extensions.ControllerHome);
-            }
-            return new HttpStatusCodeResult((int)HttpStatusCode.Unauthorized);
+            if ((Request.ClientCertificate == null) || !Request.ClientCertificate.IsValid
+                    || Request.ClientCertificate.Issuer.IsNullOrEmpty()
+                    || (Request.ClientCertificate.Issuer != Request.ClientCertificate.ServerIssuer))
+                return new HttpStatusCodeResult((int)HttpStatusCode.Unauthorized);
+
+            FormsAuthentication.SetAuthCookie(Request.ClientCertificate.Subject.Substring(3), false);
+            return RedirectToAction(Extensions.ActionIndex, Extensions.ControllerHome);
         }
     }
 }
