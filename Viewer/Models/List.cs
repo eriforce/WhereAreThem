@@ -52,7 +52,8 @@ namespace WhereAreThem.Viewer.Models {
             Folder driveFolder;
             lock (_listLock) {
                 DateTime listTimestamp = new FileInfo(listPath).LastWriteTimeUtc;
-                driveFolder = machine.Folders.SingleOrDefault(d => d.Name == drive);
+                driveFolder = machine.Folders.SingleOrDefault(d => d.Name == "{0}{1}{2}".FormatWith(
+                    driveLetter, Path.VolumeSeparatorChar, Path.DirectorySeparatorChar));
                 if ((driveFolder == null) || (driveFolder.CreatedDateUtc != listTimestamp)) {
                     machine.Folders.Remove(driveFolder);
                     driveFolder = _persistence.Load(listPath);
