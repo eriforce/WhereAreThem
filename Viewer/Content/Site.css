@@ -93,6 +93,11 @@ table.viewer tbody tr td a, div.navigationItem a {
     cursor: default;
 }
 
+table.viewer:not(.list) tbody tr:hover, table.viewer:not(.list) tbody tr:not(.selected):hover a, div.navigationItem:hover a {
+    background-color: #666;
+    color: #fff;
+}
+
 td.nowrap {
     white-space: nowrap;
 }
@@ -114,11 +119,6 @@ table.explorer tbody tr span.item {
 table.explorer tbody tr a, table.explorer tbody tr span.item {
     border: 1px solid #fff;
     border-radius: 3px;
-}
-
-table.explorer:not(.list) tbody tr:hover, table.explorer:not(.list) tbody tr:not(.selected):hover a, div.navigationItem:hover a {
-    background-color: #666;
-    color: #fff;
 }
 
 table.explorer:not(.list) tbody tr:not(.selected):hover a, table.explorer:not(.list) tbody tr:not(.selected):hover span.item {
