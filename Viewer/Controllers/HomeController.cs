@@ -34,6 +34,7 @@ namespace WhereAreThem.Viewer.Controllers {
             }
             else {
                 Dictionary<FileSystemItem, string> result = new Dictionary<FileSystemItem, string>();
+                stack.Remove(stack.Last());
                 SearchInFolder(folder, stack, searchPattern.WildcardToRegex(), result);
                 return View(Extensions.ActionSearchResult, result);
             }
