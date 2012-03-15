@@ -7,7 +7,7 @@ using System.Web;
 using PureLib.Common;
 using WhereAreThem.Model;
 
-namespace WhereAreThem.Viewer.Models {
+namespace WhereAreThem.WebViewer.Models {
     public static class List {
         private static string _path {
             get {

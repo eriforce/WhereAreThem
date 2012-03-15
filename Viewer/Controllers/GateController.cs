@@ -6,9 +6,9 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using PureLib.Common;
-using WhereAreThem.Viewer.Models;
+using WhereAreThem.WebViewer.Models;
 
-namespace WhereAreThem.Viewer.Controllers {
+namespace WhereAreThem.WebViewer.Controllers {
     public class GateController : Controller {
         public ActionResult Login() {
             if ((Request.ClientCertificate == null) || !Request.ClientCertificate.IsValid

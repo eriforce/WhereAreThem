@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using PureLib.Common;
 
-namespace WhereAreThem.Viewer.Models {
+namespace WhereAreThem.WebViewer.Models {
     public class PropertyInfo {
         public int FolderCount { get; set; }
         public int FileCount { get; set; }

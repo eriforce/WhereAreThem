@@ -7,7 +7,7 @@ using System.Web;
 using PureLib.Common;
 using WhereAreThem.Model;
 
-namespace WhereAreThem.Viewer.Models {
+namespace WhereAreThem.WebViewer.Models {
     public static class Extensions {
         public const string ControllerHome = "Home";
         public const string ActionIndex = "Index";

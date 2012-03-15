@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Viewer", "Viewer\Viewer.csproj", "{D5D937C4-5C60-42D3-ABE4-A015C8747CFA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebViewer", "Viewer\WebViewer.csproj", "{D5D937C4-5C60-42D3-ABE4-A015C8747CFA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{B36F290D-D840-4CB3-A8BA-C3A5A8770A40}"
 EndProject
