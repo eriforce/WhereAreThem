@@ -9,7 +9,7 @@ using PureLib.WPF;
 using WhereAreThem.Model;
 using System.Collections.ObjectModel;
 
-namespace WinViewer {
+namespace WhereAreThem.WinViewer {
     public class MainWindowViewModel : ViewModelBase {
         private static Loader _loader = new Loader(ConfigurationManager.AppSettings["path"].WrapPath(),
             Constant.GetPersistence(Type.GetType(ConfigurationManager.AppSettings["persistence"])));

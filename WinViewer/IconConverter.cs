@@ -9,14 +9,14 @@ using System.Text;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 using WhereAreThem.Model;
-using WinViewer.Properties;
+using WhereAreThem.WinViewer.Properties;
 using System.Runtime.InteropServices;
 using System.Windows.Media;
 using System.Windows;
 using System.Windows.Interop;
 using System.ComponentModel;
 
-namespace WinViewer {
+namespace WhereAreThem.WinViewer {
     public class IconConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             ItemType type;

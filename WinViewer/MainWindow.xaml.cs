@@ -13,7 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WhereAreThem.Model;
 
-namespace WinViewer {
+namespace WhereAreThem.WinViewer {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>

@@ -8,8 +8,8 @@
     <ProjectGuid>{4C4EF698-B830-4C95-9E81-72AD6E7D4215}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WinViewer</RootNamespace>
-    <AssemblyName>WinViewer</AssemblyName>
+    <RootNamespace>WhereAreThem.WinViewer</RootNamespace>
+    <AssemblyName>WhereAreThem.WinViewer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>

@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using PureLib.Common;
 
-namespace WinViewer {
+namespace WhereAreThem.WinViewer {
     public class SizeConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             return Utility.ToFriendlyString((long)value);
