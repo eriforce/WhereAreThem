@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PureLib.Client">
+      <HintPath>..\..\PureLib\Build\PureLib.Client.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,6 +49,7 @@
     <Compile Include="FileSystemItem.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="IPersistence.cs" />
+    <Compile Include="Loader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringPersistence.cs" />
   </ItemGroup>
