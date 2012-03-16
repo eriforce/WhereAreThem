@@ -10,6 +10,11 @@ using System.Windows.Data;
 using System.Windows.Media.Imaging;
 using WhereAreThem.Model;
 using WinViewer.Properties;
+using System.Runtime.InteropServices;
+using System.Windows.Media;
+using System.Windows;
+using System.Windows.Interop;
+using System.ComponentModel;
 
 namespace WinViewer {
     public class IconConverter : IValueConverter {
@@ -28,19 +33,11 @@ namespace WinViewer {
                     type = ItemType.Drive;
                 icon = (Icon)Resources.ResourceManager.GetObject(type.ToString());
             }
-            return GetBitmap(icon);
+            return icon.ToImageSource();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
             throw new NotImplementedException();
-        }
-
-        private BitmapFrame GetBitmap(Icon icon) {
-            MemoryStream stream = new MemoryStream();
-            icon.Save(stream);
-            icon.Dispose();
-            IconBitmapDecoder decoder = new IconBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-            return decoder.Frames[0];
         }
     }
 }

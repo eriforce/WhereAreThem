@@ -4,6 +4,10 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Runtime.InteropServices;
+using System.Windows.Media;
+using System.Windows.Interop;
+using System.Windows;
+using System.Windows.Media.Imaging;
 
 namespace WinViewer
 {
@@ -13,36 +17,26 @@ namespace WinViewer
     /// <example>
     /// <code>IconReader.GetFileIcon("c:\\general.xls");</code>
     /// </example>
-    public class IconReader
+    public static class IconReader
     {
-        /// <summary>
-        /// Options to specify the size of icons to return.
-        /// </summary>
-        public enum IconSize
-        {
-            /// <summary>
-            /// Specify large icon - 32 pixels by 32 pixels.
-            /// </summary>
-            Large = 0,
-            /// <summary>
-            /// Specify small icon - 16 pixels by 16 pixels.
-            /// </summary>
-            Small = 1
-        }
-        
-        /// <summary>
-        /// Options to specify whether folders should be in the open or closed state.
-        /// </summary>
-        public enum FolderType
-        {
-            /// <summary>
-            /// Specify open folder.
-            /// </summary>
-            Open = 0,
-            /// <summary>
-            /// Specify closed folder.
-            /// </summary>
-            Closed = 1
+        [DllImport("gdi32.dll", SetLastError = true)]
+        private static extern bool DeleteObject(IntPtr hObject);
+
+        public static ImageSource ToImageSource(this Icon icon) {
+            Bitmap bitmap = icon.ToBitmap();
+            IntPtr hBitmap = bitmap.GetHbitmap();
+
+            ImageSource wpfBitmap = Imaging.CreateBitmapSourceFromHBitmap(
+                hBitmap,
+                IntPtr.Zero,
+                Int32Rect.Empty,
+                BitmapSizeOptions.FromEmptyOptions());
+
+            if (!DeleteObject(hBitmap)) {
+                throw new Win32Exception();
+            }
+
+            return wpfBitmap;
         }
 
         /// <summary>
@@ -51,8 +45,8 @@ namespace WinViewer
         /// <param name="name">Pathname for file.</param>
         /// <param name="size">Large or small</param>
         /// <param name="linkOverlay">Whether to include the link icon</param>
-        /// <returns>System.Drawing.Icon</returns>
-        public static System.Drawing.Icon GetFileIcon(string name, IconSize size, bool linkOverlay)
+        /// <returns>Icon</returns>
+        public static Icon GetFileIcon(string name, IconSize size, bool linkOverlay)
         {
             Shell32.SHFILEINFO shfi = new Shell32.SHFILEINFO();
             uint flags = Shell32.SHGFI_ICON | Shell32.SHGFI_USEFILEATTRIBUTES;
@@ -76,7 +70,7 @@ namespace WinViewer
                 flags );
 
             // Copy (clone) the returned icon to a new object, thus allowing us to clean-up properly
-            System.Drawing.Icon icon = (System.Drawing.Icon)System.Drawing.Icon.FromHandle(shfi.hIcon).Clone();
+            Icon icon = (Icon)Icon.FromHandle(shfi.hIcon).Clone();
             User32.DestroyIcon( shfi.hIcon );		// Cleanup
             return icon;
         }
@@ -86,8 +80,8 @@ namespace WinViewer
         /// </summary>
         /// <param name="size">Specify large or small icons.</param>
         /// <param name="folderType">Specify open or closed FolderType.</param>
-        /// <returns>System.Drawing.Icon</returns>
-        public static System.Drawing.Icon GetFolderIcon( IconSize size, FolderType folderType )
+        /// <returns>Icon</returns>
+        public static Icon GetFolderIcon( IconSize size, FolderType folderType )
         {
             // Need to add size check, although errors generated at present!
             uint flags = Shell32.SHGFI_ICON | Shell32.SHGFI_USEFILEATTRIBUTES;
@@ -114,14 +108,42 @@ namespace WinViewer
                 (uint) System.Runtime.InteropServices.Marshal.SizeOf(shfi), 
                 flags );
 
-            System.Drawing.Icon.FromHandle(shfi.hIcon);	// Load the icon from an HICON handle
+            Icon.FromHandle(shfi.hIcon);	// Load the icon from an HICON handle
 
             // Now clone the icon, so that it can be successfully stored in an ImageList
-            System.Drawing.Icon icon = (System.Drawing.Icon)System.Drawing.Icon.FromHandle(shfi.hIcon).Clone();
+            Icon icon = (Icon)Icon.FromHandle(shfi.hIcon).Clone();
 
             User32.DestroyIcon( shfi.hIcon );		// Cleanup
             return icon;
-        }	
+        }
+
+        /// <summary>
+        /// Options to specify the size of icons to return.
+        /// </summary>
+        public enum IconSize {
+            /// <summary>
+            /// Specify large icon - 32 pixels by 32 pixels.
+            /// </summary>
+            Large = 0,
+            /// <summary>
+            /// Specify small icon - 16 pixels by 16 pixels.
+            /// </summary>
+            Small = 1
+        }
+
+        /// <summary>
+        /// Options to specify whether folders should be in the open or closed state.
+        /// </summary>
+        public enum FolderType {
+            /// <summary>
+            /// Specify open folder.
+            /// </summary>
+            Open = 0,
+            /// <summary>
+            /// Specify closed folder.
+            /// </summary>
+            Closed = 1
+        }
     }
 
     /// <summary>
