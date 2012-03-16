@@ -15,13 +15,41 @@ namespace WinViewer {
     public class IconConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             ItemType type;
-            if (Enum.TryParse<ItemType>(value.GetType().Name, out type)) {
-                if ((type == ItemType.Folder) && ((Folder)value).Name.Contains(Path.VolumeSeparatorChar))
-                    type = ItemType.Drive;
-                return GetBitmap(type);
-            }
-            else
+            if (!Enum.TryParse<ItemType>(value.GetType().Name, out type))
                 return null;
+
+            if (type == ItemType.File) {
+                string ext = Path.GetExtension(((WhereAreThem.Model.File)value).Name).ToLower();
+                switch (ext) {
+                    case ".txt":
+                        type = ItemType.Txt;
+                        break;
+                    case ".jpg":
+                    case ".jp2":
+                    case ".png":
+                    case ".bmp":
+                    case ".gif":
+                        type = ItemType.Pic;
+                        break;
+                    case ".exe":
+                        type = ItemType.App;
+                        break;
+                    case ".dll":
+                        type = ItemType.Dll;
+                        break;
+                    case ".bat":
+                    case ".cmd":
+                        type = ItemType.Bat;
+                        break;
+                    case ".ini":
+                        type = ItemType.Ini;
+                        break;
+                }
+            }
+            else if (((Folder)value).Name.Contains(Path.VolumeSeparatorChar))
+                type = ItemType.Drive;
+
+            return GetBitmap(type);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

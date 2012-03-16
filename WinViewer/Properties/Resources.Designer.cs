@@ -88,6 +88,13 @@ namespace WinViewer.Properties {
             }
         }
         
+        public static System.Drawing.Icon File {
+            get {
+                object obj = ResourceManager.GetObject("File", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         public static System.Drawing.Icon Folder {
             get {
                 object obj = ResourceManager.GetObject("Folder", resourceCulture);
