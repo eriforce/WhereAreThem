@@ -60,6 +60,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="IconHelper.cs" />
     <Compile Include="SizeConverter.cs" />
     <Compile Include="IconConverter.cs" />
     <Compile Include="ItemType.cs" />
@@ -106,28 +107,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\App.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Bat.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Dll.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Drive.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Folder.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Ini.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Pic.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Txt.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Model\Model.csproj">

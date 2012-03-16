@@ -18,49 +18,28 @@ namespace WinViewer {
             if (!Enum.TryParse<ItemType>(value.GetType().Name, out type))
                 return null;
 
+            Icon icon;
             if (type == ItemType.File) {
                 string ext = Path.GetExtension(((WhereAreThem.Model.File)value).Name).ToLower();
-                switch (ext) {
-                    case ".txt":
-                        type = ItemType.Txt;
-                        break;
-                    case ".jpg":
-                    case ".jp2":
-                    case ".png":
-                    case ".bmp":
-                    case ".gif":
-                        type = ItemType.Pic;
-                        break;
-                    case ".exe":
-                        type = ItemType.App;
-                        break;
-                    case ".dll":
-                        type = ItemType.Dll;
-                        break;
-                    case ".bat":
-                    case ".cmd":
-                        type = ItemType.Bat;
-                        break;
-                    case ".ini":
-                        type = ItemType.Ini;
-                        break;
-                }
+                icon = IconReader.GetFileIcon(ext, IconReader.IconSize.Small, false);
             }
-            else if (((Folder)value).Name.Contains(Path.VolumeSeparatorChar))
-                type = ItemType.Drive;
-
-            return GetBitmap(type);
+            else {
+                if (((Folder)value).Name.Contains(Path.VolumeSeparatorChar))
+                    type = ItemType.Drive;
+                icon = (Icon)Resources.ResourceManager.GetObject(type.ToString());
+            }
+            return GetBitmap(icon);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
             throw new NotImplementedException();
         }
 
-        private BitmapFrame GetBitmap(ItemType type) {
+        private BitmapFrame GetBitmap(Icon icon) {
             MemoryStream stream = new MemoryStream();
-            Icon icon = (Icon)Resources.ResourceManager.GetObject(type.ToString());
             icon.Save(stream);
-            IconBitmapDecoder decoder = new IconBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None);
+            icon.Dispose();
+            IconBitmapDecoder decoder = new IconBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
             return decoder.Frames[0];
         }
     }

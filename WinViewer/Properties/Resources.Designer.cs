@@ -60,27 +60,6 @@ namespace WinViewer.Properties {
             }
         }
         
-        public static System.Drawing.Icon App {
-            get {
-                object obj = ResourceManager.GetObject("App", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        public static System.Drawing.Icon Bat {
-            get {
-                object obj = ResourceManager.GetObject("Bat", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        public static System.Drawing.Icon Dll {
-            get {
-                object obj = ResourceManager.GetObject("Dll", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
         public static System.Drawing.Icon Drive {
             get {
                 object obj = ResourceManager.GetObject("Drive", resourceCulture);
@@ -98,27 +77,6 @@ namespace WinViewer.Properties {
         public static System.Drawing.Icon Folder {
             get {
                 object obj = ResourceManager.GetObject("Folder", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        public static System.Drawing.Icon Ini {
-            get {
-                object obj = ResourceManager.GetObject("Ini", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        public static System.Drawing.Icon Pic {
-            get {
-                object obj = ResourceManager.GetObject("Pic", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        public static System.Drawing.Icon Txt {
-            get {
-                object obj = ResourceManager.GetObject("Txt", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
