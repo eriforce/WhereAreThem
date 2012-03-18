@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Configuration;
 using System.IO;
 using System.Linq;
@@ -7,7 +8,6 @@ using System.Text;
 using PureLib.Common;
 using PureLib.WPF;
 using WhereAreThem.Model;
-using System.Collections.ObjectModel;
 
 namespace WhereAreThem.WinViewer {
     public class MainWindowViewModel : ViewModelBase {

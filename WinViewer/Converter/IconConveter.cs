@@ -1,20 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Resources;
-using System.Text;
 using System.Windows.Data;
-using System.Windows.Media.Imaging;
 using WhereAreThem.Model;
 using WhereAreThem.WinViewer.Properties;
-using System.Runtime.InteropServices;
-using System.Windows.Media;
-using System.Windows;
-using System.Windows.Interop;
-using System.ComponentModel;
 
 namespace WhereAreThem.WinViewer {
     public class IconConverter : IValueConverter {
