@@ -35,6 +35,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\ef.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PureLib.Client">
       <HintPath>..\..\PureLib\Build\PureLib.Client.dll</HintPath>
@@ -60,10 +63,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="IconHelper.cs" />
-    <Compile Include="SizeConverter.cs" />
-    <Compile Include="IconConverter.cs" />
-    <Compile Include="ItemType.cs" />
+    <Compile Include="Converter\IconConveter.cs" />
+    <Compile Include="Converter\SizeConveter.cs" />
+    <Compile Include="Model\IconHelper.cs" />
+    <Compile Include="Model\ItemType.cs" />
     <Compile Include="MainWindowViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -121,6 +124,10 @@
   <ItemGroup>
     <None Include="Resources\File.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\ef.ico" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

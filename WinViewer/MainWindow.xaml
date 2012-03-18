@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:WhereAreThem.WinViewer"
         xmlns:res="clr-namespace:WhereAreThem.WinViewer.Properties"
         xmlns:m="clr-namespace:WhereAreThem.Model;assembly=WhereAreThem.Model"
-        Title="WhereAreThem WinViewer" Height="400" Width="600">
+        Title="WhereAreThem WinViewer" Height="400" Width="600" Icon="/WhereAreThem.WinViewer;component/Resources/ef.ico">
     <Window.Resources>
         <local:IconConverter x:Key="IconConverter"></local:IconConverter>
         <local:SizeConverter x:Key="SizeConverter"></local:SizeConverter>

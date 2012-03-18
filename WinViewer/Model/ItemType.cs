@@ -5,15 +5,8 @@ using System.Text;
 
 namespace WhereAreThem.WinViewer {
     public enum ItemType {
-        Folder,
         File,
-
+        Folder,
         Drive,
-        App,
-        Bat,
-        Dll,
-        Ini,
-        Pic,
-        Txt,
     }
 }
