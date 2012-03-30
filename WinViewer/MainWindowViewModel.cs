@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
-using System.IO;
 using System.Linq;
 using System.Text;
 using PureLib.Common;
@@ -64,14 +63,34 @@ namespace WhereAreThem.WinViewer {
                 RaiseChange("SelectedDriveName");
             }
         }
-        private List<FileSystemItem> subItems;
-        public List<FileSystemItem> SubItems {
+        private ObservableCollection<FileSystemItem> subItems;
+        public ObservableCollection<FileSystemItem> SubItems {
             get {
+                if (subItems == null)
+                    subItems = new ObservableCollection<FileSystemItem>();
                 return subItems;
             }
             set {
                 subItems = value;
                 RaiseChange("SubItems");
+            }
+        }
+        private Folder selectedFolder;
+        public Folder SelectedFolder {
+            get {
+                return selectedFolder;
+            }
+            set {
+                selectedFolder = value;
+                RaiseChange("SelectedFolder");
+
+                SubItems.Clear();
+                if (selectedFolder.Folders != null)
+                    foreach (Folder f in selectedFolder.Folders)
+                        SubItems.Add(f);
+                if (selectedFolder.Files != null)
+                    foreach (File f in selectedFolder.Files)
+                        SubItems.Add(f);
             }
         }
     }

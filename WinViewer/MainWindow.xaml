@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:WhereAreThem.WinViewer"
         xmlns:res="clr-namespace:WhereAreThem.WinViewer.Properties"
         xmlns:m="clr-namespace:WhereAreThem.Model;assembly=WhereAreThem.Model"
-        Title="WhereAreThem WinViewer" Height="400" Width="600" Icon="/WhereAreThem.WinViewer;component/Resources/ef.ico">
+        Title="WhereAreThem WinViewer" Height="400" Width="600" Icon="/WhereAreThem.WinViewer;component/Resources/ef.ico" WindowState="Maximized">
     <Window.Resources>
         <local:IconConverter x:Key="IconConverter"></local:IconConverter>
         <local:SizeConverter x:Key="SizeConverter"></local:SizeConverter>
@@ -23,7 +23,7 @@
         <ComboBox ItemsSource="{Binding Machines}" SelectedItem="{Binding SelectedMachine}" Width="150" Grid.ColumnSpan="2" Margin="0,0,154,4" HorizontalAlignment="Right"></ComboBox>
         <ComboBox ItemsSource="{Binding Drives}" SelectedItem="{Binding SelectedDriveName}" Width="150" Grid.ColumnSpan="2" Margin="0,0,0,4" HorizontalAlignment="Right"></ComboBox>
 
-        <TreeView ItemsSource="{Binding SelectedDrives}" SelectedItemChanged="TreeView_SelectedItemChanged" Grid.Row="1" Grid.Column="0" Margin="0,0,2,0">
+        <TreeView x:Name="FolderTree" ItemsSource="{Binding SelectedDrives}" TreeViewItem.Selected="FolderTree_Selected" Grid.Row="1" Grid.Column="0" Margin="0,0,2,0">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="Margin" Value="2" />
@@ -43,8 +43,8 @@
         <GridSplitter Grid.Row="1" Grid.Column="0" Width="2" ResizeDirection="Columns" HorizontalAlignment="Right" VerticalAlignment="Stretch"/>
         <GridSplitter Grid.Row="1" Grid.Column="1" Width="2" ResizeDirection="Columns" HorizontalAlignment="Left" VerticalAlignment="Stretch"/>
 
-        <DataGrid ItemsSource="{Binding SubItems}" Grid.Row="1" Grid.Column="1" Margin="2,0,0,0"
-                  AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" GridLinesVisibility="None">
+        <DataGrid ItemsSource="{Binding SubItems}" Grid.Row="1" Grid.Column="1" Margin="2,0,0,0" MouseDoubleClick="DataGrid_MouseDoubleClick" 
+                  AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" GridLinesVisibility="None">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridCell}">
                     <Setter Property="Margin" Value="2"></Setter>
