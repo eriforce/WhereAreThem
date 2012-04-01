@@ -8,5 +8,6 @@ namespace WhereAreThem.WinViewer {
         File,
         Folder,
         Drive,
+        Computer,
     }
 }

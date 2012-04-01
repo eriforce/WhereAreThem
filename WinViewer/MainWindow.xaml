@@ -12,18 +12,14 @@
     
     <Grid Margin="4">
         <Grid.RowDefinitions>
-            <RowDefinition Height="27"></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"></ColumnDefinition>
             <ColumnDefinition Width="3*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        
-        <ComboBox ItemsSource="{Binding Machines}" SelectedItem="{Binding SelectedMachine}" Width="150" Grid.ColumnSpan="2" Margin="0,0,154,4" HorizontalAlignment="Right"></ComboBox>
-        <ComboBox ItemsSource="{Binding Drives}" SelectedItem="{Binding SelectedDriveName}" Width="150" Grid.ColumnSpan="2" Margin="0,0,0,4" HorizontalAlignment="Right"></ComboBox>
 
-        <TreeView x:Name="FolderTree" ItemsSource="{Binding SelectedDrives}" TreeViewItem.Selected="FolderTree_Selected" Grid.Row="1" Grid.Column="0" Margin="0,0,2,0">
+        <TreeView x:Name="FolderTree" ItemsSource="{Binding Computers}" TreeViewItem.Selected="FolderTree_Selected" TreeViewItem.Expanded="FolderTree_Expanded" Grid.Column="0" Margin="0,0,2,0">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="Margin" Value="2" />
@@ -40,10 +36,10 @@
             </TreeView.Resources>
         </TreeView>
         
-        <GridSplitter Grid.Row="1" Grid.Column="0" Width="2" ResizeDirection="Columns" HorizontalAlignment="Right" VerticalAlignment="Stretch"/>
-        <GridSplitter Grid.Row="1" Grid.Column="1" Width="2" ResizeDirection="Columns" HorizontalAlignment="Left" VerticalAlignment="Stretch"/>
+        <GridSplitter Grid.Column="0" Width="2" ResizeDirection="Columns" HorizontalAlignment="Right" VerticalAlignment="Stretch"/>
+        <GridSplitter Grid.Column="1" Width="2" ResizeDirection="Columns" HorizontalAlignment="Left" VerticalAlignment="Stretch"/>
 
-        <DataGrid ItemsSource="{Binding SubItems}" Grid.Row="1" Grid.Column="1" Margin="2,0,0,0" MouseDoubleClick="DataGrid_MouseDoubleClick" 
+        <DataGrid ItemsSource="{Binding SubItems}" Grid.Column="1" Margin="2,0,0,0" MouseDoubleClick="DataGrid_MouseDoubleClick" 
                   AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" GridLinesVisibility="None">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridCell}">

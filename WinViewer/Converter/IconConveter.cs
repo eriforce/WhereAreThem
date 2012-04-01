@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Windows.Data;
 using WhereAreThem.Model;
 using WhereAreThem.WinViewer.Properties;
+using IO = System.IO;
 
 namespace WhereAreThem.WinViewer {
     public class IconConverter : IValueConverter {
@@ -15,15 +15,11 @@ namespace WhereAreThem.WinViewer {
                 return null;
 
             Icon icon;
-            if (type == ItemType.File) {
-                string ext = Path.GetExtension(((WhereAreThem.Model.File)value).Name).ToLower();
-                icon = IconReader.GetFileIcon(ext, IconReader.IconSize.Small, false);
-            }
-            else {
-                if (((Folder)value).Name.Contains(Path.VolumeSeparatorChar))
-                    type = ItemType.Drive;
+            if (type == ItemType.File)
+                icon = IconReader.GetFileIcon(IO.Path.GetExtension(((File)value).Name).ToLower(),
+                    IconReader.IconSize.Small, false);
+            else
                 icon = (Icon)Resources.ResourceManager.GetObject(type.ToString());
-            }
             return icon.ToImageSource();
         }
 

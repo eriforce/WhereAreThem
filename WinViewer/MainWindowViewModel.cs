@@ -1,69 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Configuration;
 using System.Linq;
 using System.Text;
 using PureLib.Common;
 using PureLib.WPF;
 using WhereAreThem.Model;
+using WhereAreThem.WinViewer.Model;
 
 namespace WhereAreThem.WinViewer {
     public class MainWindowViewModel : ViewModelBase {
-        private static Loader _loader = new Loader(ConfigurationManager.AppSettings["path"].WrapPath(),
-            Constant.GetPersistence(Type.GetType(ConfigurationManager.AppSettings["persistence"])));
+        public List<Computer> Computers { get; set; }
 
-        public string[] Machines {
-            get {
-                return _loader.MachineNames;
-            }
+        public MainWindowViewModel() {
+            Computers = App.Loader.MachineNames.Select(n => new Computer() {
+                Name = n,
+                Folders = App.Loader.GetDrives(n).Select(
+                    d => (Folder)new Drive(n, d.Name, d.CreatedDateUtc)).ToList()
+            }).ToList();
         }
-        private string[] _drives;
-        public string[] Drives {
-            get {
-                return _drives;
-            }
-            set {
-                _drives = value;
-                RaiseChange("Drives");
-            }
-        }
-        private string _selectedMachine;
-        public string SelectedMachine {
-            get {
-                return _selectedMachine;
-            }
-            set {
-                _selectedMachine = value;
-                RaiseChange("SelectedMachine");
 
-                Drives = value.IsNullOrEmpty() ? null :
-                    _loader.GetDrives(value).Select(f => f.Name).ToArray();
-            }
-        }
-        private List<Folder> _selectedDrives;
-        public List<Folder> SelectedDrives {
-            get {
-                return _selectedDrives;
-            }
-            set {
-                _selectedDrives = value;
-                RaiseChange("SelectedDrives");
-            }
-        }
-        public string SelectedDriveName {
-            get {
-                if ((SelectedDrives == null) || (SelectedDrives.Count == 0))
-                    return null;
-                else
-                    return _selectedDrives.First().Name;
-            }
-            set {
-                SelectedDrives = new List<Folder>() { _loader.GetDrive(SelectedMachine, value) };
-                RaiseChange("SelectedDriveName");
-            }
-        }
         private ObservableCollection<FileSystemItem> subItems;
+        private Folder selectedFolder;
+
         public ObservableCollection<FileSystemItem> SubItems {
             get {
                 if (subItems == null)
@@ -75,7 +34,6 @@ namespace WhereAreThem.WinViewer {
                 RaiseChange("SubItems");
             }
         }
-        private Folder selectedFolder;
         public Folder SelectedFolder {
             get {
                 return selectedFolder;

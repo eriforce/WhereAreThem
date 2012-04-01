@@ -65,6 +65,8 @@
     </ApplicationDefinition>
     <Compile Include="Converter\IconConveter.cs" />
     <Compile Include="Converter\SizeConveter.cs" />
+    <Compile Include="Model\Computer.cs" />
+    <Compile Include="Model\Drive.cs" />
     <Compile Include="Model\IconHelper.cs" />
     <Compile Include="Model\ItemType.cs" />
     <Compile Include="MainWindowViewModel.cs" />
@@ -127,7 +129,9 @@
   <ItemGroup>
     <Resource Include="Resources\ef.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\Computer.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

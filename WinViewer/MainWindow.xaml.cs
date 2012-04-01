@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WhereAreThem.Model;
+using WhereAreThem.WinViewer.Model;
 
 namespace WhereAreThem.WinViewer {
     /// <summary>
@@ -48,7 +49,18 @@ namespace WhereAreThem.WinViewer {
             _selectedTreeViewItem = (TreeViewItem)e.OriginalSource;
 
             TreeView treeView = (TreeView)sender;
+            LoadDrive(treeView.SelectedItem);
             VM.SelectedFolder = (Folder)treeView.SelectedItem;
+        }
+
+        private void FolderTree_Expanded(object sender, RoutedEventArgs e) {
+            TreeViewItem treeViewItem = (TreeViewItem)e.OriginalSource;
+            LoadDrive(treeViewItem.Header);
+        }
+
+        private void LoadDrive(object item) {
+            if (item is Drive)
+                ((Drive)item).Load();
         }
     }
 }
