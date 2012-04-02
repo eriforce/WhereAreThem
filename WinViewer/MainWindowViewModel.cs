@@ -6,7 +6,6 @@ using System.Text;
 using PureLib.Common;
 using PureLib.WPF;
 using WhereAreThem.Model;
-using WhereAreThem.WinViewer.Model;
 
 namespace WhereAreThem.WinViewer {
     public class MainWindowViewModel : ViewModelBase {

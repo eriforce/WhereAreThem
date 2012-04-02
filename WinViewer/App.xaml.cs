@@ -12,7 +12,14 @@ namespace WhereAreThem.WinViewer {
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application {
-        public static Loader Loader = new Loader(ConfigurationManager.AppSettings["path"].WrapPath(),
-            Constant.GetPersistence(Type.GetType(ConfigurationManager.AppSettings["persistence"])));
+        private static Loader _loader;
+        public static Loader Loader {
+            get {
+                if (_loader == null)
+                    _loader = new Loader(ConfigurationManager.AppSettings["path"].WrapPath(),
+                        Constant.GetPersistence(Type.GetType(ConfigurationManager.AppSettings["persistence"])));
+                return _loader;
+            }
+        }
     }
 }

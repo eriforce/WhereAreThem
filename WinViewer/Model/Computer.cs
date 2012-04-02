@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using WhereAreThem.Model;
 
-namespace WhereAreThem.WinViewer.Model {
+namespace WhereAreThem.WinViewer {
     public class Computer : Folder {
     }
 }

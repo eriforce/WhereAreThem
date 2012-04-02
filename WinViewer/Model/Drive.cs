@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using WhereAreThem.Model;
 
-namespace WhereAreThem.WinViewer.Model {
+namespace WhereAreThem.WinViewer {
     public class Drive : Folder, INotifyPropertyChanged {
         private static List<Folder> _dummyFolders = new List<Folder>() { new Folder() };
         private string machineName;
