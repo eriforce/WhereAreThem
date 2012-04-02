@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:WhereAreThem.WinViewer"
         xmlns:res="clr-namespace:WhereAreThem.WinViewer.Properties"
         xmlns:m="clr-namespace:WhereAreThem.Model;assembly=WhereAreThem.Model"
-        Title="WhereAreThem WinViewer" Height="400" Width="600" Icon="/WhereAreThem.WinViewer;component/Resources/ef.ico" WindowState="Maximized">
+        Title="WhereAreThem WinViewer" Height="400" Width="600" Icon="/WhereAreThem.WinViewer;component/Resources/ef.ico" WindowState="Maximized" KeyDown="Window_KeyDown">
     <Window.Resources>
         <local:IconConverter x:Key="IconConverter"></local:IconConverter>
         <local:SizeConverter x:Key="SizeConverter"></local:SizeConverter>
@@ -19,7 +19,7 @@
             <ColumnDefinition Width="3*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <TreeView x:Name="FolderTree" ItemsSource="{Binding Computers}" TreeViewItem.Selected="FolderTree_Selected" TreeViewItem.Expanded="FolderTree_Expanded" Grid.Column="0" Margin="0,0,2,0">
+        <TreeView ItemsSource="{Binding Computers}" TreeViewItem.Selected="FolderTree_Selected" TreeViewItem.Expanded="FolderTree_Expanded" Grid.Column="0" Margin="0,0,2,0">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="Margin" Value="2" />

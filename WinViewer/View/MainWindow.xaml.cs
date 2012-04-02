@@ -61,5 +61,13 @@ namespace WhereAreThem.WinViewer {
             if (item is Drive)
                 ((Drive)item).Load();
         }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e) {
+            if ((e.Key == Key.F) && (Keyboard.Modifiers == ModifierKeys.Control)) {
+                SearchWindow window = new SearchWindow();
+                window.Owner = this;
+                window.Show();
+            }
+        }
     }
 }
