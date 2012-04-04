@@ -8,6 +8,7 @@ $(document).ready(function () {
 
     // add watermark to search box
     var watermarkClassName = 'watermark';
+    var isSearchBoxSelected = false;
     $('input[type="text"].search').keydown(function (event) {
         if (event.keyCode == 13) {
             var form = $(this);
@@ -17,9 +18,11 @@ $(document).ready(function () {
             form.submit();
         }
     }).focus(function () {
+        isSearchBoxSelected = true;
         if ($(this).hasClass(watermarkClassName))
             $(this).removeClass(watermarkClassName).val('');
     }).blur(function () {
+        isSearchBoxSelected = false;
         if ($(this).val() == '')
             $(this).addClass(watermarkClassName).val('Search ...');
     }).blur();
@@ -58,7 +61,7 @@ $(document).ready(function () {
             isCtrlDown = true;
         else if (e.keyCode == 16)
             isShiftDown = true;
-        else if (isCtrlDown && (e.keyCode == 65 || e.keyCode == 97)) {
+        else if (!isSearchBoxSelected && isCtrlDown && (e.keyCode == 65 || e.keyCode == 97)) {
             allRows.addClass(selectedClassName).enableContextMenu();
             return false;
         }
@@ -223,7 +226,7 @@ $(document).ready(function () {
                     $(document).unbind('mousemove');
                     $(document).unbind('mouseup');
                 });
-            } 
+            }
         }
     });
 });
