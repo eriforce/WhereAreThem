@@ -7,15 +7,19 @@ using System.Web.Mvc;
 using System.Web.Security;
 using PureLib.Common;
 using WhereAreThem.WebViewer.Models;
+using System.Diagnostics;
 
 namespace WhereAreThem.WebViewer.Controllers {
     public class GateController : Controller {
         public ActionResult Login() {
-            if ((Request.ClientCertificate == null) || !Request.ClientCertificate.IsValid
+            if (Debugger.IsAttached)
+                FormsAuthentication.SetAuthCookie("Debug", false);
+            else if ((Request.ClientCertificate == null) || !Request.ClientCertificate.IsValid
                     || Request.ClientCertificate.Issuer.IsNullOrEmpty())
                 return new HttpStatusCodeResult((int)HttpStatusCode.Unauthorized);
 
-            FormsAuthentication.SetAuthCookie(Request.ClientCertificate.Subject.Substring(3), false);
+            string userName = Request.ClientCertificate.Subject.Substring(3);
+            FormsAuthentication.SetAuthCookie(userName, false);
             return RedirectToAction(Extensions.ActionIndex, Extensions.ControllerHome);
         }
     }

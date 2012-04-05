@@ -8,12 +8,12 @@ using WhereAreThem.Model;
 namespace WhereAreThem.WinViewer {
     public class Drive : Folder, INotifyPropertyChanged {
         private static List<Folder> _dummyFolders = new List<Folder>() { new Folder() };
-        private string machineName;
+        private string _machineName;
 
         public Drive(string machineName, string driveName, DateTime createdDateUtc) {
-            this.machineName = machineName;
-            this.Name = driveName;
-            this.CreatedDateUtc = createdDateUtc;
+            _machineName = machineName;
+            Name = driveName;
+            CreatedDateUtc = createdDateUtc;
 
             Folders = _dummyFolders;
         }
@@ -21,7 +21,7 @@ namespace WhereAreThem.WinViewer {
         public void Load() {
             lock (this) {
                 if (Folders == _dummyFolders) {
-                    Folder drive = App.Loader.GetDrive(machineName, Name);
+                    Folder drive = App.Loader.GetDrive(_machineName, Name);
                     CreatedDateUtc = drive.CreatedDateUtc;
                     Files = drive.Files;
                     Folders = drive.Folders;

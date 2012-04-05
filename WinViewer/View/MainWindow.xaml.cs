@@ -19,11 +19,28 @@ namespace WhereAreThem.WinViewer {
     /// </summary>
     public partial class MainWindow : Window {
         private TreeViewItem _selectedTreeViewItem;
+        private SearchWindow _searchWindow;
 
         public MainWindowViewModel VM { get; private set; }
+        public SearchWindow SearchWindow {
+            get {
+                if (_searchWindow == null) {
+                    _searchWindow = new SearchWindow();
+                    _searchWindow.Owner = this;
+                    _searchWindow.Closing += (s, e) => {
+                        ((Window)s).Hide();
+                        KeyDown += Window_KeyDown;
+                        e.Cancel = true;
+                    };
+                }
+                return _searchWindow;
+            }
+        }
 
         public MainWindow() {
             InitializeComponent();
+
+            KeyDown += Window_KeyDown;
 
             VM = new MainWindowViewModel();
             VM.View = this;
@@ -57,16 +74,42 @@ namespace WhereAreThem.WinViewer {
             LoadDrive(treeViewItem.Header);
         }
 
+        private void DataGrid_KeyDown(object sender, KeyEventArgs e) {
+            if ((e.Key == Key.C) && (Keyboard.Modifiers == ModifierKeys.Control))
+                VM.CopyCommand.Execute(null);
+
+            e.Handled = true;
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e) {
+            if ((e.Key == Key.F) && (Keyboard.Modifiers == ModifierKeys.Control)) {
+                if (!(VM.SelectedFolder is Computer)) {
+                    List<Folder> stack = new List<Folder>();
+                    GetFolderStack(_selectedTreeViewItem, stack);
+                    SearchWindow.VM.Root = VM.SelectedFolder;
+                    SearchWindow.VM.RootStack = stack;
+                    SearchWindow.Show();
+                    KeyDown -= Window_KeyDown;
+                }
+            }
+            e.Handled = true;
+        }
+
         private void LoadDrive(object item) {
             if (item is Drive)
                 ((Drive)item).Load();
         }
 
-        private void Window_KeyDown(object sender, KeyEventArgs e) {
-            if ((e.Key == Key.F) && (Keyboard.Modifiers == ModifierKeys.Control)) {
-                SearchWindow window = new SearchWindow();
-                window.Owner = this;
-                window.Show();
+        private void GetFolderStack(TreeViewItem item, List<Folder> stack) {
+            DependencyObject parent = item;
+            do {
+                parent = VisualTreeHelper.GetParent(parent);
+            } while (!(parent is TreeViewItem || parent is TreeView));
+
+            if (parent is TreeViewItem) {
+                TreeViewItem treeViewItem = (TreeViewItem)parent;
+                stack.Insert(0, (Folder)treeViewItem.Header);
+                GetFolderStack(treeViewItem, stack);
             }
         }
     }

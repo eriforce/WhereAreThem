@@ -28,10 +28,6 @@ namespace WhereAreThem.WebViewer.Models {
             return Path.Combine(parts.ToArray());
         }
 
-        public static string WildcardToRegex(this string pattern) {
-            return Regex.Escape(pattern).Replace("\\*", ".*").Replace("\\?", ".");
-        }
-
         public static string GetTitle(this string titleName, string path, string machineName) {
             return "{0} - {1} | {2}".FormatWith(titleName, path, machineName);
         }

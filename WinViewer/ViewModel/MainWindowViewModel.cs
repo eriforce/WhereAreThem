@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using PureLib.Common;
 using PureLib.WPF;
 using WhereAreThem.Model;
 
 namespace WhereAreThem.WinViewer {
     public class MainWindowViewModel : ViewModelBase {
-        public List<Computer> Computers { get; set; }
+        private RelayCommand _copyCommand;
+        private ObservableCollection<FileSystemItem> _subItems;
+        private Folder _selectedFolder;
+        private FileSystemItem _selectedItem;
 
         public MainWindowViewModel() {
             Computers = App.Loader.MachineNames.Select(n => new Computer() {
@@ -19,35 +23,47 @@ namespace WhereAreThem.WinViewer {
             }).ToList();
         }
 
-        private ObservableCollection<FileSystemItem> subItems;
-        private Folder selectedFolder;
-
+        public RelayCommand CopyCommand {
+            get {
+                if (_copyCommand == null)
+                    _copyCommand = new RelayCommand((p) => {
+                        Clipboard.SetText(SelectedItem.Name);
+                    });
+                return _copyCommand;
+            }
+        }
+        public List<Computer> Computers { get; set; }
         public ObservableCollection<FileSystemItem> SubItems {
             get {
-                if (subItems == null)
-                    subItems = new ObservableCollection<FileSystemItem>();
-                return subItems;
+                if (_subItems == null)
+                    _subItems = new ObservableCollection<FileSystemItem>();
+                return _subItems;
             }
             set {
-                subItems = value;
+                _subItems = value;
                 RaiseChange("SubItems");
             }
         }
         public Folder SelectedFolder {
-            get {
-                return selectedFolder;
-            }
+            get { return _selectedFolder; }
             set {
-                selectedFolder = value;
+                _selectedFolder = value;
                 RaiseChange("SelectedFolder");
 
                 SubItems.Clear();
-                if (selectedFolder.Folders != null)
-                    foreach (Folder f in selectedFolder.Folders)
+                if (_selectedFolder.Folders != null)
+                    foreach (Folder f in _selectedFolder.Folders)
                         SubItems.Add(f);
-                if (selectedFolder.Files != null)
-                    foreach (File f in selectedFolder.Files)
+                if (_selectedFolder.Files != null)
+                    foreach (File f in _selectedFolder.Files)
                         SubItems.Add(f);
+            }
+        }
+        public FileSystemItem SelectedItem {
+            get { return _selectedItem; }
+            set {
+                _selectedItem = value;
+                RaiseChange("SelectedItem");
             }
         }
     }
