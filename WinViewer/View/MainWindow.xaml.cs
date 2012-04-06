@@ -73,13 +73,6 @@ namespace WhereAreThem.WinViewer {
             LoadDrive(treeViewItem.Header);
         }
 
-        private void DataGrid_KeyDown(object sender, KeyEventArgs e) {
-            if ((e.Key == Key.C) && (Keyboard.Modifiers == ModifierKeys.Control))
-                VM.CopyCommand.Execute(null);
-
-            e.Handled = true;
-        }
-
         private void Window_KeyDown(object sender, KeyEventArgs e) {
             if ((e.Key == Key.F) && (Keyboard.Modifiers == ModifierKeys.Control)) {
                 if (!(VM.SelectedFolder is Computer)) {
@@ -90,8 +83,8 @@ namespace WhereAreThem.WinViewer {
                     SearchWindow.Show();
                     KeyDown -= Window_KeyDown;
                 }
+                e.Handled = true;
             }
-            e.Handled = true;
         }
 
         private void OnLocatingItem(object sender, LocateItemEventArgs e) {
