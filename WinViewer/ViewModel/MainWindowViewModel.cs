@@ -33,17 +33,6 @@ namespace WhereAreThem.WinViewer {
             }
         }
         public List<Computer> Computers { get; set; }
-        public ObservableCollection<FileSystemItem> SubItems {
-            get {
-                if (_subItems == null)
-                    _subItems = new ObservableCollection<FileSystemItem>();
-                return _subItems;
-            }
-            set {
-                _subItems = value;
-                RaiseChange("SubItems");
-            }
-        }
         public Folder SelectedFolder {
             get { return _selectedFolder; }
             set {
@@ -57,6 +46,17 @@ namespace WhereAreThem.WinViewer {
                 if (_selectedFolder.Files != null)
                     foreach (File f in _selectedFolder.Files)
                         SubItems.Add(f);
+            }
+        }
+        public ObservableCollection<FileSystemItem> SubItems {
+            get {
+                if (_subItems == null)
+                    _subItems = new ObservableCollection<FileSystemItem>();
+                return _subItems;
+            }
+            set {
+                _subItems = value;
+                RaiseChange("SubItems");
             }
         }
         public FileSystemItem SelectedItem {

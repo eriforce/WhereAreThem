@@ -11,7 +11,7 @@
         <TextBox x:Name="txtSearch" Text="{Binding SearchPattern, UpdateSourceTrigger=PropertyChanged}" Height="23" Margin="0,0,81,0" VerticalAlignment="Top"></TextBox>
         <Button Command="{Binding SearchCommand}" IsDefault="True" Content="Search" Width="75" Height="23" VerticalAlignment="Top" HorizontalAlignment="Right"></Button>
 
-        <DataGrid ItemsSource="{Binding Results}" CurrentItem="{Binding SelectedSearchResult, Mode=TwoWay}" Grid.Row="1"
+        <DataGrid ItemsSource="{Binding Results}" SelectedItem="{Binding SelectedSearchResult}" Grid.Row="1"
                   AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" GridLinesVisibility="None">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridCell}">

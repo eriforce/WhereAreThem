@@ -103,9 +103,6 @@ namespace WhereAreThem.WinViewer {
             }
             treeViewItem.IsSelected = true;
             VM.SelectedItem = e.Result.Item;
-            dgItems.UpdateLayout();
-            DataGridRow row = (DataGridRow)dgItems.ItemContainerGenerator.ContainerFromItem(VM.SelectedItem);
-            row.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
         }
 
         private void LoadDrive(object item) {

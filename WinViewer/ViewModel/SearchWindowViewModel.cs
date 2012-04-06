@@ -50,7 +50,6 @@ namespace WhereAreThem.WinViewer {
                     _locateCommand = new RelayCommand((p) => {
                         if (LocatingItem != null)
                             LocatingItem(this, new LocateItemEventArgs(SelectedSearchResult));
-                        SelectedSearchResult = null;
                         View.Close();
                     });
                 return _locateCommand;
