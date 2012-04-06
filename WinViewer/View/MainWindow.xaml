@@ -33,7 +33,7 @@
         <GridSplitter Grid.Column="0" Width="2" ResizeDirection="Columns" HorizontalAlignment="Right" VerticalAlignment="Stretch"/>
         <GridSplitter Grid.Column="1" Width="2" ResizeDirection="Columns" HorizontalAlignment="Left" VerticalAlignment="Stretch"/>
 
-        <DataGrid ItemsSource="{Binding SubItems}" CurrentItem="{Binding SelectedItem, Mode=TwoWay}" Grid.Column="1" Margin="2,0,0,0" MouseDoubleClick="DataGrid_MouseDoubleClick" KeyDown="DataGrid_KeyDown"
+        <DataGrid x:Name="dgItems" ItemsSource="{Binding SubItems}" CurrentItem="{Binding SelectedItem, Mode=TwoWay}" Grid.Column="1" Margin="2,0,0,0" MouseDoubleClick="DataGrid_MouseDoubleClick" KeyDown="DataGrid_KeyDown"
                   AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" GridLinesVisibility="None">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridCell}">

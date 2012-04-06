@@ -27,6 +27,7 @@ namespace WhereAreThem.WinViewer {
                 if (_searchWindow == null) {
                     _searchWindow = new SearchWindow();
                     _searchWindow.Owner = this;
+                    _searchWindow.VM.LocatingItem += OnLocatingItem;
                     _searchWindow.Closing += (s, e) => {
                         ((Window)s).Hide();
                         KeyDown += Window_KeyDown;
@@ -52,12 +53,10 @@ namespace WhereAreThem.WinViewer {
             FileSystemItem item = (FileSystemItem)dataGrid.SelectedItem;
 
             if (item is Folder) {
-                VM.SelectedFolder = (Folder)item;
-
                 _selectedTreeViewItem.IsExpanded = true;
                 _selectedTreeViewItem.UpdateLayout();
                 _selectedTreeViewItem = (TreeViewItem)_selectedTreeViewItem.ItemContainerGenerator.ContainerFromItem(item);
-                _selectedTreeViewItem.IsSelected = true; ;
+                _selectedTreeViewItem.IsSelected = true;
             }
         }
 
@@ -95,22 +94,48 @@ namespace WhereAreThem.WinViewer {
             e.Handled = true;
         }
 
+        private void OnLocatingItem(object sender, LocateItemEventArgs e) {
+            TreeViewItem treeViewItem = GetRootTreeViewItem(_selectedTreeViewItem);
+            for (int i = 1; i < e.Result.Stack.Count; i++) {
+                treeViewItem.IsExpanded = true;
+                treeViewItem.UpdateLayout();
+                treeViewItem = (TreeViewItem)treeViewItem.ItemContainerGenerator.ContainerFromItem(e.Result.Stack[i]);
+            }
+            treeViewItem.IsSelected = true;
+            VM.SelectedItem = e.Result.Item;
+            dgItems.UpdateLayout();
+            DataGridRow row = (DataGridRow)dgItems.ItemContainerGenerator.ContainerFromItem(VM.SelectedItem);
+            row.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+        }
+
         private void LoadDrive(object item) {
             if (item is Drive)
                 ((Drive)item).Load();
         }
 
         private void GetFolderStack(TreeViewItem item, List<Folder> stack) {
-            DependencyObject parent = item;
-            do {
-                parent = VisualTreeHelper.GetParent(parent);
-            } while (!(parent is TreeViewItem || parent is TreeView));
-
+            DependencyObject parent = GetParentTreeNode(item);
             if (parent is TreeViewItem) {
                 TreeViewItem treeViewItem = (TreeViewItem)parent;
                 stack.Insert(0, (Folder)treeViewItem.Header);
                 GetFolderStack(treeViewItem, stack);
             }
+        }
+
+        private TreeViewItem GetRootTreeViewItem(TreeViewItem item) {
+            DependencyObject parent = GetParentTreeNode(item);
+            if (parent is TreeViewItem)
+                return GetRootTreeViewItem((TreeViewItem)parent);
+            else // parent is TreeView
+                return item;
+        }
+
+        private static DependencyObject GetParentTreeNode(TreeViewItem item) {
+            DependencyObject parent = item;
+            do {
+                parent = VisualTreeHelper.GetParent(parent);
+            } while (!(parent is TreeViewItem || parent is TreeView));
+            return parent;
         }
     }
 }
