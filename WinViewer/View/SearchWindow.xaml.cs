@@ -32,5 +32,9 @@ namespace WhereAreThem.WinViewer {
             VM.View = this;
             DataContext = VM;
         }
+
+        private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+            VM.OnLocatingItem();
+        }
     }
 }

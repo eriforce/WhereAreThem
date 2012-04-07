@@ -21,7 +21,6 @@ namespace WhereAreThem.WinViewer {
 
     public class SearchWindowViewModel : ViewModelBase {
         private RelayCommand _searchCommand;
-        private RelayCommand _locateCommand;
         private SearchResult _selectedSearchResult;
         private ObservableCollection<SearchResult> _results;
         private string _searchPattern;
@@ -42,17 +41,6 @@ namespace WhereAreThem.WinViewer {
                         SearchInFolder(Root, RootStack);
                     }, (p) => { return !SearchPattern.IsNullOrEmpty(); });
                 return _searchCommand;
-            }
-        }
-        public RelayCommand LocateCommand {
-            get {
-                if (_locateCommand == null)
-                    _locateCommand = new RelayCommand((p) => {
-                        if (LocatingItem != null)
-                            LocatingItem(this, new LocateItemEventArgs(SelectedSearchResult));
-                        View.Close();
-                    });
-                return _locateCommand;
             }
         }
         public SearchResult SelectedSearchResult {
@@ -84,6 +72,12 @@ namespace WhereAreThem.WinViewer {
 
         public void RefreshWindowTitle() {
             RaiseChange("WindowTitle");
+        }
+
+        public void OnLocatingItem() {
+            if (LocatingItem != null)
+                LocatingItem(this, new LocateItemEventArgs(SelectedSearchResult));
+            View.Close();
         }
 
         private void SearchInFolder(Folder folder, List<Folder> folderStack) {
