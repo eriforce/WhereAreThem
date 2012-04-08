@@ -48,6 +48,20 @@ namespace WhereAreThem.WinViewer {
             DataContext = VM;
         }
 
+        private void Window_KeyDown(object sender, KeyEventArgs e) {
+            if ((e.Key == Key.F) && (Keyboard.Modifiers == ModifierKeys.Control)) {
+                if (!(VM.SelectedFolder is Computer)) {
+                    List<Folder> stack = new List<Folder>();
+                    GetFolderStack(_selectedTreeViewItem, stack);
+                    SearchWindow.VM.Root = VM.SelectedFolder;
+                    SearchWindow.VM.RootStack = stack;
+                    SearchWindow.Show();
+                    KeyDown -= Window_KeyDown;
+                }
+                e.Handled = true;
+            }
+        }
+
         private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
             DataGrid dataGrid = (DataGrid)sender;
             FileSystemItem item = (FileSystemItem)dataGrid.SelectedItem;
@@ -58,6 +72,10 @@ namespace WhereAreThem.WinViewer {
                 _selectedTreeViewItem = (TreeViewItem)_selectedTreeViewItem.ItemContainerGenerator.ContainerFromItem(item);
                 _selectedTreeViewItem.IsSelected = true;
             }
+        }
+
+        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            ((DataGrid)sender).ScrollIntoView(VM.SelectedItem);
         }
 
         private void FolderTree_Selected(object sender, RoutedEventArgs e) {
@@ -73,21 +91,7 @@ namespace WhereAreThem.WinViewer {
             LoadDrive(treeViewItem.Header);
         }
 
-        private void Window_KeyDown(object sender, KeyEventArgs e) {
-            if ((e.Key == Key.F) && (Keyboard.Modifiers == ModifierKeys.Control)) {
-                if (!(VM.SelectedFolder is Computer)) {
-                    List<Folder> stack = new List<Folder>();
-                    GetFolderStack(_selectedTreeViewItem, stack);
-                    SearchWindow.VM.Root = VM.SelectedFolder;
-                    SearchWindow.VM.RootStack = stack;
-                    SearchWindow.Show();
-                    KeyDown -= Window_KeyDown;
-                }
-                e.Handled = true;
-            }
-        }
-
-        private void OnLocatingItem(object sender, LocateItemEventArgs e) {
+        private void OnLocatingItem(object sender, LocatingItemEventArgs e) {
             TreeViewItem treeViewItem = GetRootTreeViewItem(_selectedTreeViewItem);
             for (int i = 1; i < e.Result.Stack.Count; i++) {
                 treeViewItem.IsExpanded = true;

@@ -17,41 +17,45 @@ namespace WhereAreThem {
         [STAThread]
         static void Main(string[] args) {
             IPersistence persistence = Constant.GetPersistence(Type.GetType(ConfigurationManager.AppSettings["persistence"]));
-            string outputPath = Path.Combine(ConfigurationManager.AppSettings["outputPath"], Environment.MachineName);
-            if (!Directory.Exists(outputPath))
-                Directory.CreateDirectory(outputPath);
+            string outputPath = ConfigurationManager.AppSettings["outputPath"];
+            string machinePath = Path.Combine(outputPath, Environment.MachineName);
+            if (!Directory.Exists(machinePath))
+                Directory.CreateDirectory(machinePath);
 
             Arguments arguments = new Arguments(args);
             if (arguments.ContainsKey(updateArgumentName)) {
-                string path = arguments.GetValue(updateArgumentName);
-                if (path.IsNullOrEmpty())
-                    path = ChooseDirectory();
-                if (!Directory.Exists(path))
-                    throw new ArgumentException("Path '{0}' cannot be found.".FormatWith(path));
-                string[] parts = path.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
-                parts[0] += Path.DirectorySeparatorChar;
-                string driveLetter = parts[0].Substring(0, parts[0].IndexOf(Path.VolumeSeparatorChar));
-                string listPath = Path.Combine(outputPath, Path.ChangeExtension(driveLetter, Constant.ListExt));
-                if (!System.IO.File.Exists(listPath))
-                    throw new FileNotFoundException("List '{0}' cannot be found.".FormatWith(listPath));
-                Folder drive = persistence.Load(listPath);
-                UpdateFolder(drive, parts);
-                Save(persistence, listPath, drive);
+                Loader loader = new Loader(outputPath, persistence);
+                do {
+                    string path = ChooseDirectory();
+                    if (!Directory.Exists(path))
+                        throw new ArgumentException("Path '{0}' cannot be found.".FormatWith(path));
+                    string[] parts = path.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+                    parts[0] += Path.DirectorySeparatorChar;
+                    string driveLetter = parts[0].Substring(0, parts[0].IndexOf(Path.VolumeSeparatorChar));
+                    string listPath = Path.Combine(outputPath, Path.ChangeExtension(driveLetter, Constant.ListExt));
+                    if (!System.IO.File.Exists(listPath))
+                        throw new FileNotFoundException("List '{0}' cannot be found.".FormatWith(listPath));
+                    Folder drive = persistence.Load(listPath);
+                    UpdateFolder(drive, parts);
+                    Save(persistence, listPath, drive);
+                    Console.WriteLine("Press X to exit.");
+                }
+                while (!Console.ReadLine().Equals("x", StringComparison.OrdinalIgnoreCase));
             }
             else {
                 foreach (string letter in ConfigurationManager.AppSettings["drives"].ToUpper().Split(',')) {
                     Folder drive = GetFolder(new DirectoryInfo("{0}{1}{2}".FormatWith(letter, Path.VolumeSeparatorChar, Path.DirectorySeparatorChar)));
                     Save(persistence, Path.Combine(outputPath, Path.ChangeExtension(letter, Constant.ListExt)), drive);
                 }
+                Console.ReadLine();
             }
-            Console.WriteLine();
-            Console.WriteLine("List saved.");
-            Console.ReadLine();
         }
 
         private static void Save(IPersistence persistence, string listPath, Folder drive) {
             drive.CreatedDateUtc = DateTime.UtcNow;
             persistence.Save(drive, listPath);
+            Console.WriteLine();
+            Console.WriteLine("List saved.");
         }
 
         private static string ChooseDirectory() {

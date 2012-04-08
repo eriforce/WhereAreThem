@@ -10,14 +10,14 @@ using WhereAreThem.Model;
 using IO = System.IO;
 
 namespace WhereAreThem.WinViewer {
-    public class LocateItemEventArgs : EventArgs {
+    public class LocatingItemEventArgs : EventArgs {
         public SearchResult Result { get; private set; }
 
-        public LocateItemEventArgs(SearchResult result) {
+        public LocatingItemEventArgs(SearchResult result) {
             Result = result;
         }
     }
-    public delegate void LocateItemEventHandler(object sender, LocateItemEventArgs e);
+    public delegate void LocatingItemEventHandler(object sender, LocatingItemEventArgs e);
 
     public class SearchWindowViewModel : ViewModelBase {
         private RelayCommand _searchCommand;
@@ -29,7 +29,7 @@ namespace WhereAreThem.WinViewer {
             Results = new ObservableCollection<SearchResult>();
         }
 
-        public event LocateItemEventHandler LocatingItem;
+        public event LocatingItemEventHandler LocatingItem;
 
         public Folder Root { get; set; }
         public List<Folder> RootStack { get; set; }
@@ -76,7 +76,7 @@ namespace WhereAreThem.WinViewer {
 
         public void OnLocatingItem() {
             if (LocatingItem != null)
-                LocatingItem(this, new LocateItemEventArgs(SelectedSearchResult));
+                LocatingItem(this, new LocatingItemEventArgs(SelectedSearchResult));
             View.Close();
         }
 
