@@ -75,7 +75,8 @@ namespace WhereAreThem.WinViewer {
         }
 
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            ((DataGrid)sender).ScrollIntoView(VM.SelectedItem);
+            if (VM.SelectedItem != null)
+                ((DataGrid)sender).ScrollIntoView(VM.SelectedItem);
         }
 
         private void FolderTree_Selected(object sender, RoutedEventArgs e) {
