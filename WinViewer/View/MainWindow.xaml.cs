@@ -50,7 +50,7 @@ namespace WhereAreThem.WinViewer {
 
         private void Window_KeyDown(object sender, KeyEventArgs e) {
             if ((e.Key == Key.F) && (Keyboard.Modifiers == ModifierKeys.Control)) {
-                if (!(VM.SelectedFolder is Computer)) {
+                if ((VM.SelectedFolder != null) && !(VM.SelectedFolder is Computer)) {
                     List<Folder> stack = new List<Folder>();
                     GetFolderStack(_selectedTreeViewItem, stack);
                     SearchWindow.VM.Root = VM.SelectedFolder;
