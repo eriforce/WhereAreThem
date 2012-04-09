@@ -48,15 +48,15 @@ namespace WhereAreThem.WinViewer {
                 RaiseChange("SelectedFolder");
 
                 SubItems.Clear();
-                List<string> statusTextParts = new List<string>();
+                List<string> statusTextParts = new List<string>() {
+                    Utility.ToFriendlyString(SelectedFolder.Size)
+                };
                 if (SelectedFolder.Folders != null) {
-                    foreach (Folder f in SelectedFolder.Folders)
-                        SubItems.Add(f);
+                    SubItems.AddRange(SelectedFolder.Folders);
                     statusTextParts.Add("{0} folder(s)".FormatWith(SelectedFolder.Folders.Count));
                 }
                 if (SelectedFolder.Files != null) {
-                    foreach (File f in SelectedFolder.Files)
-                        SubItems.Add(f);
+                    SubItems.AddRange(SelectedFolder.Files);
                     statusTextParts.Add("{0} file(s)".FormatWith(SelectedFolder.Files.Count));
                 }
                 StatusBarText = string.Join(", ", statusTextParts);
