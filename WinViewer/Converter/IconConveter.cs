@@ -14,12 +14,16 @@ namespace WhereAreThem.WinViewer {
             if (!Enum.TryParse<ItemType>(value.GetType().Name, out type))
                 return null;
 
+            IconSize size;
+            if(!Enum.TryParse<IconSize>((string)parameter, out size))
+                size = IconSize.Small;
+
             Icon icon;
             if (type == ItemType.File)
                 icon = IconReader.GetFileIcon(IO.Path.GetExtension(((File)value).Name).ToLower(),
-                    IconReader.IconSize.Small, false);
+                    size, false);
             else
-                icon = (Icon)Resources.ResourceManager.GetObject(type.ToString());
+                icon = IconReader.GetIcon(type, size);
             return icon.ToImageSource();
         }
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -27,11 +28,31 @@ namespace WhereAreThem.WinViewer {
                 Int32Rect.Empty,
                 BitmapSizeOptions.FromEmptyOptions());
 
-            if (!DeleteObject(hBitmap)) {
+            if (!DeleteObject(hBitmap))
                 throw new Win32Exception();
-            }
 
             return wpfBitmap;
+        }
+
+        public static Icon GetIcon(ItemType type, IconSize size) {
+            int index = 0;
+            switch (type) {
+                case ItemType.Computer:
+                    index = 15;
+                    break;
+                case ItemType.Drive:
+                    index = 8;
+                    break;
+                case ItemType.Folder:
+                    index = 4;
+                    break;
+                case ItemType.File:
+                    index = 16795;
+                    break;
+            }
+            IntPtr hIconLarge = IntPtr.Zero, hIconSmall = IntPtr.Zero;
+            Shell32.ExtractIconEx("shell32.dll", index, ref hIconLarge, ref hIconSmall, 1);
+            return GetIcon(size == IconSize.Small ? hIconSmall : hIconLarge);
         }
 
         /// <summary>
@@ -45,98 +66,42 @@ namespace WhereAreThem.WinViewer {
             Shell32.SHFILEINFO shfi = new Shell32.SHFILEINFO();
             uint flags = Shell32.SHGFI_ICON | Shell32.SHGFI_USEFILEATTRIBUTES;
 
-            if (true == linkOverlay) flags += Shell32.SHGFI_LINKOVERLAY;
+            if (linkOverlay) 
+                flags |= Shell32.SHGFI_LINKOVERLAY;
 
-            /* Check the size specified for return. */
             if (IconSize.Small == size)
-                flags += Shell32.SHGFI_SMALLICON;
+                flags |= Shell32.SHGFI_SMALLICON;
             else
-                flags += Shell32.SHGFI_LARGEICON;
+                flags |= Shell32.SHGFI_LARGEICON;
 
             Shell32.SHGetFileInfo(name,
                 Shell32.FILE_ATTRIBUTE_NORMAL,
                 ref shfi,
-                (uint)System.Runtime.InteropServices.Marshal.SizeOf(shfi),
+                (uint)Marshal.SizeOf(shfi),
                 flags);
 
+            return GetIcon(shfi.hIcon);
+        }
+
+        private static Icon GetIcon(IntPtr hIcon) {
             // Copy (clone) the returned icon to a new object, thus allowing us to clean-up properly
-            Icon icon = (Icon)Icon.FromHandle(shfi.hIcon).Clone();
-            User32.DestroyIcon(shfi.hIcon);		// Cleanup
+            Icon icon = (Icon)Icon.FromHandle(hIcon).Clone();
+            User32.DestroyIcon(hIcon); // Cleanup
             return icon;
-        }
-
-        /// <summary>
-        /// Used to access system folder icons.
-        /// </summary>
-        /// <param name="size">Specify large or small icons.</param>
-        /// <param name="folderType">Specify open or closed FolderType.</param>
-        /// <returns>Icon</returns>
-        public static Icon GetFolderIcon(IconSize size, FolderType folderType) {
-            // Need to add size check, although errors generated at present!
-            uint flags = Shell32.SHGFI_ICON | Shell32.SHGFI_USEFILEATTRIBUTES;
-
-            if (FolderType.Open == folderType)
-                flags += Shell32.SHGFI_OPENICON;
-
-            if (IconSize.Small == size)
-                flags += Shell32.SHGFI_SMALLICON;
-            else
-                flags += Shell32.SHGFI_LARGEICON;
-
-            // Get the folder icon
-            Shell32.SHFILEINFO shfi = new Shell32.SHFILEINFO();
-            Shell32.SHGetFileInfo(null,
-                Shell32.FILE_ATTRIBUTE_DIRECTORY,
-                ref shfi,
-                (uint)System.Runtime.InteropServices.Marshal.SizeOf(shfi),
-                flags);
-
-            Icon.FromHandle(shfi.hIcon);	// Load the icon from an HICON handle
-
-            // Now clone the icon, so that it can be successfully stored in an ImageList
-            Icon icon = (Icon)Icon.FromHandle(shfi.hIcon).Clone();
-
-            User32.DestroyIcon(shfi.hIcon);		// Cleanup
-            return icon;
-        }
-
-        /// <summary>
-        /// Options to specify the size of icons to return.
-        /// </summary>
-        public enum IconSize {
-            /// <summary>
-            /// Specify large icon - 32 pixels by 32 pixels.
-            /// </summary>
-            Large = 0,
-            /// <summary>
-            /// Specify small icon - 16 pixels by 16 pixels.
-            /// </summary>
-            Small = 1
-        }
-
-        /// <summary>
-        /// Options to specify whether folders should be in the open or closed state.
-        /// </summary>
-        public enum FolderType {
-            /// <summary>
-            /// Specify open folder.
-            /// </summary>
-            Open = 0,
-            /// <summary>
-            /// Specify closed folder.
-            /// </summary>
-            Closed = 1
         }
     }
 
+    public enum IconSize {
+        Large = 0,
+        Small = 1,
+    }
+
+    // This code has been left largely untouched from that in the CRC example. The main changes have been moving
+    // the icon reading code over to the IconReader type.
     /// <summary>
     /// Wraps necessary Shell32.dll structures and functions required to retrieve Icon Handles using SHGetFileInfo. Code
     /// courtesy of MSDN Cold Rooster Consulting case study.
     /// </summary>
-    /// 
-
-    // This code has been left largely untouched from that in the CRC example. The main changes have been moving
-    // the icon reading code over to the IconReader type.
     public class Shell32 {
         public const int MAX_PATH = 256;
 
@@ -214,14 +179,14 @@ namespace WhereAreThem.WinViewer {
         public const uint FILE_ATTRIBUTE_DIRECTORY = 0x00000010;
         public const uint FILE_ATTRIBUTE_NORMAL = 0x00000080;
 
-        [DllImport("Shell32.dll")]
-        public static extern IntPtr SHGetFileInfo(
-            string pszPath,
-            uint dwFileAttributes,
-            ref SHFILEINFO psfi,
-            uint cbFileInfo,
-            uint uFlags
-            );
+        [DllImport("shell32.dll")]
+        public static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes, ref SHFILEINFO psfi, uint cbFileInfo, uint uFlags);
+
+        [DllImport("shell32.dll")]
+        public static extern IntPtr ExtractIcon(IntPtr hInst, string lpszExeFileName, int nIconIndex);
+    
+        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
+        public static extern int ExtractIconEx(string stExeFileName, int nIconIndex, ref IntPtr phiconLarge, ref IntPtr phiconSmall, int nIcons); 
     }
 
     /// <summary>
@@ -234,7 +199,7 @@ namespace WhereAreThem.WinViewer {
         /// </summary>
         /// <param name="hIcon">Pointer to icon handle.</param>
         /// <returns>N/A</returns>
-        [DllImport("User32.dll")]
+        [DllImport("user32.dll")]
         public static extern int DestroyIcon(IntPtr hIcon);
     }
 }

@@ -121,25 +121,13 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Drive.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Folder.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Model\Model.csproj">
       <Project>{B36F290D-D840-4CB3-A8BA-C3A5A8770A40}</Project>
       <Name>Model</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\File.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\ef.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Computer.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
