@@ -7,6 +7,9 @@ namespace WhereAreThem.Model {
     public abstract class FileSystemItem : IComparable<FileSystemItem> {
         public string Name { get; set; }
         public DateTime CreatedDateUtc { get; set; }
+        public DateTime CreatedDate {
+            get { return CreatedDateUtc.ToLocalTime(); }
+        }
         public abstract long Size { get; }
 
         public int CompareTo(FileSystemItem other) {

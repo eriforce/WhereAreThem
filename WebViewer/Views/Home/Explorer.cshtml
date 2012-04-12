@@ -106,7 +106,7 @@
                             </a>
                         </td>
                         <td class="size nowrap">@Utility.ToFriendlyString(f.Size)</td>
-                        <td class="nowrap">@f.CreatedDateUtc.ToLocalTimeString()</td>
+                        <td class="nowrap">@f.CreatedDate.ToExplorerString()</td>
                         <td></td>
                     </tr>
                     }
@@ -120,8 +120,8 @@
                             </a>
                         </td>
                         <td class="size nowrap">@Utility.ToFriendlyString(f.Size)</td>
-                        <td class="nowrap">@f.CreatedDateUtc.ToLocalTimeString()</td>
-                        <td class="nowrap">@f.ModifiedDateUtc.ToLocalTimeString()</td>
+                        <td class="nowrap">@f.CreatedDate.ToExplorerString()</td>
+                        <td class="nowrap">@f.ModifiedDate.ToExplorerString()</td>
                     </tr>
                     }
                 }

@@ -17,9 +17,10 @@ namespace WhereAreThem.WebViewer.Controllers {
             else if ((Request.ClientCertificate == null) || !Request.ClientCertificate.IsValid
                     || Request.ClientCertificate.Issuer.IsNullOrEmpty())
                 return new HttpStatusCodeResult((int)HttpStatusCode.Unauthorized);
-
-            string userName = Request.ClientCertificate.Subject.Substring(3);
-            FormsAuthentication.SetAuthCookie(userName, false);
+            else {
+                string userName = Request.ClientCertificate.Subject.Substring(3);
+                FormsAuthentication.SetAuthCookie(userName, false);
+            }
             return RedirectToAction(Extensions.ActionIndex, Extensions.ControllerHome);
         }
     }

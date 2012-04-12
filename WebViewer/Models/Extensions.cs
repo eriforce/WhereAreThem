@@ -15,9 +15,8 @@ namespace WhereAreThem.WebViewer.Models {
         public const string ActionSearchResult = "SearchResult";
         public const string DetailsViewSessionName = "DetailsView";
 
-        public static string ToLocalTimeString(this DateTime utcTime) {
-            DateTimeOffset offset = new DateTimeOffset(utcTime, TimeZoneInfo.Utc.GetUtcOffset(utcTime));
-            return offset.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+        public static string ToExplorerString(this DateTime time) {
+            return time.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
         public static string GetFullPath(this Folder folder, List<Folder> stack) {

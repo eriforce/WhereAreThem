@@ -8,6 +8,9 @@ namespace WhereAreThem.Model {
     public class File : FileSystemItem {
         public long FileSize { get; set; }
         public DateTime ModifiedDateUtc { get; set; }
+        public DateTime ModifiedDate {
+            get { return ModifiedDateUtc.ToLocalTime(); }
+        }
 
         public override long Size {
             get {

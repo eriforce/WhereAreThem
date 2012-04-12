@@ -64,8 +64,8 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Created" Binding="{Binding CreatedDateUtc, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Modified" Binding="{Binding ModifiedDateUtc, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Created" Binding="{Binding CreatedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Modified" Binding="{Binding ModifiedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
         

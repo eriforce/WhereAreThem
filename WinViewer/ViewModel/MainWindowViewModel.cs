@@ -42,7 +42,7 @@ namespace WhereAreThem.WinViewer {
                 if (_copyCommand == null)
                     _copyCommand = new RelayCommand((p) => {
                         Clipboard.SetText(SelectedItem.Name);
-                    });
+                    }, (p) => { return SelectedItem != null; });
                 return _copyCommand;
             }
         }
@@ -52,7 +52,7 @@ namespace WhereAreThem.WinViewer {
                     _openPropertiesCommand = new RelayCommand((p) => {
                         if (OpeningProperties != null)
                             OpeningProperties(this, new OpeningPropertiesEventArgs(SelectedItem));
-                    });
+                    }, (p) => { return SelectedItem != null; });
                 return _openPropertiesCommand;
             }
         }
