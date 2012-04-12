@@ -24,7 +24,7 @@ namespace WhereAreThem.WinViewer {
 
             VM = new PropertiesWindowViewModel(item, itemStack);
             VM.View = this;
-            DataContext = VM;        
+            DataContext = VM;
         }
     }
 }
