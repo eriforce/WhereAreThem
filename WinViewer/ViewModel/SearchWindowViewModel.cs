@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Input;
 using PureLib.Common;
 using PureLib.WPF;
 using WhereAreThem.Model;
@@ -20,7 +21,7 @@ namespace WhereAreThem.WinViewer {
     public delegate void LocatingItemEventHandler(object sender, LocatingItemEventArgs e);
 
     public class SearchWindowViewModel : ViewModelBase {
-        private RelayCommand _searchCommand;
+        private ICommand _searchCommand;
         private SearchResult _selectedSearchResult;
         private ObservableCollection<SearchResult> _results;
         private string _searchPattern;
@@ -33,7 +34,7 @@ namespace WhereAreThem.WinViewer {
 
         public Folder Root { get; set; }
         public List<Folder> RootStack { get; set; }
-        public RelayCommand SearchCommand {
+        public ICommand SearchCommand {
             get {
                 if (_searchCommand == null)
                     _searchCommand = new RelayCommand((p) => {
@@ -66,7 +67,9 @@ namespace WhereAreThem.WinViewer {
         }
         public string WindowTitle {
             get {
-                return "Search {0} in {1}".FormatWith(Root.Name, IO.Path.Combine(RootStack.Select(f => f.Name).ToArray()));
+                return "Search in {0} of {1}".FormatWith(
+                    IO.Path.Combine(RootStack.Select(f => f.Name).Union(new string[] { Root.Name }).ToArray()),
+                    RootStack.First().Name);
             }
         }
 

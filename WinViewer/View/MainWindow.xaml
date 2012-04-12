@@ -43,6 +43,7 @@
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Copy" Command="{Binding CopyCommand}" />
+                    <MenuItem Header="Properties" Command="{Binding OpenPropertiesCommand}" />
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>

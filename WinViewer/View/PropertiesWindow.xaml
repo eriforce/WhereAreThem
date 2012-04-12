@@ -1,0 +1,22 @@
+﻿ <Window x:Class="WhereAreThem.WinViewer.PropertiesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Properties" Height="300" Width="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="3*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Image Source="{Binding Item, Converter={StaticResource IconConverter}, ConverterParameter=Large}" Width="32" Height="32"></Image>
+        <TextBox Text="{Binding Item.Name}" Grid.Row="0" Grid.Column="1" IsReadOnly="True" Height="23"></TextBox>
+        <TextBlock Text="Type:" Grid.Row="1" Grid.Column="0"></TextBlock>
+        <TextBlock Text="{Binding FileSystemType}" Grid.Row="1" Grid.Column="1"></TextBlock>
+        <TextBlock Text="Location:" Grid.Row="2" Grid.Column="0"></TextBlock>
+        <TextBlock Text="{Binding Item.Logcation}" Grid.Row="2" Grid.Column="1"></TextBlock>
+    </Grid>
+</Window>

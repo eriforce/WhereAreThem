@@ -4,13 +4,24 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Input;
 using PureLib.Common;
 using PureLib.WPF;
 using WhereAreThem.Model;
 
 namespace WhereAreThem.WinViewer {
+    public class OpeningPropertiesEventArgs : EventArgs {
+        public FileSystemItem Item { get; private set; }
+
+        public OpeningPropertiesEventArgs(FileSystemItem item) {
+            Item = item;
+        }
+    }
+    public delegate void OpeningPropertiesEventHandler(object sender, OpeningPropertiesEventArgs e);
+    
     public class MainWindowViewModel : ViewModelBase {
-        private RelayCommand _copyCommand;
+        private ICommand _copyCommand;
+        private ICommand _openPropertiesCommand;
         private string _statusBarText;
         private ObservableCollection<FileSystemItem> _subItems;
         private Folder _selectedFolder;
@@ -24,13 +35,25 @@ namespace WhereAreThem.WinViewer {
             }).ToList();
         }
 
-        public RelayCommand CopyCommand {
+        public event OpeningPropertiesEventHandler OpeningProperties;
+
+        public ICommand CopyCommand {
             get {
                 if (_copyCommand == null)
                     _copyCommand = new RelayCommand((p) => {
                         Clipboard.SetText(SelectedItem.Name);
                     });
                 return _copyCommand;
+            }
+        }
+        public ICommand OpenPropertiesCommand {
+            get {
+                if (_openPropertiesCommand == null)
+                    _openPropertiesCommand = new RelayCommand((p) => {
+                        if (OpeningProperties != null)
+                            OpeningProperties(this, new OpeningPropertiesEventArgs(SelectedItem));
+                    });
+                return _openPropertiesCommand;
             }
         }
         public string StatusBarText {
@@ -62,6 +85,7 @@ namespace WhereAreThem.WinViewer {
                 StatusBarText = string.Join(", ", statusTextParts);
             }
         }
+        public List<Folder> SelectedFolderStack { get; set; }
         public ObservableCollection<FileSystemItem> SubItems {
             get {
                 if (_subItems == null)

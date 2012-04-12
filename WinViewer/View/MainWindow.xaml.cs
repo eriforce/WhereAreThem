@@ -45,16 +45,23 @@ namespace WhereAreThem.WinViewer {
 
             VM = new MainWindowViewModel();
             VM.View = this;
+            VM.OpeningProperties += new OpeningPropertiesEventHandler(OnOpeningProperties);
             DataContext = VM;
+        }
+
+        private void OnOpeningProperties(object sender, OpeningPropertiesEventArgs e) {
+            List<Folder> stack = new List<Folder>(VM.SelectedFolderStack);
+            stack.Add(VM.SelectedFolder);
+            PropertiesWindow window = new PropertiesWindow(VM.SelectedItem, stack);
+            window.Owner = this;
+            window.Show();
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e) {
             if ((e.Key == Key.F) && (Keyboard.Modifiers == ModifierKeys.Control)) {
                 if ((VM.SelectedFolder != null) && !(VM.SelectedFolder is Computer)) {
-                    List<Folder> stack = new List<Folder>();
-                    GetFolderStack(_selectedTreeViewItem, stack);
                     SearchWindow.VM.Root = VM.SelectedFolder;
-                    SearchWindow.VM.RootStack = stack;
+                    SearchWindow.VM.RootStack = VM.SelectedFolderStack;
                     SearchWindow.Show();
                     KeyDown -= Window_KeyDown;
                 }
@@ -85,6 +92,9 @@ namespace WhereAreThem.WinViewer {
             TreeView treeView = (TreeView)sender;
             LoadDrive(treeView.SelectedItem);
             VM.SelectedFolder = (Folder)treeView.SelectedItem;
+            List<Folder> stack = new List<Folder>();
+            GetFolderStack(_selectedTreeViewItem, stack);
+            VM.SelectedFolderStack = stack;
         }
 
         private void FolderTree_Expanded(object sender, RoutedEventArgs e) {

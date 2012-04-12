@@ -185,7 +185,7 @@ namespace WhereAreThem.WinViewer {
         [DllImport("shell32.dll")]
         public static extern IntPtr ExtractIcon(IntPtr hInst, string lpszExeFileName, int nIconIndex);
     
-        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
+        [DllImport("shell32.dll")]
         public static extern int ExtractIconEx(string stExeFileName, int nIconIndex, ref IntPtr phiconLarge, ref IntPtr phiconSmall, int nIcons); 
     }
 

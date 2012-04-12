@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:WhereAreThem.WinViewer"
              StartupUri="View\MainWindow.xaml">
     <Application.Resources>
-        <local:IconConverter x:Key="IconConverter"></local:IconConverter>
-        <local:SizeConverter x:Key="SizeConverter"></local:SizeConverter>
+        <local:IconConverter x:Key="IconConverter" />
+        <local:SizeConverter x:Key="SizeConverter" />
     </Application.Resources>
 </Application>
