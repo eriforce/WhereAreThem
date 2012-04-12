@@ -42,31 +42,8 @@ namespace WhereAreThem.WebViewer.Controllers {
 
         public JsonResult GetProperties(string machineName, string path, string[] selectedItems) {
             List<Folder> stack = null;
-            Folder folder = GetFolder(machineName, path, out stack);
-
-            List<File> files = folder.Files == null ? new List<File>() :
-                folder.Files.Where(i => selectedItems.Contains(i.Name)).ToList();
-            List<Folder> folders = folder.Folders == null ? new List<Folder>() :
-                folder.Folders.Where(i => selectedItems.Contains(i.Name)).ToList();
-            PropertyInfo info = new PropertyInfo() {
-                FileCount = folders.Sum(f => GetFileCount(f)) + files.Count,
-                FolderCount = folders.Sum(f => GetFolderCount(f)),
-                TotalSize = files.Sum(f => f.Size) + folders.Sum(f => f.Size)
-            };
-            if (selectedItems.Length > 1)
-                info.FolderCount += folders.Count;
-            return Json(info);
-        }
-
-        private int GetFileCount(Folder folder) {
-            int count = folder.Files == null ? 0 : folder.Files.Count;
-            if (folder.Folders != null)
-                count += folder.Folders.Sum(f => GetFileCount(f));
-            return count;
-        }
-
-        private int GetFolderCount(Folder folder) {
-            return folder.Folders == null ? 0 : (folder.Folders.Count + folder.Folders.Sum(f => GetFolderCount(f)));
+            Folder parent = GetFolder(machineName, path, out stack);
+            return Json(new PropertyInfo(parent, selectedItems));
         }
 
         private Folder GetFolder(string machineName, string path, out List<Folder> stack) {

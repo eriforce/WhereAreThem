@@ -70,7 +70,6 @@
     </Compile>
     <Compile Include="Models\Extensions.cs" />
     <Compile Include="Models\List.cs" />
-    <Compile Include="Models\PropertyInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
