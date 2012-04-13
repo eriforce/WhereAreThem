@@ -139,7 +139,8 @@ namespace WhereAreThem.WinViewer {
             DependencyObject parent = item;
             do {
                 parent = VisualTreeHelper.GetParent(parent);
-            } while (!(parent is TreeViewItem || parent is TreeView));
+            }
+            while (!(parent is TreeViewItem || parent is TreeView));
             return parent;
         }
     }
