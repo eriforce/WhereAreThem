@@ -36,6 +36,7 @@
       <HintPath>..\..\PureLib\Build\PureLib.Client.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -45,13 +46,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constant.cs" />
-    <Compile Include="File.cs" />
-    <Compile Include="FileSystemItem.cs" />
-    <Compile Include="Folder.cs" />
     <Compile Include="IPersistence.cs" />
     <Compile Include="Loader.cs" />
+    <Compile Include="Models\File.cs" />
+    <Compile Include="Models\FileSystemItem.cs" />
+    <Compile Include="Models\Folder.cs" />
+    <Compile Include="Models\PropertyInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PropertyInfo.cs" />
     <Compile Include="StringPersistence.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -16,8 +16,8 @@ namespace WhereAreThem.WinViewer {
         public static Loader Loader {
             get {
                 if (_loader == null)
-                    _loader = new Loader(ConfigurationManager.AppSettings["path"].WrapPath(),
-                        Constant.GetPersistence(Type.GetType(ConfigurationManager.AppSettings["persistence"])));
+                    _loader = new Loader(
+                        ConfigurationManager.AppSettings["path"].WrapPath(), Constant.GetPersistence());
                 return _loader;
             }
         }

@@ -9,8 +9,8 @@ using WhereAreThem.Model;
 
 namespace WhereAreThem.WebViewer.Models {
     public static class List {
-        private static Loader _loader = new Loader(ConfigurationManager.AppSettings["path"].WrapPath(),
-            Constant.GetPersistence(Type.GetType(ConfigurationManager.AppSettings["persistence"])));
+        private static Loader _loader = new Loader(
+            ConfigurationManager.AppSettings["path"].WrapPath(), Constant.GetPersistence());
   
         public static string[] MachineNames {
             get {

@@ -16,8 +16,8 @@ namespace WhereAreThem {
 
         [STAThread]
         static void Main(string[] args) {
-            IPersistence persistence = Constant.GetPersistence(Type.GetType(ConfigurationManager.AppSettings["persistence"]));
-            string outputPath = ConfigurationManager.AppSettings["outputPath"];
+            IPersistence persistence = Constant.GetPersistence();
+            string outputPath = ConfigurationManager.AppSettings["outputPath"].WrapPath();
             string machinePath = Path.Combine(outputPath, Environment.MachineName);
             if (!Directory.Exists(machinePath))
                 Directory.CreateDirectory(machinePath);
