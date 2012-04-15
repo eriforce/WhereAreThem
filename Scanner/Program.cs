@@ -32,7 +32,7 @@ namespace WhereAreThem {
                     string[] parts = path.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
                     parts[0] += Path.DirectorySeparatorChar;
                     string driveLetter = parts[0].Substring(0, parts[0].IndexOf(Path.VolumeSeparatorChar));
-                    string listPath = Path.Combine(outputPath, Path.ChangeExtension(driveLetter, Constant.ListExt));
+                    string listPath = Path.Combine(machinePath, Path.ChangeExtension(driveLetter, Constant.ListExt));
                     if (!System.IO.File.Exists(listPath))
                         throw new FileNotFoundException("List '{0}' cannot be found.".FormatWith(listPath));
                     Folder drive = persistence.Load(listPath);
@@ -45,7 +45,7 @@ namespace WhereAreThem {
             else {
                 foreach (string letter in ConfigurationManager.AppSettings["drives"].ToUpper().Split(',')) {
                     Folder drive = GetFolder(new DirectoryInfo("{0}{1}{2}".FormatWith(letter, Path.VolumeSeparatorChar, Path.DirectorySeparatorChar)));
-                    Save(persistence, Path.Combine(outputPath, Path.ChangeExtension(letter, Constant.ListExt)), drive);
+                    Save(persistence, Path.Combine(machinePath, Path.ChangeExtension(letter, Constant.ListExt)), drive);
                 }
                 Console.ReadLine();
             }
