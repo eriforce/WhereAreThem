@@ -12,13 +12,15 @@ namespace WhereAreThem.Model {
         private const string fileFormat = "{1}{0}{2}{0}{3}{0}{4}";
 
         public void Save(Folder folder, string path) {
-            string tempFile = Path.ChangeExtension(path, "tmp");
-            using (StreamWriter sw = new FileInfo(tempFile).CreateText()) {
-                Save(folder, 0, sw);
-            }
             if (System.IO.File.Exists(path))
                 System.IO.File.Delete(path);
-            System.IO.File.Move(tempFile, path);
+            using (StreamWriter sw = new FileInfo(path).CreateText()) {
+                Save(folder, sw);
+            }
+        }
+
+        internal void Save(Folder folder, StreamWriter writer) {
+            Save(folder, 0, writer);
         }
 
         private void Save(Folder folder, int level, StreamWriter sw) {
@@ -49,40 +51,44 @@ namespace WhereAreThem.Model {
 
         public Folder Load(string path) {
             using (StreamReader sr = new FileInfo(path).OpenText()) {
-                string line = sr.ReadLine();
-                string[] parts = line.Split(columnSeparator);
-                int folderLinePartsLength = parts.Length;
-                Dictionary<int, Folder> recentFolders = new Dictionary<int, Folder>() {
+                return Load(sr);
+            }
+        }
+
+        internal Folder Load(StreamReader reader) {
+            string line = reader.ReadLine();
+            string[] parts = line.Split(columnSeparator);
+            int folderLinePartsLength = parts.Length;
+            Dictionary<int, Folder> recentFolders = new Dictionary<int, Folder>() {
                     { 0, GetFolder(parts) }
                 };
 
-                while (!sr.EndOfStream) {
-                    line = sr.ReadLine();
-                    if (string.IsNullOrEmpty(line))
-                        continue;
-                    parts = line.Split(columnSeparator);
+            while (!reader.EndOfStream) {
+                line = reader.ReadLine();
+                if (string.IsNullOrEmpty(line))
+                    continue;
+                parts = line.Split(columnSeparator);
 
-                    int currentLevel = GetLevel(parts);
-                    int parent = currentLevel - 1;
-                    if (parts.Length == folderLinePartsLength) {
-                        Folder f = GetFolder(parts);
-                        if (recentFolders[parent].Folders == null)
-                            recentFolders[parent].Folders = new List<Folder>();
-                        recentFolders[parent].Folders.Add(f);
+                int currentLevel = GetLevel(parts);
+                int parent = currentLevel - 1;
+                if (parts.Length == folderLinePartsLength) {
+                    Folder f = GetFolder(parts);
+                    if (recentFolders[parent].Folders == null)
+                        recentFolders[parent].Folders = new List<Folder>();
+                    recentFolders[parent].Folders.Add(f);
 
-                        if (recentFolders.ContainsKey(currentLevel))
-                            recentFolders[currentLevel] = f;
-                        else
-                            recentFolders.Add(currentLevel, f);
-                    }
-                    else {
-                        if (recentFolders[parent].Files == null)
-                            recentFolders[parent].Files = new List<File>();
-                        recentFolders[parent].Files.Add(GetFile(parts));
-                    }
+                    if (recentFolders.ContainsKey(currentLevel))
+                        recentFolders[currentLevel] = f;
+                    else
+                        recentFolders.Add(currentLevel, f);
                 }
-                return recentFolders[0];
+                else {
+                    if (recentFolders[parent].Files == null)
+                        recentFolders[parent].Files = new List<File>();
+                    recentFolders[parent].Files.Add(GetFile(parts));
+                }
             }
+            return recentFolders[0];
         }
 
         private Folder GetFolder(string[] lineParts) {

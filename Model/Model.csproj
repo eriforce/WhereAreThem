@@ -46,14 +46,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constant.cs" />
-    <Compile Include="IPersistence.cs" />
     <Compile Include="Loader.cs" />
     <Compile Include="Models\File.cs" />
     <Compile Include="Models\FileSystemItem.cs" />
     <Compile Include="Models\Folder.cs" />
     <Compile Include="Models\PropertyInfo.cs" />
+    <Compile Include="Persistences\CompressedPersistenceBase.cs" />
+    <Compile Include="Persistences\IPersistence.cs" />
+    <Compile Include="Persistences\StringPersistence.cs" />
+    <Compile Include="Persistences\CompressedStringPersistence.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StringPersistence.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
