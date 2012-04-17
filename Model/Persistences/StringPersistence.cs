@@ -20,7 +20,9 @@ namespace WhereAreThem.Model {
         }
 
         public void Save(Folder folder, Stream stream) {
-            Save(folder, 0, new StreamWriter(stream));
+            StreamWriter writer = new StreamWriter(stream);
+            Save(folder, 0, writer);
+            writer.Flush();
         }
 
         private void Save(Folder folder, int level, StreamWriter sw) {
