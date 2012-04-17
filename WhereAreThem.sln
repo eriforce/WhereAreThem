@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+# Visual C# Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebViewer", "WebViewer\WebViewer.csproj", "{D5D937C4-5C60-42D3-ABE4-A015C8747CFA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{B36F290D-D840-4CB3-A8BA-C3A5A8770A40}"
@@ -8,6 +8,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scanner", "Scanner\Scanner.csproj", "{08012805-495C-4D6D-B09D-10E487C795A4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinViewer", "WinViewer\WinViewer.csproj", "{4C4EF698-B830-4C95-9E81-72AD6E7D4215}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistenceConverter", "PersistenceConverter\PersistenceConverter.csproj", "{4B31764B-0F6A-44D2-B4AF-9E49426F7B48}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,16 @@ Global
 		{4C4EF698-B830-4C95-9E81-72AD6E7D4215}.Release|Mixed Platforms.Build.0 = Release|x86
 		{4C4EF698-B830-4C95-9E81-72AD6E7D4215}.Release|x86.ActiveCfg = Release|x86
 		{4C4EF698-B830-4C95-9E81-72AD6E7D4215}.Release|x86.Build.0 = Release|x86
+		{4B31764B-0F6A-44D2-B4AF-9E49426F7B48}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{4B31764B-0F6A-44D2-B4AF-9E49426F7B48}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{4B31764B-0F6A-44D2-B4AF-9E49426F7B48}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{4B31764B-0F6A-44D2-B4AF-9E49426F7B48}.Debug|x86.ActiveCfg = Debug|x86
+		{4B31764B-0F6A-44D2-B4AF-9E49426F7B48}.Debug|x86.Build.0 = Debug|x86
+		{4B31764B-0F6A-44D2-B4AF-9E49426F7B48}.Release|Any CPU.ActiveCfg = Release|x86
+		{4B31764B-0F6A-44D2-B4AF-9E49426F7B48}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{4B31764B-0F6A-44D2-B4AF-9E49426F7B48}.Release|Mixed Platforms.Build.0 = Release|x86
+		{4B31764B-0F6A-44D2-B4AF-9E49426F7B48}.Release|x86.ActiveCfg = Release|x86
+		{4B31764B-0F6A-44D2-B4AF-9E49426F7B48}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
