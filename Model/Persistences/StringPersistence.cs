@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 
 namespace WhereAreThem.Model {
-    public class StringPersistence : IPersistence {
+    public class StringPersistence : IPersistence, IStreamPersistence {
         private const char columnSeparator = '|';
         private const string rowFormat = "{0}{1}{2}";
         private const string folderFormat = "{1}{0}{2}";
@@ -14,13 +14,15 @@ namespace WhereAreThem.Model {
         public void Save(Folder folder, string path) {
             if (System.IO.File.Exists(path))
                 System.IO.File.Delete(path);
-            using (StreamWriter sw = new FileInfo(path).CreateText()) {
-                Save(folder, sw);
+            using (FileStream stream = new FileStream(path, FileMode.Create)) {
+                Save(folder, stream);
             }
         }
 
-        internal void Save(Folder folder, StreamWriter writer) {
-            Save(folder, 0, writer);
+        public void Save(Folder folder, Stream stream) {
+            using (StreamWriter writer = new StreamWriter(stream)) {
+                Save(folder, 0, writer);
+            }
         }
 
         private void Save(Folder folder, int level, StreamWriter sw) {
@@ -50,45 +52,47 @@ namespace WhereAreThem.Model {
         }
 
         public Folder Load(string path) {
-            using (StreamReader sr = new FileInfo(path).OpenText()) {
-                return Load(sr);
+            using (FileStream stream = new FileStream(path, FileMode.Open)) {
+                return Load(stream);
             }
         }
 
-        internal Folder Load(StreamReader reader) {
-            string line = reader.ReadLine();
-            string[] parts = line.Split(columnSeparator);
-            int folderLinePartsLength = parts.Length;
-            Dictionary<int, Folder> recentFolders = new Dictionary<int, Folder>() {
+        public Folder Load(Stream stream) {
+            using (StreamReader reader = new StreamReader(stream)) {
+                string line = reader.ReadLine();
+                string[] parts = line.Split(columnSeparator);
+                int folderLinePartsLength = parts.Length;
+                Dictionary<int, Folder> recentFolders = new Dictionary<int, Folder>() {
                     { 0, GetFolder(parts) }
                 };
 
-            while (!reader.EndOfStream) {
-                line = reader.ReadLine();
-                if (string.IsNullOrEmpty(line))
-                    continue;
-                parts = line.Split(columnSeparator);
+                while (!reader.EndOfStream) {
+                    line = reader.ReadLine();
+                    if (string.IsNullOrEmpty(line))
+                        continue;
+                    parts = line.Split(columnSeparator);
 
-                int currentLevel = GetLevel(parts);
-                int parent = currentLevel - 1;
-                if (parts.Length == folderLinePartsLength) {
-                    Folder f = GetFolder(parts);
-                    if (recentFolders[parent].Folders == null)
-                        recentFolders[parent].Folders = new List<Folder>();
-                    recentFolders[parent].Folders.Add(f);
+                    int currentLevel = GetLevel(parts);
+                    int parent = currentLevel - 1;
+                    if (parts.Length == folderLinePartsLength) {
+                        Folder f = GetFolder(parts);
+                        if (recentFolders[parent].Folders == null)
+                            recentFolders[parent].Folders = new List<Folder>();
+                        recentFolders[parent].Folders.Add(f);
 
-                    if (recentFolders.ContainsKey(currentLevel))
-                        recentFolders[currentLevel] = f;
-                    else
-                        recentFolders.Add(currentLevel, f);
+                        if (recentFolders.ContainsKey(currentLevel))
+                            recentFolders[currentLevel] = f;
+                        else
+                            recentFolders.Add(currentLevel, f);
+                    }
+                    else {
+                        if (recentFolders[parent].Files == null)
+                            recentFolders[parent].Files = new List<File>();
+                        recentFolders[parent].Files.Add(GetFile(parts));
+                    }
                 }
-                else {
-                    if (recentFolders[parent].Files == null)
-                        recentFolders[parent].Files = new List<File>();
-                    recentFolders[parent].Files.Add(GetFile(parts));
-                }
+                return recentFolders[0];
             }
-            return recentFolders[0];
         }
 
         private Folder GetFolder(string[] lineParts) {

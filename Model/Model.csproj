@@ -51,10 +51,11 @@
     <Compile Include="Models\FileSystemItem.cs" />
     <Compile Include="Models\Folder.cs" />
     <Compile Include="Models\PropertyInfo.cs" />
-    <Compile Include="Persistences\CompressedPersistenceBase.cs" />
+    <Compile Include="Persistences\CompressedPersistence.cs" />
     <Compile Include="Persistences\IPersistence.cs" />
+    <Compile Include="Persistences\IStreamPersistence.cs" />
     <Compile Include="Persistences\StringPersistence.cs" />
-    <Compile Include="Persistences\CompressedStringPersistence.cs" />
+    <Compile Include="Persistences\XmlPersistence.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
