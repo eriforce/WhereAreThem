@@ -9,14 +9,20 @@ namespace WhereAreThem.Model {
     public static class Constant {
         public const string ListExt = "wat";
 
-        public static IPersistence GetPersistence() {
-            string persistenceType = ConfigurationManager.AppSettings["persistence"];
-            string typeArgs = ConfigurationManager.AppSettings["persistenceArgs"];
+        private static IPersistence _persistence;
+        public static IPersistence Persistence {
+            get {
+                if (_persistence == null) {
+                    string persistenceType = ConfigurationManager.AppSettings["persistence"];
+                    string typeArgs = ConfigurationManager.AppSettings["persistenceArgs"];
 
-            Type type = Type.GetType(persistenceType);
-            if (!typeArgs.IsNullOrEmpty())
-                type = type.MakeGenericType(Type.GetType(typeArgs));
-            return Activator.CreateInstance(type) as IPersistence;
+                    Type type = Type.GetType(persistenceType);
+                    if (!typeArgs.IsNullOrEmpty())
+                        type = type.MakeGenericType(Type.GetType(typeArgs));
+                    _persistence = Activator.CreateInstance(type) as IPersistence;
+                }
+                return _persistence;
+            }
         }
     }
 }

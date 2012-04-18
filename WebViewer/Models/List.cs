@@ -10,7 +10,7 @@ using WhereAreThem.Model;
 namespace WhereAreThem.WebViewer.Models {
     public static class List {
         private static Loader _loader = new Loader(
-            ConfigurationManager.AppSettings["path"].WrapPath(), Constant.GetPersistence());
+            ConfigurationManager.AppSettings["path"].WrapPath(), Constant.Persistence);
   
         public static string[] MachineNames {
             get {

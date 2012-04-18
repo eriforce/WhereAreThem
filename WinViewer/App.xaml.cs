@@ -17,7 +17,7 @@ namespace WhereAreThem.WinViewer {
             get {
                 if (_loader == null)
                     _loader = new Loader(
-                        ConfigurationManager.AppSettings["path"].WrapPath(), Constant.GetPersistence());
+                        ConfigurationManager.AppSettings["path"].WrapPath(), Constant.Persistence);
                 return _loader;
             }
         }
