@@ -10,34 +10,24 @@ namespace WhereAreThem.Model {
         private T _streamPersistence = Activator.CreateInstance<T>();
 
         public void Save(Folder folder, string path) {
-            using (MemoryStream stream = new MemoryStream()) {
-                _streamPersistence.Save(folder, stream);
-                stream.Seek(0, SeekOrigin.Begin);
+            using (MemoryStream ms = new MemoryStream()) {
+                _streamPersistence.Save(folder, ms);
+                ms.Seek(0, SeekOrigin.Begin);
                 using (FileStream fs = new FileStream(path, FileMode.Create)) {
-                    Compress(stream, fs);
+                    GZipStream gzipStream = new GZipStream(fs, CompressionMode.Compress);
+                    ms.CopyTo(gzipStream);
                 }
             }
         }
 
         public Folder Load(string path) {
-            using (MemoryStream stream = new MemoryStream()) {
+            using (MemoryStream ms = new MemoryStream()) {
                 using (FileStream fs = new FileStream(path, FileMode.Open)) {
-                    Decompress(fs, stream);
+                    GZipStream gzipStream = new GZipStream(fs, CompressionMode.Decompress);
+                    gzipStream.CopyTo(ms);
                 }
-                stream.Seek(0, SeekOrigin.Begin);
-                return _streamPersistence.Load(stream);
-            }
-        }
-
-        private void Compress(Stream inStream, Stream outStream) {
-            using (GZipStream gzipStream = new GZipStream(outStream, CompressionMode.Compress)) {
-                inStream.CopyTo(gzipStream);
-            }
-        }
-
-        private void Decompress(Stream inStream, Stream outStream) {
-            using (GZipStream gzipStream = new GZipStream(inStream, CompressionMode.Decompress)) {
-                gzipStream.CopyTo(outStream);
+                ms.Seek(0, SeekOrigin.Begin);
+                return _streamPersistence.Load(ms);
             }
         }
     }
