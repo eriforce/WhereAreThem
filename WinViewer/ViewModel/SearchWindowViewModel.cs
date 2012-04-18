@@ -48,21 +48,21 @@ namespace WhereAreThem.WinViewer {
             get { return _selectedSearchResult; }
             set {
                 _selectedSearchResult = value;
-                RaiseChange("SelectedSearchResult");
+                RaiseChange(() => SelectedSearchResult);
             }
         }
         public ObservableCollection<SearchResult> Results {
             get { return _results; }
             set {
                 _results = value;
-                RaiseChange("Results");
+                RaiseChange(() => Results);
             }
         }
         public string SearchPattern {
             get { return _searchPattern; }
             set {
                 _searchPattern = value;
-                RaiseChange("SearchPattern");
+                RaiseChange(() => SearchPattern);
             }
         }
         public string WindowTitle {
@@ -74,7 +74,7 @@ namespace WhereAreThem.WinViewer {
         }
 
         public void RefreshWindowTitle() {
-            RaiseChange("WindowTitle");
+            RaiseChange(() => WindowTitle);
         }
 
         public void OnLocatingItem() {

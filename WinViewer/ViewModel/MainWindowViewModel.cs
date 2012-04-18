@@ -60,7 +60,7 @@ namespace WhereAreThem.WinViewer {
             get { return _statusBarText; }
             set {
                 _statusBarText = value;
-                RaiseChange("StatusBarText");
+                RaiseChange(() => StatusBarText);
             }
         }
         public List<Computer> Computers { get; set; }
@@ -68,7 +68,7 @@ namespace WhereAreThem.WinViewer {
             get { return _selectedFolder; }
             set {
                 _selectedFolder = value;
-                RaiseChange("SelectedFolder");
+                RaiseChange(() => SelectedFolder);
 
                 SubItems.Clear();
                 List<string> statusTextParts = new List<string>() {
@@ -94,14 +94,14 @@ namespace WhereAreThem.WinViewer {
             }
             set {
                 _subItems = value;
-                RaiseChange("SubItems");
+                RaiseChange(() => SubItems);
             }
         }
         public FileSystemItem SelectedItem {
             get { return _selectedItem; }
             set {
                 _selectedItem = value;
-                RaiseChange("SelectedItem");
+                RaiseChange(() => SelectedItem);
             }
         }
     }
