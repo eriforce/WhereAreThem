@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 
 namespace WhereAreThem.Model {
-    [Serializable]
     public class Folder : FileSystemItem {
         public List<Folder> Folders { get; set; }
         public List<File> Files { get; set; }

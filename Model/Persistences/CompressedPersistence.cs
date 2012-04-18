@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using System.Text;
 
 namespace WhereAreThem.Model {
     public class CompressedPersistence<T> : IPersistence where T : IStreamPersistence {

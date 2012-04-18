@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 namespace WhereAreThem.Model {
+    [Serializable]
     public abstract class FileSystemItem : IComparable<FileSystemItem> {
         public string Name { get; set; }
         public DateTime CreatedDateUtc { get; set; }
