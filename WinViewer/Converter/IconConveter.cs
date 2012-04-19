@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
 using WhereAreThem.Model;
-using WhereAreThem.WinViewer.Properties;
 using IO = System.IO;
 
 namespace WhereAreThem.WinViewer {

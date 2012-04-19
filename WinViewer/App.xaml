@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:WhereAreThem.WinViewer"
              xmlns:purelib="clr-namespace:PureLib.WPF;assembly=PureLib.Client"
-             StartupUri="View\MainWindow.xaml">
+             StartupUri="View\MainWindow.xaml" DispatcherUnhandledException="Application_DispatcherUnhandledException">
     <Application.Resources>
         <local:IconConverter x:Key="IconConverter" />
         <local:SizeConverter x:Key="SizeConverter" />

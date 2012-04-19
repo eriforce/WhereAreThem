@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using PureLib.Common;
@@ -18,7 +20,7 @@ namespace WhereAreThem.WinViewer {
         }
     }
     public delegate void OpeningPropertiesEventHandler(object sender, OpeningPropertiesEventArgs e);
-    
+
     public class MainWindowViewModel : ViewModelBase {
         private ICommand _copyCommand;
         private ICommand _openPropertiesCommand;
@@ -41,7 +43,21 @@ namespace WhereAreThem.WinViewer {
             get {
                 if (_copyCommand == null)
                     _copyCommand = new RelayCommand((p) => {
-                        Clipboard.SetText(SelectedItem.Name);
+                        const int tryTimesLimit = 3;
+                        int tryTimes = 0;
+                        while (tryTimes < tryTimesLimit) {
+                            try {
+                                if (tryTimes > 0)
+                                    Thread.Sleep(1000);
+                                Clipboard.SetText(SelectedItem.Name);
+                                break;
+                            }
+                            catch (COMException) {
+                                tryTimes++;
+                                if (tryTimes == tryTimesLimit)
+                                    MessageBox.Show(View, "Cannot access the clipboard.");
+                            }
+                        }
                     }, (p) => { return SelectedItem != null; });
                 return _copyCommand;
             }
