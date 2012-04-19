@@ -12,66 +12,14 @@ using PureLib.WPF;
 using WhereAreThem.Model;
 
 namespace WhereAreThem.WinViewer {
-    public class OpeningPropertiesEventArgs : EventArgs {
-        public FileSystemItem Item { get; private set; }
-
-        public OpeningPropertiesEventArgs(FileSystemItem item) {
-            Item = item;
-        }
-    }
-    public delegate void OpeningPropertiesEventHandler(object sender, OpeningPropertiesEventArgs e);
-
     public class MainWindowViewModel : ViewModelBase {
-        private ICommand _copyCommand;
-        private ICommand _openPropertiesCommand;
         private string _statusBarText;
         private ObservableCollection<FileSystemItem> _subItems;
         private Folder _selectedFolder;
         private FileSystemItem _selectedItem;
+        private ICommand _copyCommand;
+        private ICommand _openPropertiesCommand;
 
-        public MainWindowViewModel() {
-            Computers = App.Loader.MachineNames.Select(n => new Computer() {
-                Name = n,
-                Folders = App.Loader.GetDrives(n).Select(
-                    d => (Folder)new Drive(n, d.Name, d.CreatedDateUtc)).ToList()
-            }).ToList();
-        }
-
-        public event OpeningPropertiesEventHandler OpeningProperties;
-
-        public ICommand CopyCommand {
-            get {
-                if (_copyCommand == null)
-                    _copyCommand = new RelayCommand((p) => {
-                        const int tryTimesLimit = 3;
-                        int tryTimes = 0;
-                        while (tryTimes < tryTimesLimit) {
-                            try {
-                                if (tryTimes > 0)
-                                    Thread.Sleep(1000);
-                                Clipboard.SetText(SelectedItem.Name);
-                                break;
-                            }
-                            catch (COMException) {
-                                tryTimes++;
-                                if (tryTimes == tryTimesLimit)
-                                    MessageBox.Show(View, "Cannot access the clipboard.");
-                            }
-                        }
-                    }, (p) => { return SelectedItem != null; });
-                return _copyCommand;
-            }
-        }
-        public ICommand OpenPropertiesCommand {
-            get {
-                if (_openPropertiesCommand == null)
-                    _openPropertiesCommand = new RelayCommand((p) => {
-                        if (OpeningProperties != null)
-                            OpeningProperties(this, new OpeningPropertiesEventArgs(SelectedItem));
-                    }, (p) => { return SelectedItem != null; });
-                return _openPropertiesCommand;
-            }
-        }
         public string StatusBarText {
             get { return _statusBarText; }
             set {
@@ -120,5 +68,48 @@ namespace WhereAreThem.WinViewer {
                 RaiseChange(() => SelectedItem);
             }
         }
+        public ICommand CopyCommand {
+            get {
+                if (_copyCommand == null)
+                    _copyCommand = new RelayCommand((p) => {
+                        const int tryTimesLimit = 3;
+                        int tryTimes = 0;
+                        while (tryTimes < tryTimesLimit) {
+                            try {
+                                if (tryTimes > 0)
+                                    Thread.Sleep(1000);
+                                Clipboard.SetText(SelectedItem.Name);
+                                break;
+                            }
+                            catch (COMException) {
+                                tryTimes++;
+                                if (tryTimes == tryTimesLimit)
+                                    MessageBox.Show(View, "Cannot access the clipboard.");
+                            }
+                        }
+                    }, (p) => { return SelectedItem != null; });
+                return _copyCommand;
+            }
+        }
+        public ICommand OpenPropertiesCommand {
+            get {
+                if (_openPropertiesCommand == null)
+                    _openPropertiesCommand = new RelayCommand((p) => {
+                        if (OpeningProperties != null)
+                            OpeningProperties(this, new OpeningPropertiesEventArgs(SelectedItem));
+                    }, (p) => { return SelectedItem != null; });
+                return _openPropertiesCommand;
+            }
+        }
+
+        public MainWindowViewModel() {
+            Computers = App.Loader.MachineNames.Select(n => new Computer() {
+                Name = n,
+                Folders = App.Loader.GetDrives(n).Select(
+                    d => (Folder)new Drive(n, d.Name, d.CreatedDateUtc)).ToList()
+            }).ToList();
+        }
+
+        public event OpeningPropertiesEventHandler OpeningProperties;
     }
 }

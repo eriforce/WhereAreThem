@@ -13,25 +13,21 @@ namespace WhereAreThem.WinViewer {
         private PropertyInfo _propertyInfo { get; set; }
 
         public FileSystemItem Item { get; private set; }
-
         public string FileSystemType {
             get {
                 return Item.GetType().Name;
             }
         }
-
         public string Location {
             get {
                 return System.IO.Path.Combine(_itemStack.Select(f => f.Name).ToArray());
             }
         }
-
         public string Size {
             get {
                 return string.Format("{0} ({1} bytes)", _propertyInfo.TotalSizeFriendlyString, _propertyInfo.TotalSizeString);
             }
         }
-
         public string Contains {
             get {
                 string strFilesCount = string.Empty;
@@ -42,11 +38,9 @@ namespace WhereAreThem.WinViewer {
                 return strFilesCount;
             }
         }
-
         public bool IsFolder {
             get { return !IsFile; }
         }
-
         public bool IsFile {
             get { return Item is File; }
         }

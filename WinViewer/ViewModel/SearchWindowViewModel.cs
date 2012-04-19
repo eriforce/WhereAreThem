@@ -11,39 +11,14 @@ using WhereAreThem.Model;
 using IO = System.IO;
 
 namespace WhereAreThem.WinViewer {
-    public class LocatingItemEventArgs : EventArgs {
-        public SearchResult Result { get; private set; }
-
-        public LocatingItemEventArgs(SearchResult result) {
-            Result = result;
-        }
-    }
-    public delegate void LocatingItemEventHandler(object sender, LocatingItemEventArgs e);
-
     public class SearchWindowViewModel : ViewModelBase {
-        private ICommand _searchCommand;
         private SearchResult _selectedSearchResult;
         private ObservableCollection<SearchResult> _results;
         private string _searchPattern;
-
-        public SearchWindowViewModel() {
-            Results = new ObservableCollection<SearchResult>();
-        }
-
-        public event LocatingItemEventHandler LocatingItem;
+        private ICommand _searchCommand;
 
         public Folder Root { get; set; }
         public List<Folder> RootStack { get; set; }
-        public ICommand SearchCommand {
-            get {
-                if (_searchCommand == null)
-                    _searchCommand = new RelayCommand((p) => {
-                        Results.Clear();
-                        SearchInFolder(Root, RootStack);
-                    }, (p) => { return !SearchPattern.IsNullOrEmpty(); });
-                return _searchCommand;
-            }
-        }
         public SearchResult SelectedSearchResult {
             get { return _selectedSearchResult; }
             set {
@@ -72,6 +47,22 @@ namespace WhereAreThem.WinViewer {
                     RootStack.First().Name);
             }
         }
+        public ICommand SearchCommand {
+            get {
+                if (_searchCommand == null)
+                    _searchCommand = new RelayCommand((p) => {
+                        Results.Clear();
+                        SearchInFolder(Root, RootStack);
+                    }, (p) => { return !SearchPattern.IsNullOrEmpty(); });
+                return _searchCommand;
+            }
+        }
+
+        public SearchWindowViewModel() {
+            Results = new ObservableCollection<SearchResult>();
+        }
+
+        public event LocatingItemEventHandler LocatingItem;
 
         public void RefreshWindowTitle() {
             RaiseChange(() => WindowTitle);
