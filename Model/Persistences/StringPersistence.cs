@@ -5,21 +5,13 @@ using System.Linq;
 using System.Text;
 
 namespace WhereAreThem.Model {
-    public class StringPersistence : IPersistence, IStreamPersistence {
+    public class StringPersistence : PersistenceBase {
         private const char columnSeparator = '|';
         private const string rowFormat = "{0}{1}{2}";
         private const string folderFormat = "{1}{0}{2}";
         private const string fileFormat = "{1}{0}{2}{0}{3}{0}{4}";
 
-        public void Save(Folder folder, string path) {
-            if (System.IO.File.Exists(path))
-                System.IO.File.Delete(path);
-            using (FileStream stream = new FileStream(path, FileMode.Create)) {
-                Save(folder, stream);
-            }
-        }
-
-        public void Save(Folder folder, Stream stream) {
+        public override void Save(Folder folder, Stream stream) {
             StreamWriter writer = new StreamWriter(stream);
             Save(folder, 0, writer);
             writer.Flush();
@@ -51,13 +43,7 @@ namespace WhereAreThem.Model {
                 file.Name, file.Size, file.CreatedDateUtc.Ticks, file.ModifiedDateUtc.Ticks);
         }
 
-        public Folder Load(string path) {
-            using (FileStream stream = new FileStream(path, FileMode.Open)) {
-                return Load(stream);
-            }
-        }
-
-        public Folder Load(Stream stream) {
+        public override Folder Load(Stream stream) {
             StreamReader reader = new StreamReader(stream);
             string line = reader.ReadLine();
             string[] parts = line.Split(columnSeparator);

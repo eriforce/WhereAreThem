@@ -12,6 +12,7 @@
     <AssemblyName>WhereAreThem.Model</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -38,6 +39,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,6 +56,8 @@
     <Compile Include="Persistences\CompressedPersistence.cs" />
     <Compile Include="Persistences\IPersistence.cs" />
     <Compile Include="Persistences\IStreamPersistence.cs" />
+    <Compile Include="Persistences\JsonPersistence.cs" />
+    <Compile Include="Persistences\PersistenceBase.cs" />
     <Compile Include="Persistences\StringPersistence.cs" />
     <Compile Include="Persistences\XmlPersistence.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

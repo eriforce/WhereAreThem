@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace WhereAreThem.Model {
     public class Folder : FileSystemItem {
+        [DataMember]
         public List<Folder> Folders { get; set; }
+        [DataMember]
         public List<File> Files { get; set; }
 
         public override long Size {
