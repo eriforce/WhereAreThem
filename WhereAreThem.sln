@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C# Express 2010
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebViewer", "WebViewer\WebViewer.csproj", "{D5D937C4-5C60-42D3-ABE4-A015C8747CFA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{B36F290D-D840-4CB3-A8BA-C3A5A8770A40}"
@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scanner", "Scanner\Scanner.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinViewer", "WinViewer\WinViewer.csproj", "{4C4EF698-B830-4C95-9E81-72AD6E7D4215}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistenceConverter", "PersistenceConverter\PersistenceConverter.csproj", "{4B31764B-0F6A-44D2-B4AF-9E49426F7B48}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Converter", "Converter\Converter.csproj", "{4B31764B-0F6A-44D2-B4AF-9E49426F7B48}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

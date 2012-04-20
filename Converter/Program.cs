@@ -7,7 +7,7 @@ using System.Text;
 using PureLib.Common;
 using WhereAreThem.Model;
 
-namespace WhereAreThem.PersistenceConverter {
+namespace WhereAreThem.Converter {
     class Program {
         static void Main(string[] args) {
             IPersistence source = new StringPersistence();

@@ -8,8 +8,8 @@
     <ProjectGuid>{4B31764B-0F6A-44D2-B4AF-9E49426F7B48}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WhereAreThem.PersistenceConverter</RootNamespace>
-    <AssemblyName>WhereAreThem.PersistenceConverter</AssemblyName>
+    <RootNamespace>WhereAreThem.Converter</RootNamespace>
+    <AssemblyName>WhereAreThem.Converter</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
