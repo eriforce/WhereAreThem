@@ -6,7 +6,7 @@ using System.Text;
 using PureLib.Common;
 
 namespace WhereAreThem.Model {
-    public class Loader {
+    public class Loader : ILoader {
         private string _path;
         private IPersistence _persistence;
         private Dictionary<string, Folder> _machineCache = new Dictionary<string, Folder>();

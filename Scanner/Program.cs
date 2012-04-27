@@ -24,7 +24,7 @@ namespace WhereAreThem {
 
             Arguments arguments = new Arguments(args);
             if (arguments.ContainsKey(updateArgumentName)) {
-                Loader loader = new Loader(outputPath, persistence);
+                ILoader loader = new Loader(outputPath, persistence);
                 do {
                     string path = ChooseDirectory();
                     if (!Directory.Exists(path))

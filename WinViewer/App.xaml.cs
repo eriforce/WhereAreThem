@@ -13,8 +13,8 @@ namespace WhereAreThem.WinViewer {
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application {
-        private static Loader _loader;
-        public static Loader Loader {
+        private static ILoader _loader;
+        public static ILoader Loader {
             get {
                 if (_loader == null)
                     _loader = new Loader(
