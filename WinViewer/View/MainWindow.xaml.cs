@@ -119,29 +119,28 @@ namespace WhereAreThem.WinViewer {
         }
 
         private void GetFolderStack(TreeViewItem item, List<Folder> stack) {
-            DependencyObject parent = GetParentTreeNode(item);
-            if (parent is TreeViewItem) {
-                TreeViewItem treeViewItem = (TreeViewItem)parent;
-                stack.Insert(0, (Folder)treeViewItem.Header);
-                GetFolderStack(treeViewItem, stack);
+            TreeViewItem parent = GetParentTreeNode(item);
+            if (parent != null) {
+                stack.Insert(0, (Folder)parent.Header);
+                GetFolderStack(parent, stack);
             }
         }
 
         private TreeViewItem GetRootTreeViewItem(TreeViewItem item) {
-            DependencyObject parent = GetParentTreeNode(item);
-            if (parent is TreeViewItem)
-                return GetRootTreeViewItem((TreeViewItem)parent);
+            TreeViewItem parent = GetParentTreeNode(item);
+            if (parent != null)
+                return GetRootTreeViewItem(parent);
             else // parent is TreeView
                 return item;
         }
 
-        private static DependencyObject GetParentTreeNode(TreeViewItem item) {
+        private static TreeViewItem GetParentTreeNode(TreeViewItem item) {
             DependencyObject parent = item;
             do {
                 parent = VisualTreeHelper.GetParent(parent);
             }
             while (!(parent is TreeViewItem || parent is TreeView));
-            return parent;
+            return parent as TreeViewItem;
         }
     }
 }
