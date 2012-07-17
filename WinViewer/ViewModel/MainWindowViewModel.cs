@@ -14,7 +14,6 @@ using WhereAreThem.Model;
 namespace WhereAreThem.WinViewer {
     public class MainWindowViewModel : ViewModelBase {
         private string _statusBarText;
-        private ObservableCollection<FileSystemItem> _subItems;
         private Folder _selectedFolder;
         private FileSystemItem _selectedItem;
         private ICommand _copyCommand;
@@ -34,33 +33,17 @@ namespace WhereAreThem.WinViewer {
                 _selectedFolder = value;
                 RaiseChange(() => SelectedFolder);
 
-                SubItems.Clear();
                 List<string> statusTextParts = new List<string>() {
                     Utility.ToFriendlyString(SelectedFolder.Size)
                 };
-                if (SelectedFolder.Folders != null) {
-                    SubItems.AddRange(SelectedFolder.Folders);
+                if (SelectedFolder.Folders != null)
                     statusTextParts.Add("{0} folder(s)".FormatWith(SelectedFolder.Folders.Count));
-                }
-                if (SelectedFolder.Files != null) {
-                    SubItems.AddRange(SelectedFolder.Files);
+                if (SelectedFolder.Files != null)
                     statusTextParts.Add("{0} file(s)".FormatWith(SelectedFolder.Files.Count));
-                }
                 StatusBarText = string.Join(", ", statusTextParts);
             }
         }
         public List<Folder> SelectedFolderStack { get; set; }
-        public ObservableCollection<FileSystemItem> SubItems {
-            get {
-                if (_subItems == null)
-                    _subItems = new ObservableCollection<FileSystemItem>();
-                return _subItems;
-            }
-            set {
-                _subItems = value;
-                RaiseChange(() => SubItems);
-            }
-        }
         public FileSystemItem SelectedItem {
             get { return _selectedItem; }
             set {
