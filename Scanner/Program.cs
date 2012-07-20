@@ -25,8 +25,11 @@ namespace WhereAreThem {
             Arguments arguments = new Arguments(args);
             if (arguments.ContainsKey(updateArgumentName)) {
                 ILoader loader = new Loader(outputPath, persistence);
-                do {
-                    string path = ChooseDirectory();
+                string path = null;
+                while (true) {
+                    path = ChooseDirectory(path);
+                    if (path.IsNullOrEmpty())
+                        break;
                     if (!Directory.Exists(path))
                         throw new ArgumentException("Path '{0}' cannot be found.".FormatWith(path));
                     string[] parts = path.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
@@ -40,7 +43,6 @@ namespace WhereAreThem {
                     Save(persistence, listPath, drive);
                     Console.WriteLine("Press X to exit.");
                 }
-                while (!Console.ReadLine().Equals("x", StringComparison.OrdinalIgnoreCase));
             }
             else {
                 foreach (string letter in ConfigurationManager.AppSettings["drives"].ToUpper().Split(',')) {
@@ -58,9 +60,10 @@ namespace WhereAreThem {
             Console.WriteLine("List saved.");
         }
 
-        private static string ChooseDirectory() {
+        private static string ChooseDirectory(string selectedPath) {
             using (FolderBrowserDialog fbdDes = new FolderBrowserDialog()) {
                 fbdDes.RootFolder = Environment.SpecialFolder.MyComputer;
+                fbdDes.SelectedPath = selectedPath;
                 fbdDes.ShowNewFolderButton = false;
                 fbdDes.Description = "Choose a folder to perform updating.";
                 if (fbdDes.ShowDialog() == DialogResult.OK)
