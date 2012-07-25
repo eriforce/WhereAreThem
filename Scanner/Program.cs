@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using PureLib.Common;
-using PureLib.Common.Entities;
 using WhereAreThem.Model;
 
 namespace WhereAreThem {
