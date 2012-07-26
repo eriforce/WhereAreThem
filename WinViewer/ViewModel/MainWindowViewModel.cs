@@ -34,7 +34,7 @@ namespace WhereAreThem.WinViewer {
                 RaiseChange(() => SelectedFolder);
 
                 List<string> statusTextParts = new List<string>() {
-                    Utility.ToFriendlyString(SelectedFolder.Size)
+                    SelectedFolder.Size.ToFriendlyString()
                 };
                 if (SelectedFolder.Folders != null)
                     statusTextParts.Add("{0} folder(s)".FormatWith(SelectedFolder.Folders.Count));

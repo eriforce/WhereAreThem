@@ -30,7 +30,7 @@ namespace WhereAreThem.Model {
         }
         public string TotalSizeFriendlyString {
             get {
-                return Utility.ToFriendlyString(TotalSize);
+                return TotalSize.ToFriendlyString();
             }
         }
 

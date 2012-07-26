@@ -6,7 +6,7 @@ using PureLib.Common;
 namespace WhereAreThem.WinViewer {
     public class SizeConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            return Utility.ToFriendlyString((long)value);
+            return ((long)value).ToFriendlyString();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
