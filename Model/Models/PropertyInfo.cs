@@ -7,8 +7,9 @@ using PureLib.Common;
 
 namespace WhereAreThem.Model {
     public class PropertyInfo {
-        public File[] Files { get; private set; }
-        public Folder[] Folders { get; private set; }
+        private File[] _files;
+        private Folder[] _folders;
+
         public int FolderCount { get; private set; }
         public int FileCount { get; private set; }
         public long TotalSize { get; private set; }
@@ -35,16 +36,16 @@ namespace WhereAreThem.Model {
         }
 
         public PropertyInfo(Folder parent, string[] selectedItems) {
-            Files = parent.Files == null ? new File[] { } :
+            _files = parent.Files == null ? new File[] { } :
                 parent.Files.Where(i => selectedItems.Contains(i.Name)).ToArray();
-            Folders = parent.Folders == null ? new Folder[] { } :
+            _folders = parent.Folders == null ? new Folder[] { } :
                 parent.Folders.Where(i => selectedItems.Contains(i.Name)).ToArray();
 
-            FileCount = Folders.Sum(f => GetFileCount(f)) + Files.Length;
-            FolderCount = Folders.Sum(f => GetFolderCount(f));
-            TotalSize = Files.Sum(f => f.Size) + Folders.Sum(f => f.Size);
+            FileCount = _folders.Sum(f => GetFileCount(f)) + _files.Length;
+            FolderCount = _folders.Sum(f => GetFolderCount(f));
+            TotalSize = _files.Sum(f => f.Size) + _folders.Sum(f => f.Size);
             if (selectedItems.Length > 1)
-                FolderCount += Folders.Length;
+                FolderCount += _folders.Length;
         }
 
         private int GetFileCount(Folder folder) {
