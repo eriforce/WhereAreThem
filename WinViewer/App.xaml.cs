@@ -24,12 +24,11 @@ namespace WhereAreThem.WinViewer {
             }
         }
 
-        public App()
-            : base(new Guid("{09B64957-2D83-410E-8430-6FC63E11D735}")) {
-        }
-
         private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
-            MessageBox.Show(MainWindow, e.Exception.GetTraceText());
+            if (MainWindow == null)
+                MessageBox.Show(e.Exception.GetTraceText());
+            else
+                MessageBox.Show(MainWindow, e.Exception.GetTraceText());
         }
     }
 }
