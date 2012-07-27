@@ -7,9 +7,6 @@ using PureLib.Common;
 
 namespace WhereAreThem.Model {
     public class PropertyInfo {
-        private File[] _files;
-        private Folder[] _folders;
-
         public int FolderCount { get; private set; }
         public int FileCount { get; private set; }
         public long TotalSize { get; private set; }
@@ -36,16 +33,16 @@ namespace WhereAreThem.Model {
         }
 
         public PropertyInfo(Folder parent, string[] selectedItems) {
-            _files = parent.Files == null ? new File[] { } :
-                parent.Files.Where(i => selectedItems.Contains(i.Name)).ToArray();
-            _folders = parent.Folders == null ? new Folder[] { } :
-                parent.Folders.Where(i => selectedItems.Contains(i.Name)).ToArray();
+            IEnumerable<File> files = (parent.Files == null) ? new File[0] :
+                 parent.Files.Where(i => selectedItems.Contains(i.Name));
+            IEnumerable<Folder> folders = (parent.Folders == null) ? new Folder[0] :
+                 parent.Folders.Where(i => selectedItems.Contains(i.Name));
 
-            FileCount = _folders.Sum(f => GetFileCount(f)) + _files.Length;
-            FolderCount = _folders.Sum(f => GetFolderCount(f));
-            TotalSize = _files.Sum(f => f.Size) + _folders.Sum(f => f.Size);
+            FileCount = folders.Sum(f => GetFileCount(f)) + files.Count();
+            FolderCount = folders.Sum(f => GetFolderCount(f));
+            TotalSize = files.Sum(f => f.Size) + folders.Sum(f => f.Size);
             if (selectedItems.Length > 1)
-                FolderCount += _folders.Length;
+                FolderCount += folders.Count();
         }
 
         private int GetFileCount(Folder folder) {
