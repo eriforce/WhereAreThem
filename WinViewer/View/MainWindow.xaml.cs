@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -11,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using PureLib.Common;
 using WhereAreThem.Model.Models;
 using WhereAreThem.WinViewer.Event;
 using WhereAreThem.WinViewer.Model;
@@ -117,8 +119,12 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void LoadDrive(object item) {
-            if (item is Drive)
-                ((Drive)item).Load();
+            if (item is Drive) {
+                Drive drive = (Drive)item;
+                VM.Busy("Loading {0} ...".FormatWith(drive.Name), async () => {
+                    await Task.Run(() => drive.Load());
+                });
+            }
         }
 
         private void GetFolderStack(TreeViewItem item, List<Folder> stack) {

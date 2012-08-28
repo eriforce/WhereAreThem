@@ -23,5 +23,12 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 RaiseChange(() => BusyContent);
             }
         }
+
+        public void Busy(string content, Action action) {
+            BusyContent = content;
+            IsBusy = true;
+            action();
+            IsBusy = false;
+        }
     }
 }
