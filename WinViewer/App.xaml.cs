@@ -40,6 +40,7 @@ namespace WhereAreThem.WinViewer {
                 MessageBox.Show(e.Exception.GetTraceText());
             else
                 MessageBox.Show(MainWindow, e.Exception.GetTraceText());
+            e.Handled = true;
         }
     }
 }

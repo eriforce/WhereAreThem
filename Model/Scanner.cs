@@ -22,13 +22,14 @@ namespace WhereAreThem.Model {
             _persistence = persistence;
         }
 
-        public void Scan(string drive) {
+        public Folder Scan(string drive) {
             string driveLetter = drive.EndsWith(driveSuffix) ? GetDriveLetter(drive) : drive;
             Folder driveFolder = GetFolder(new DirectoryInfo("{0}{1}".FormatWith(driveLetter, driveSuffix)));
             Save(GetListPath(driveLetter), driveFolder);
+            return driveFolder;
         }
 
-        public void ScanUpdate(string path) {
+        public Folder ScanUpdate(string path) {
             if (path.IsNullOrEmpty())
                 throw new ArgumentNullException("ScanUpdate path is null.");
             if (!Directory.Exists(path))
@@ -41,6 +42,7 @@ namespace WhereAreThem.Model {
             Folder driveFolder = _persistence.Load(listPath);
             UpdateFolder(driveFolder, parts);
             Save(listPath, driveFolder);
+            return driveFolder;
         }
 
         private void OnPrintLine(string s) {

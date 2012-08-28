@@ -25,6 +25,8 @@ namespace WhereAreThem.WinViewer.ViewModel {
         private ICommand _copyCommand;
         private ICommand _openPropertiesCommand;
 
+        public List<Computer> Computers { get; private set; }
+
         public string StatusBarText {
             get { return _statusBarText; }
             set {
@@ -32,7 +34,6 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 RaiseChange(() => StatusBarText);
             }
         }
-        public List<Computer> Computers { get; set; }
         public Folder SelectedFolder {
             get { return _selectedFolder; }
             set {
@@ -66,13 +67,19 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         if (p != SelectedFolder)
                             folders.Add((Folder)p);
 
-                        App.Scanner.PrintLine += ScannerPrintLine;
+                        Folder driveFolder = null;
                         await BusyAsync(null, Task.Run(() => {
-                            App.Scanner.ScanUpdate(Path.Combine(folders.Select(f => f.Name).ToArray()));
+                            App.Scanner.PrintLine += ScannerPrintLine;
+                            driveFolder = App.Scanner.ScanUpdate(Path.Combine(folders.Select(f => f.Name).ToArray()));
                             App.Scanner.PrintLine -= ScannerPrintLine;
                         }));
+
+                        Computer computer = Computers.Single(c => c.Name == Environment.MachineName);
+                        Drive drive = (Drive)computer.Folders.Single(d => d.Name == driveFolder.Name);
+                        drive.Load();
                     }, (p) => {
                         return (p is Folder) && !(p is Computer)
+                            && (SelectedFolderStack != null) && SelectedFolderStack.Any()
                             && (SelectedFolderStack.First().Name == Environment.MachineName);
                     });
                 }
