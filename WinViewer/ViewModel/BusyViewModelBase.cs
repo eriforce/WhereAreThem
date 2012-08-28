@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using PureLib.WPF;
 
 namespace WhereAreThem.WinViewer.ViewModel {
@@ -24,10 +25,10 @@ namespace WhereAreThem.WinViewer.ViewModel {
             }
         }
 
-        public void Busy(string content, Action action) {
+        public async void Busy(string content, Task task) {
             BusyContent = content;
             IsBusy = true;
-            action();
+            await task;
             IsBusy = false;
         }
     }

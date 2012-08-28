@@ -9,8 +9,6 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
 
-        <t:RadBusyIndicator IsBusy="{Binding IsBusy}" BusyContent="{Binding BusyContent}" Grid.RowSpan="2"  />
-
         <TextBox x:Name="txtSearch" Text="{Binding SearchPattern, UpdateSourceTrigger=PropertyChanged}" Height="23" Margin="0,0,81,0" VerticalAlignment="Top"></TextBox>
         <Button Command="{Binding SearchCommand}" IsDefault="True" Content="Search" Width="75" Height="23" VerticalAlignment="Top" HorizontalAlignment="Right"></Button>
 
@@ -44,5 +42,7 @@
                 <DataGridTextColumn Header="Modified" Binding="{Binding Item.ModifiedDateUtc, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
+
+        <t:RadBusyIndicator IsBusy="{Binding IsBusy}" BusyContent="{Binding BusyContent}" Grid.RowSpan="2"  />
     </Grid>
 </Window>

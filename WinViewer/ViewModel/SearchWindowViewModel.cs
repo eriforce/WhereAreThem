@@ -56,10 +56,8 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get {
                 if (_searchCommand == null)
                     _searchCommand = new RelayCommand((p) => {
-                        Busy("Searching {0} ...".FormatWith(_location), async () => {
-                            Results.Clear();
-                            await Task.Run(() => SearchInFolder(Root, RootStack));
-                        });
+                        Results.Clear();
+                        Busy("Searching {0} ...".FormatWith(_location), Task.Run(() => SearchInFolder(Root, RootStack)));
                     }, (p) => { return !SearchPattern.IsNullOrEmpty(); });
                 return _searchCommand;
             }

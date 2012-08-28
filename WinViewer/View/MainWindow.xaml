@@ -13,8 +13,6 @@
             <ColumnDefinition Width="3*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <t:RadBusyIndicator IsBusy="{Binding IsBusy}" BusyContent="{Binding BusyContent}" Grid.ColumnSpan="2"  />
-
         <TreeView ItemsSource="{Binding Computers}" TreeViewItem.Selected="FolderTree_Selected" TreeViewItem.Expanded="FolderTree_Expanded" Grid.Column="0" Margin="0,0,2,0">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
@@ -74,5 +72,7 @@
         <StatusBar Grid.Column="1" VerticalAlignment="Bottom">
             <StatusBarItem Content="{Binding StatusBarText}" />
         </StatusBar>
+
+        <t:RadBusyIndicator IsBusy="{Binding IsBusy}" BusyContent="{Binding BusyContent}" Grid.ColumnSpan="2"  />
     </Grid>
 </Window>
