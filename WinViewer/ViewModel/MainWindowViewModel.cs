@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using PureLib.Common;
 using PureLib.WPF;
+using WhereAreThem.Model;
 using WhereAreThem.Model.Models;
 using WhereAreThem.WinViewer.Event;
 using WhereAreThem.WinViewer.Model;
@@ -18,6 +21,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         private string _statusBarText;
         private Folder _selectedFolder;
         private FileSystemItem _selectedItem;
+        private ICommand _updateCommand;
         private ICommand _copyCommand;
         private ICommand _openPropertiesCommand;
 
@@ -53,6 +57,28 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 RaiseChange(() => SelectedItem);
             }
         }
+        public ICommand UpdateCommand {
+            get {
+                if (_updateCommand == null) {
+                    _updateCommand = new RelayCommand(async (p) => {
+                        List<Folder> folders = SelectedFolderStack.Skip(1).ToList();
+                        folders.Add(SelectedFolder);
+                        if (p != SelectedFolder)
+                            folders.Add((Folder)p);
+
+                        App.Scanner.PrintLine += ScannerPrintLine;
+                        await BusyAsync(null, Task.Run(() => {
+                            App.Scanner.ScanUpdate(Path.Combine(folders.Select(f => f.Name).ToArray()));
+                            App.Scanner.PrintLine -= ScannerPrintLine;
+                        }));
+                    }, (p) => {
+                        return (p is Folder) && !(p is Computer)
+                            && (SelectedFolderStack.First().Name == Environment.MachineName);
+                    });
+                }
+                return _updateCommand;
+            }
+        }
         public ICommand CopyCommand {
             get {
                 if (_copyCommand == null)
@@ -77,6 +103,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             List<Folder> stack = new List<Folder>(SelectedFolderStack);
                             if (p != SelectedFolder)
                                 stack.Add(SelectedFolder);
+
                             OpeningProperties(this, new OpeningPropertiesEventArgs(item, stack));
                         }
                     }, (p) => SelectedFolderStack.Any());
@@ -92,6 +119,10 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 Folders = App.Loader.GetDrives(n).Select(
                     d => (Folder)new Drive(n, d.Name, d.CreatedDateUtc)).ToList()
             }).ToList();
+        }
+
+        private void ScannerPrintLine(object sender, StringEventArgs e) {
+            BusyContent = e.String;
         }
     }
 }

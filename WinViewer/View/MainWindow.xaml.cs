@@ -72,10 +72,26 @@ namespace WhereAreThem.WinViewer.View {
             }
         }
 
-        private void ItemsControlMouseRightClick(object sender, MouseButtonEventArgs e) {
+        private void FolderTreeMouseRightClick(object sender, MouseButtonEventArgs e) {
             TreeViewItem item = GetParentTreeNode(e.OriginalSource as DependencyObject);
             item.Focus();
             e.Handled = true;
+        }
+
+        private async void FolderTreeSelected(object sender, RoutedEventArgs e) {
+            _selectedTreeViewItem = (TreeViewItem)e.OriginalSource;
+
+            TreeView treeView = (TreeView)sender;
+            await LoadDriveAsync(treeView.SelectedItem);
+            VM.SelectedFolder = (Folder)treeView.SelectedItem;
+            List<Folder> stack = new List<Folder>();
+            GetFolderStack(_selectedTreeViewItem, stack);
+            VM.SelectedFolderStack = stack;
+        }
+
+        private async void FolderTreeExpanded(object sender, RoutedEventArgs e) {
+            TreeViewItem treeViewItem = (TreeViewItem)e.OriginalSource;
+            await LoadDriveAsync(treeViewItem.Header);
         }
 
         private void DataGridMouseDoubleClick(object sender, MouseButtonEventArgs e) {
@@ -93,22 +109,6 @@ namespace WhereAreThem.WinViewer.View {
         private void DataGridSelectionChanged(object sender, SelectionChangedEventArgs e) {
             if (VM.SelectedItem != null)
                 ((DataGrid)sender).ScrollIntoView(VM.SelectedItem);
-        }
-
-        private async void FolderTreeSelected(object sender, RoutedEventArgs e) {
-            _selectedTreeViewItem = (TreeViewItem)e.OriginalSource;
-
-            TreeView treeView = (TreeView)sender;
-            await LoadDriveAsync(treeView.SelectedItem);
-            VM.SelectedFolder = (Folder)treeView.SelectedItem;
-            List<Folder> stack = new List<Folder>();
-            GetFolderStack(_selectedTreeViewItem, stack);
-            VM.SelectedFolderStack = stack;
-        }
-
-        private async void FolderTreeExpanded(object sender, RoutedEventArgs e) {
-            TreeViewItem treeViewItem = (TreeViewItem)e.OriginalSource;
-            await LoadDriveAsync(treeViewItem.Header);
         }
 
         private void OnLocatingItem(object sender, LocatingItemEventArgs e) {

@@ -17,8 +17,8 @@ namespace WhereAreThem.Model {
 
         public event StringEventHandler PrintLine;
 
-        public Scanner(string machinePath, IPersistence persistence) {
-            _machinePath = machinePath;
+        public Scanner(string outputPath, IPersistence persistence) {
+            _machinePath = Path.Combine(outputPath, Environment.MachineName);
             _persistence = persistence;
         }
 
@@ -57,6 +57,8 @@ namespace WhereAreThem.Model {
         }
 
         private void Save(string listPath, Folder drive) {
+            if (!Directory.Exists(_machinePath))
+                Directory.CreateDirectory(_machinePath);
             drive.CreatedDateUtc = DateTime.UtcNow;
             _persistence.Save(drive, listPath);
         }

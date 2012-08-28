@@ -17,11 +17,8 @@ namespace WhereAreThem.Scanner {
         static void Main(string[] args) {
             IPersistence persistence = Constant.Persistence;
             string outputPath = ConfigurationManager.AppSettings["outputPath"].WrapPath();
-            string machinePath = Path.Combine(outputPath, Environment.MachineName);
-            Model.Scanner scanner = new Model.Scanner(machinePath, Constant.Persistence);
+            Model.Scanner scanner = new Model.Scanner(outputPath, Constant.Persistence);
             scanner.PrintLine += new StringEventHandler((s, e) => { Console.WriteLine(e.String); });
-            if (!Directory.Exists(machinePath))
-                Directory.CreateDirectory(machinePath);
 
             const string updateArgumentName = "u";
             Arguments arguments = new Arguments(args);

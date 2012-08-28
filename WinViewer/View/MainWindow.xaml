@@ -6,6 +6,8 @@
         Title="WhereAreThem WinViewer" Height="400" Width="600" WindowState="Maximized" Icon="/WhereAreThem.WinViewer;component/Resources/ef.ico">
     <Window.Resources>
         <ContextMenu x:Key="watMenu">
+            <MenuItem Header="Update" CommandParameter="{Binding}"
+                      Command="{Binding DataContext.UpdateCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
             <MenuItem Header="Copy" CommandParameter="{Binding}"
                       Command="{Binding DataContext.CopyCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
             <MenuItem Header="Properties" CommandParameter="{Binding}"
@@ -25,7 +27,7 @@
         <TreeView ItemsSource="{Binding Computers}" TreeViewItem.Selected="FolderTreeSelected" TreeViewItem.Expanded="FolderTreeExpanded" Grid.Column="0" Margin="0,0,2,0">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
-                    <EventSetter Event="PreviewMouseRightButtonDown" Handler="ItemsControlMouseRightClick" />
+                    <EventSetter Event="PreviewMouseRightButtonDown" Handler="FolderTreeMouseRightClick" />
                     <Setter Property="ContextMenu" Value="{StaticResource watMenu}" />
                     <Setter Property="Margin" Value="2" />
                 </Style>
@@ -49,7 +51,6 @@
                   AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" GridLinesVisibility="None">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridCell}">
-                    <EventSetter Event="PreviewMouseRightButtonDown" Handler="ItemsControlMouseRightClick" />
                     <Setter Property="ContextMenu" Value="{StaticResource watMenu}" />
                     <Setter Property="Margin" Value="2"></Setter>
                 </Style>
