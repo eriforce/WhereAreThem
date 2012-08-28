@@ -91,20 +91,20 @@ namespace WhereAreThem.WinViewer.View {
                 ((DataGrid)sender).ScrollIntoView(VM.SelectedItem);
         }
 
-        private void FolderTree_Selected(object sender, RoutedEventArgs e) {
+        private async void FolderTree_Selected(object sender, RoutedEventArgs e) {
             _selectedTreeViewItem = (TreeViewItem)e.OriginalSource;
 
             TreeView treeView = (TreeView)sender;
-            LoadDrive(treeView.SelectedItem);
+            await LoadDriveAsync(treeView.SelectedItem);
             VM.SelectedFolder = (Folder)treeView.SelectedItem;
             List<Folder> stack = new List<Folder>();
             GetFolderStack(_selectedTreeViewItem, stack);
             VM.SelectedFolderStack = stack;
         }
 
-        private void FolderTree_Expanded(object sender, RoutedEventArgs e) {
+        private async void FolderTree_Expanded(object sender, RoutedEventArgs e) {
             TreeViewItem treeViewItem = (TreeViewItem)e.OriginalSource;
-            LoadDrive(treeViewItem.Header);
+            await LoadDriveAsync(treeViewItem.Header);
         }
 
         private void OnLocatingItem(object sender, LocatingItemEventArgs e) {
@@ -118,10 +118,11 @@ namespace WhereAreThem.WinViewer.View {
             VM.SelectedItem = e.Result.Item;
         }
 
-        private void LoadDrive(object item) {
+        private async Task LoadDriveAsync(object item) {
             if (item is Drive) {
                 Drive drive = (Drive)item;
-                VM.Busy("Loading {0} ...".FormatWith(drive.Name), Task.Run(() => drive.Load()));
+                await VM.BusyAsync("Loading {0} ...".FormatWith(drive.Name),
+                    Task.Run(() => drive.Load()));
             }
         }
 

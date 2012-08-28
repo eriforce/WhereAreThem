@@ -25,7 +25,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             }
         }
 
-        public async void Busy(string content, Task task) {
+        public async Task BusyAsync(string content, Task task) {
             BusyContent = content;
             IsBusy = true;
             await task;
