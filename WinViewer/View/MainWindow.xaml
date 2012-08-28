@@ -4,6 +4,15 @@
         xmlns:t="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:m="clr-namespace:WhereAreThem.Model.Models;assembly=WhereAreThem.Model"
         Title="WhereAreThem WinViewer" Height="400" Width="600" WindowState="Maximized" Icon="/WhereAreThem.WinViewer;component/Resources/ef.ico">
+    <Window.Resources>
+        <ContextMenu x:Key="watMenu">
+            <MenuItem Header="Copy" CommandParameter="{Binding}"
+                      Command="{Binding DataContext.CopyCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+            <MenuItem Header="Properties" CommandParameter="{Binding}"
+                      Command="{Binding DataContext.OpenPropertiesCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+        </ContextMenu>
+    </Window.Resources>
+    
     <Grid Margin="6">
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
@@ -13,9 +22,11 @@
             <ColumnDefinition Width="3*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <TreeView ItemsSource="{Binding Computers}" TreeViewItem.Selected="FolderTree_Selected" TreeViewItem.Expanded="FolderTree_Expanded" Grid.Column="0" Margin="0,0,2,0">
+        <TreeView ItemsSource="{Binding Computers}" TreeViewItem.Selected="FolderTreeSelected" TreeViewItem.Expanded="FolderTreeExpanded" Grid.Column="0" Margin="0,0,2,0">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
+                    <EventSetter Event="PreviewMouseRightButtonDown" Handler="ItemsControlMouseRightClick" />
+                    <Setter Property="ContextMenu" Value="{StaticResource watMenu}" />
                     <Setter Property="Margin" Value="2" />
                 </Style>
             </TreeView.ItemContainerStyle>
@@ -33,19 +44,16 @@
         <GridSplitter Grid.Column="0" Width="2" ResizeDirection="Columns" HorizontalAlignment="Right" VerticalAlignment="Stretch"/>
         <GridSplitter Grid.Column="1" Width="2" ResizeDirection="Columns" HorizontalAlignment="Left" VerticalAlignment="Stretch"/>
 
-        <DataGrid ItemsSource="{Binding SelectedFolder.Items}" SelectedItem="{Binding SelectedItem}" Grid.Column="1" Margin="2,0,0,22" MouseDoubleClick="DataGrid_MouseDoubleClick" SelectionChanged="DataGrid_SelectionChanged"
-                  AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" GridLinesVisibility="None">
+        <DataGrid ItemsSource="{Binding SelectedFolder.Items}" SelectedItem="{Binding SelectedItem}" Grid.Column="1" Margin="2,0,0,22"
+                  MouseDoubleClick="DataGridMouseDoubleClick" SelectionChanged="DataGridSelectionChanged" IsReadOnly="True"
+                  AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" GridLinesVisibility="None">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridCell}">
+                    <EventSetter Event="PreviewMouseRightButtonDown" Handler="ItemsControlMouseRightClick" />
+                    <Setter Property="ContextMenu" Value="{StaticResource watMenu}" />
                     <Setter Property="Margin" Value="2"></Setter>
                 </Style>
             </DataGrid.Resources>
-            <DataGrid.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Copy" Command="{Binding CopyCommand}" />
-                    <MenuItem Header="Properties" Command="{Binding OpenPropertiesCommand}" />
-                </ContextMenu>
-            </DataGrid.ContextMenu>
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Name">
                     <DataGridTemplateColumn.CellTemplate>

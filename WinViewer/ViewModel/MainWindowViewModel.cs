@@ -57,22 +57,14 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get {
                 if (_copyCommand == null)
                     _copyCommand = new RelayCommand((p) => {
-                        const int tryTimesLimit = 3;
-                        int tryTimes = 0;
-                        while (tryTimes < tryTimesLimit) {
-                            try {
-                                if (tryTimes > 0)
-                                    Thread.Sleep(1000);
-                                Clipboard.SetText(SelectedItem.Name);
-                                break;
-                            }
-                            catch (COMException) {
-                                tryTimes++;
-                                if (tryTimes == tryTimesLimit)
-                                    MessageBox.Show(View, "Cannot access the clipboard.");
-                            }
+                        FileSystemItem item = p as FileSystemItem;
+                        try {
+                            Clipboard.SetText(item.Name);
                         }
-                    }, (p) => { return SelectedItem != null; });
+                        catch (COMException) {
+                            MessageBox.Show(View, "Cannot access the clipboard.");
+                        }
+                    });
                 return _copyCommand;
             }
         }
@@ -80,9 +72,14 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get {
                 if (_openPropertiesCommand == null)
                     _openPropertiesCommand = new RelayCommand((p) => {
-                        if (OpeningProperties != null)
-                            OpeningProperties(this, new OpeningPropertiesEventArgs(SelectedItem));
-                    }, (p) => { return SelectedItem != null; });
+                        FileSystemItem item = p as FileSystemItem;
+                        if (OpeningProperties != null) {
+                            List<Folder> stack = new List<Folder>(SelectedFolderStack);
+                            if (p != SelectedFolder)
+                                stack.Add(SelectedFolder);
+                            OpeningProperties(this, new OpeningPropertiesEventArgs(item, stack));
+                        }
+                    }, (p) => SelectedFolderStack.Any());
                 return _openPropertiesCommand;
             }
         }

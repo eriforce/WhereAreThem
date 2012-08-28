@@ -35,7 +35,7 @@ namespace WhereAreThem.WinViewer.View {
                     _searchWindow.VM.LocatingItem += OnLocatingItem;
                     _searchWindow.Closing += (s, e) => {
                         ((Window)s).Hide();
-                        KeyDown += Window_KeyDown;
+                        KeyDown += WindowKeyDown;
                         e.Cancel = true;
                     };
                 }
@@ -46,7 +46,7 @@ namespace WhereAreThem.WinViewer.View {
         public MainWindow() {
             InitializeComponent();
 
-            KeyDown += Window_KeyDown;
+            KeyDown += WindowKeyDown;
 
             VM = new MainWindowViewModel();
             VM.View = this;
@@ -55,26 +55,30 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void OnOpeningProperties(object sender, OpeningPropertiesEventArgs e) {
-            List<Folder> stack = new List<Folder>(VM.SelectedFolderStack);
-            stack.Add(VM.SelectedFolder);
-            PropertiesWindow window = new PropertiesWindow(VM.SelectedItem, stack);
+            PropertiesWindow window = new PropertiesWindow(e.Item, e.FolderStack);
             window.Owner = this;
             window.Show();
         }
 
-        private void Window_KeyDown(object sender, KeyEventArgs e) {
+        private void WindowKeyDown(object sender, KeyEventArgs e) {
             if ((e.Key == Key.F) && (Keyboard.Modifiers == ModifierKeys.Control)) {
                 if ((VM.SelectedFolder != null) && !(VM.SelectedFolder is Computer)) {
                     SearchWindow.VM.Root = VM.SelectedFolder;
                     SearchWindow.VM.RootStack = VM.SelectedFolderStack;
                     SearchWindow.Show();
-                    KeyDown -= Window_KeyDown;
+                    KeyDown -= WindowKeyDown;
                 }
                 e.Handled = true;
             }
         }
 
-        private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+        private void ItemsControlMouseRightClick(object sender, MouseButtonEventArgs e) {
+            TreeViewItem item = GetParentTreeNode(e.OriginalSource as DependencyObject);
+            item.Focus();
+            e.Handled = true;
+        }
+
+        private void DataGridMouseDoubleClick(object sender, MouseButtonEventArgs e) {
             DataGrid dataGrid = (DataGrid)sender;
             FileSystemItem item = (FileSystemItem)dataGrid.SelectedItem;
 
@@ -86,12 +90,12 @@ namespace WhereAreThem.WinViewer.View {
             }
         }
 
-        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+        private void DataGridSelectionChanged(object sender, SelectionChangedEventArgs e) {
             if (VM.SelectedItem != null)
                 ((DataGrid)sender).ScrollIntoView(VM.SelectedItem);
         }
 
-        private async void FolderTree_Selected(object sender, RoutedEventArgs e) {
+        private async void FolderTreeSelected(object sender, RoutedEventArgs e) {
             _selectedTreeViewItem = (TreeViewItem)e.OriginalSource;
 
             TreeView treeView = (TreeView)sender;
@@ -102,7 +106,7 @@ namespace WhereAreThem.WinViewer.View {
             VM.SelectedFolderStack = stack;
         }
 
-        private async void FolderTree_Expanded(object sender, RoutedEventArgs e) {
+        private async void FolderTreeExpanded(object sender, RoutedEventArgs e) {
             TreeViewItem treeViewItem = (TreeViewItem)e.OriginalSource;
             await LoadDriveAsync(treeViewItem.Header);
         }
@@ -142,7 +146,7 @@ namespace WhereAreThem.WinViewer.View {
                 return item;
         }
 
-        private static TreeViewItem GetParentTreeNode(TreeViewItem item) {
+        private TreeViewItem GetParentTreeNode(DependencyObject item) {
             DependencyObject parent = item;
             do {
                 parent = VisualTreeHelper.GetParent(parent);

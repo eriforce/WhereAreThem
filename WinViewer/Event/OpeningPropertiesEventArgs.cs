@@ -8,9 +8,11 @@ using WhereAreThem.Model.Models;
 namespace WhereAreThem.WinViewer.Event {
     public class OpeningPropertiesEventArgs : EventArgs {
         public FileSystemItem Item { get; private set; }
+        public List<Folder> FolderStack { get; private set; }
 
-        public OpeningPropertiesEventArgs(FileSystemItem item) {
+        public OpeningPropertiesEventArgs(FileSystemItem item, List<Folder> folderStack) {
             Item = item;
+            FolderStack = folderStack;
         }
     }
 
