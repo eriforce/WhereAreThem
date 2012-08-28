@@ -4,6 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using PureLib.Common;
+using WhereAreThem.Model.Models;
+using WhereAreThem.Model.Persistences;
+using IO = System.IO;
 
 namespace WhereAreThem.Model {
     public class Loader : ILoader {
@@ -40,7 +43,7 @@ namespace WhereAreThem.Model {
             string listFileName = Path.ChangeExtension(driveLetter, Constant.ListExt);
             string listPath = Path.Combine(machinePath, listFileName);
 
-            if (!System.IO.File.Exists(listPath))
+            if (!IO.File.Exists(listPath))
                 throw new FileNotFoundException("List {0} cannot be found.".FormatWith(listPath));
 
             Folder machine = _machineCache[machineName];

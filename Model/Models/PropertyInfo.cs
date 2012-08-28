@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using PureLib.Common;
 
-namespace WhereAreThem.Model {
+namespace WhereAreThem.Model.Models {
     public class PropertyInfo {
         public int FolderCount { get; private set; }
         public int FileCount { get; private set; }

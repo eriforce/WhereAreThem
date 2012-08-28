@@ -1,23 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
+using WhereAreThem.Model.Models;
+using IO = System.IO;
 
-namespace WhereAreThem.Model {
+namespace WhereAreThem.Model.Persistences {
     public class StringPersistence : PersistenceBase {
         private const char columnSeparator = '|';
         private const string rowFormat = "{0}{1}{2}";
         private const string folderFormat = "{1}{0}{2}";
         private const string fileFormat = "{1}{0}{2}{0}{3}{0}{4}";
 
-        public override void Save(Folder folder, Stream stream) {
-            StreamWriter writer = new StreamWriter(stream);
+        public override void Save(Folder folder, IO.Stream stream) {
+            IO.StreamWriter writer = new IO.StreamWriter(stream);
             Save(folder, 0, writer);
             writer.Flush();
         }
 
-        private void Save(Folder folder, int level, StreamWriter sw) {
+        private void Save(Folder folder, int level, IO.StreamWriter sw) {
             sw.WriteLine(GetRow(level++, GetFolderString(folder)));
             if (folder.Folders != null)
                 foreach (Folder f in folder.Folders) {
@@ -43,8 +44,8 @@ namespace WhereAreThem.Model {
                 file.Name, file.Size, file.CreatedDateUtc.Ticks, file.ModifiedDateUtc.Ticks);
         }
 
-        public override Folder Load(Stream stream) {
-            StreamReader reader = new StreamReader(stream);
+        public override Folder Load(IO.Stream stream) {
+            IO.StreamReader reader = new IO.StreamReader(stream);
             string line = reader.ReadLine();
             string[] parts = line.Split(columnSeparator);
             int folderLinePartsLength = parts.Length;

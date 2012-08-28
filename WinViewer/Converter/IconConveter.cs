@@ -3,10 +3,11 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
-using WhereAreThem.Model;
+using WhereAreThem.Model.Models;
+using WhereAreThem.WinViewer.Model;
 using IO = System.IO;
 
-namespace WhereAreThem.WinViewer {
+namespace WhereAreThem.WinViewer.Converter {
     public class IconConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             ItemType type;

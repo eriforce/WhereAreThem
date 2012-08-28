@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace WhereAreThem.Model {
+namespace WhereAreThem.Model.Models {
     [DataContract, Serializable]
     public abstract class FileSystemItem : IComparable<FileSystemItem> {
         [DataMember]

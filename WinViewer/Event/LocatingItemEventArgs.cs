@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using WhereAreThem.WinViewer.Model;
 
-namespace WhereAreThem.WinViewer {
+namespace WhereAreThem.WinViewer.Event {
     public class LocatingItemEventArgs : EventArgs {
         public SearchResult Result { get; private set; }
 

@@ -1,5 +1,5 @@
 ﻿@using PureLib.Common
-@using WhereAreThem.Model
+@using WhereAreThem.Model.Models
 @using WhereAreThem.WebViewer.Models
 @model Folder
 @{
@@ -65,7 +65,7 @@
             }
         }
         @if (Model.Files != null) {
-            foreach (WhereAreThem.Model.File f in Model.Files) {
+            foreach (WhereAreThem.Model.Models.File f in Model.Files) {
                 if ((count > 0) && ((count % rowCount) == 0)) {
                     @Html.Raw("</tbody></table><table class=\"viewer explorer list\"><tbody>")
                 }
@@ -112,7 +112,7 @@
                     }
                 }
                 @if (Model.Files != null) {
-                    foreach (WhereAreThem.Model.File f in Model.Files) {
+                    foreach (WhereAreThem.Model.Models.File f in Model.Files) {
                     <tr>
                         <td>
                             <a href="#">

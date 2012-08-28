@@ -10,7 +10,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace WhereAreThem.WinViewer {
+namespace WhereAreThem.WinViewer.Model {
     /// <summary>
     /// Provides static methods to read system icons for both folders and files.
     /// </summary>

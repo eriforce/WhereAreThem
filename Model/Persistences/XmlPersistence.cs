@@ -6,8 +6,9 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using PureLib.Common;
+using WhereAreThem.Model.Models;
 
-namespace WhereAreThem.Model {
+namespace WhereAreThem.Model.Persistences {
     public class XmlPersistence : PersistenceBase {
         public override void Save(Folder folder, Stream stream) {
             XmlSerializer serializer = new XmlSerializer(typeof(Folder));

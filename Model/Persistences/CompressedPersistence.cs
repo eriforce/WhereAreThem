@@ -5,8 +5,9 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using WhereAreThem.Model.Models;
 
-namespace WhereAreThem.Model {
+namespace WhereAreThem.Model.Persistences {
     public class CompressedPersistence<T> : IPersistence where T : IStreamPersistence {
         private T _streamPersistence = Activator.CreateInstance<T>();
 

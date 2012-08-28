@@ -9,10 +9,12 @@ using System.Windows;
 using System.Windows.Input;
 using PureLib.Common;
 using PureLib.WPF;
-using WhereAreThem.Model;
+using WhereAreThem.Model.Models;
+using WhereAreThem.WinViewer.Event;
+using WhereAreThem.WinViewer.Model;
 
-namespace WhereAreThem.WinViewer {
-    public class MainWindowViewModel : ViewModelBase {
+namespace WhereAreThem.WinViewer.ViewModel {
+    public class MainWindowViewModel : BusyViewModelBase {
         private string _statusBarText;
         private Folder _selectedFolder;
         private FileSystemItem _selectedItem;
@@ -85,6 +87,8 @@ namespace WhereAreThem.WinViewer {
             }
         }
 
+        public event OpeningPropertiesEventHandler OpeningProperties;
+
         public MainWindowViewModel() {
             Computers = App.Loader.MachineNames.Select(n => new Computer() {
                 Name = n,
@@ -92,7 +96,5 @@ namespace WhereAreThem.WinViewer {
                     d => (Folder)new Drive(n, d.Name, d.CreatedDateUtc)).ToList()
             }).ToList();
         }
-
-        public event OpeningPropertiesEventHandler OpeningProperties;
     }
 }

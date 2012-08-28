@@ -5,28 +5,23 @@ using System.Text;
 using System.Windows;
 using PureLib.Common;
 using PureLib.WPF;
-using WhereAreThem.Model;
+using WhereAreThem.Model.Models;
+using IO = System.IO;
 
-namespace WhereAreThem.WinViewer {
+namespace WhereAreThem.WinViewer.ViewModel {
     public class PropertiesWindowViewModel : ViewModelBase {
-        private List<Folder> _itemStack {  get; set; }
+        private List<Folder> _itemStack { get; set; }
         private PropertyInfo _propertyInfo { get; set; }
 
         public FileSystemItem Item { get; private set; }
         public string FileSystemType {
-            get {
-                return Item.GetType().Name;
-            }
+            get { return Item.GetType().Name; }
         }
         public string Location {
-            get {
-                return System.IO.Path.Combine(_itemStack.Select(f => f.Name).ToArray());
-            }
+            get { return IO.Path.Combine(_itemStack.Select(f => f.Name).ToArray()); }
         }
         public string Size {
-            get {
-                return string.Format("{0} ({1} bytes)", _propertyInfo.TotalSizeFriendlyString, _propertyInfo.TotalSizeString);
-            }
+            get { return string.Format("{0} ({1} bytes)", _propertyInfo.TotalSizeFriendlyString, _propertyInfo.TotalSizeString); }
         }
         public string Contains {
             get {

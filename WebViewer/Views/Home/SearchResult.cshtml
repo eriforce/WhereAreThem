@@ -1,5 +1,5 @@
 ﻿@using PureLib.Common
-@using WhereAreThem.Model
+@using WhereAreThem.Model.Models
 @using WhereAreThem.WebViewer.Models
 @model Dictionary<FileSystemItem, string>
 @{
@@ -50,7 +50,7 @@
                         </td>
                     }
                     else {
-                        WhereAreThem.Model.File f = (WhereAreThem.Model.File)p.Key;
+                        WhereAreThem.Model.Models.File f = (WhereAreThem.Model.Models.File)p.Key;
                         <td>
                             <span class="icon file item iconText">@f.Name</span>
                         </td>

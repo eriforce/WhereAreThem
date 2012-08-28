@@ -10,9 +10,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using WhereAreThem.Model;
+using WhereAreThem.WinViewer.ViewModel;
 
-namespace WhereAreThem.WinViewer {
+namespace WhereAreThem.WinViewer.View {
     /// <summary>
     /// Interaction logic for SearchWindow.xaml
     /// </summary>

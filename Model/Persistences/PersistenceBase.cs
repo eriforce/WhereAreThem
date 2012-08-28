@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using WhereAreThem.Model.Models;
 
-namespace WhereAreThem.Model {
+namespace WhereAreThem.Model.Persistences {
     public abstract class PersistenceBase : IPersistence, IStreamPersistence {
         public virtual void Save(Folder folder, string path) {
             using (FileStream stream = new FileStream(path, FileMode.Create)) {

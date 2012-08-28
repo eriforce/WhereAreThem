@@ -11,9 +11,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using WhereAreThem.Model;
+using WhereAreThem.Model.Models;
+using WhereAreThem.WinViewer.Event;
+using WhereAreThem.WinViewer.Model;
+using WhereAreThem.WinViewer.ViewModel;
 
-namespace WhereAreThem.WinViewer {
+namespace WhereAreThem.WinViewer.View {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>

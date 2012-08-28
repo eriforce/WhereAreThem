@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using PureLib.Common;
-using WhereAreThem.Model;
+using WhereAreThem.Model.Models;
 
 namespace WhereAreThem.WebViewer.Models {
     public static class Extensions {

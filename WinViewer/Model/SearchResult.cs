@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Text;
-using WhereAreThem.Model;
+using WhereAreThem.Model.Models;
 
-namespace WhereAreThem.WinViewer {
+namespace WhereAreThem.WinViewer.Model {
     public class SearchResult {
         public FileSystemItem Item { get; private set; }
         public List<Folder> Stack { get; private set; }

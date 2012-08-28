@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using PureLib.Common;
 using WhereAreThem.Model;
+using WhereAreThem.Model.Models;
 using WhereAreThem.WebViewer.Models;
 
 namespace WhereAreThem.WebViewer.Controllers {

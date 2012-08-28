@@ -24,7 +24,7 @@ namespace WhereAreThem.WinViewer {
             }
         }
 
-        private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
+        private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
             if (MainWindow == null)
                 MessageBox.Show(e.Exception.GetTraceText());
             else

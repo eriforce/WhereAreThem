@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using WhereAreThem.Model;
+using WhereAreThem.Model.Models;
 
-namespace WhereAreThem.WinViewer {
+namespace WhereAreThem.WinViewer.Model {
     public class Drive : Folder, INotifyPropertyChanged {
         private static List<Folder> _dummyFolders = new List<Folder>() { new Folder() };
         private string _machineName;

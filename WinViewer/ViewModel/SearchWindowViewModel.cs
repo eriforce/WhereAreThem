@@ -7,11 +7,13 @@ using System.Text.RegularExpressions;
 using System.Windows.Input;
 using PureLib.Common;
 using PureLib.WPF;
-using WhereAreThem.Model;
+using WhereAreThem.Model.Models;
+using WhereAreThem.WinViewer.Event;
+using WhereAreThem.WinViewer.Model;
 using IO = System.IO;
 
-namespace WhereAreThem.WinViewer {
-    public class SearchWindowViewModel : ViewModelBase {
+namespace WhereAreThem.WinViewer.ViewModel {
+    public class SearchWindowViewModel : BusyViewModelBase {
         private SearchResult _selectedSearchResult;
         private ObservableCollection<SearchResult> _results;
         private string _searchPattern;
@@ -58,11 +60,11 @@ namespace WhereAreThem.WinViewer {
             }
         }
 
+        public event LocatingItemEventHandler LocatingItem;
+
         public SearchWindowViewModel() {
             Results = new ObservableCollection<SearchResult>();
         }
-
-        public event LocatingItemEventHandler LocatingItem;
 
         public void RefreshWindowTitle() {
             RaiseChange(() => WindowTitle);

@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using PureLib.Common;
+using WhereAreThem.Model.Models;
 
-namespace WhereAreThem.Model {
+namespace WhereAreThem.Model.Persistences {
     public class JsonPersistence : PersistenceBase {
         private const SerializationFormat format = SerializationFormat.Json;
 
