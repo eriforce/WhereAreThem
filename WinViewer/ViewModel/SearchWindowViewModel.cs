@@ -101,11 +101,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         }
 
         private void AddToResult(FileSystemItem item, List<Folder> folderStack) {
-            Action add = () => { Results.Add(new SearchResult(item, folderStack)); };
-            if (View.Dispatcher.Thread == Thread.CurrentThread)
-                add();
-            else
-                View.Dispatcher.Invoke(add);
+            RunOnUIThread(() => Results.Add(new SearchResult(item, folderStack)));
         }
     }
 }

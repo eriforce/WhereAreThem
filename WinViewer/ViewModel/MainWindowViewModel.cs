@@ -67,14 +67,17 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         if (p != SelectedFolder)
                             folders.Add((Folder)p);
 
-                        await BusyAsync(null, Task.Run(() => {
+                        await BusyAsync("Scanning ...", Task.Run(() => {
+                            Folder driveFolder = folders.First();
                             string path = Path.Combine(folders.Select(f => f.Name).ToArray());
-                            if (!Directory.Exists(path)) {
-                                MessageBox.Show(View, "Cannot find {0} on local disk.".FormatWith(path));
-                                return;
+                            if (Directory.Exists(path))
+                                App.Scanner.ScanUpdate(path);
+                            else {
+                                Folder parent = folders[folders.Count - 2];
+                                parent.Folders.Remove(folders.Last());
+                                App.Scanner.Save(driveFolder);
                             }
 
-                            Folder driveFolder = App.Scanner.ScanUpdate(path);
                             Computer computer = Computers.Single(c => c.Name == Environment.MachineName);
                             Drive drive = (Drive)computer.Folders.Single(d => d.Name == driveFolder.Name);
                             drive.Load();

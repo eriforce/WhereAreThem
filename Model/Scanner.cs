@@ -47,6 +47,10 @@ namespace WhereAreThem.Model {
             return driveFolder;
         }
 
+        public void Save(Folder drive) {
+            Save(GetListPath(GetDriveLetter(drive.Name)), drive);
+        }
+        
         private void OnPrintLine(string s) {
             if (PrintLine != null)
                 PrintLine(this, new StringEventArgs() { String = s });
@@ -61,6 +65,7 @@ namespace WhereAreThem.Model {
         }
 
         private void Save(string listPath, Folder drive) {
+            OnPrintLine("Saving {0} ...".FormatWith(drive.Name));
             if (!Directory.Exists(_machinePath))
                 Directory.CreateDirectory(_machinePath);
             drive.CreatedDateUtc = DateTime.UtcNow;

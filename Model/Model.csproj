@@ -48,7 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constant.cs" />
-    <Compile Include="ILoader.cs" />
     <Compile Include="Loader.cs" />
     <Compile Include="Models\File.cs" />
     <Compile Include="Models\FileSystemItem.cs" />

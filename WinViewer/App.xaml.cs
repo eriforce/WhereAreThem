@@ -14,13 +14,13 @@ namespace WhereAreThem.WinViewer {
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : SingleInstanceApp {
-        private static ILoader _loader;
+        private static Loader _loader;
         private static Scanner _scanner;
         private static string _path {
             get { return ConfigurationManager.AppSettings["path"].WrapPath(); }
         }
 
-        public static ILoader Loader {
+        public static Loader Loader {
             get {
                 if (_loader == null)
                     _loader = new Loader(_path, Constant.Persistence);

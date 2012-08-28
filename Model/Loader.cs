@@ -9,7 +9,7 @@ using WhereAreThem.Model.Persistences;
 using IO = System.IO;
 
 namespace WhereAreThem.Model {
-    public class Loader : ILoader {
+    public class Loader {
         private string _path;
         private IPersistence _persistence;
         private Dictionary<string, Folder> _machineCache = new Dictionary<string, Folder>();
