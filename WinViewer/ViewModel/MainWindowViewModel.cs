@@ -67,16 +67,18 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         if (p != SelectedFolder)
                             folders.Add((Folder)p);
 
-                        Folder driveFolder = null;
                         await BusyAsync(null, Task.Run(() => {
-                            App.Scanner.PrintLine += ScannerPrintLine;
-                            driveFolder = App.Scanner.ScanUpdate(Path.Combine(folders.Select(f => f.Name).ToArray()));
-                            App.Scanner.PrintLine -= ScannerPrintLine;
-                        }));
+                            string path = Path.Combine(folders.Select(f => f.Name).ToArray());
+                            if (!Directory.Exists(path)) {
+                                MessageBox.Show(View, "Cannot find {0} on local disk.".FormatWith(path));
+                                return;
+                            }
 
-                        Computer computer = Computers.Single(c => c.Name == Environment.MachineName);
-                        Drive drive = (Drive)computer.Folders.Single(d => d.Name == driveFolder.Name);
-                        drive.Load();
+                            Folder driveFolder = App.Scanner.ScanUpdate(path);
+                            Computer computer = Computers.Single(c => c.Name == Environment.MachineName);
+                            Drive drive = (Drive)computer.Folders.Single(d => d.Name == driveFolder.Name);
+                            drive.Load();
+                        }));
                     }, (p) => {
                         return (p is Folder) && !(p is Computer)
                             && (SelectedFolderStack != null) && SelectedFolderStack.Any()
@@ -121,6 +123,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public event OpeningPropertiesEventHandler OpeningProperties;
 
         public MainWindowViewModel() {
+            App.Scanner.PrintLine += ScannerPrintLine;
             Computers = App.Loader.MachineNames.Select(n => new Computer() {
                 Name = n,
                 Folders = App.Loader.GetDrives(n).Select(

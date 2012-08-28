@@ -34,11 +34,13 @@ namespace WhereAreThem.Model {
                 throw new ArgumentNullException("ScanUpdate path is null.");
             if (!Directory.Exists(path))
                 throw new DirectoryNotFoundException("Path '{0}' cannot be found.".FormatWith(path));
+            
             string[] parts = path.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
             parts[0] += Path.DirectorySeparatorChar;
             string listPath = GetListPath(GetDriveLetter(parts[0]));
             if (!IO.File.Exists(listPath))
                 throw new FileNotFoundException("List '{0}' cannot be found.".FormatWith(listPath));
+            
             Folder driveFolder = _persistence.Load(listPath);
             UpdateFolder(driveFolder, parts);
             Save(listPath, driveFolder);
