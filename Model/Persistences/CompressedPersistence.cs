@@ -27,7 +27,7 @@ namespace WhereAreThem.Model.Persistences {
         [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times")]
         public Folder Load(string path) {
             using (MemoryStream ms = new MemoryStream()) {
-                using (FileStream fs = new FileStream(path, FileMode.Open)) {
+                using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read)) {
                     using (GZipStream gzipStream = new GZipStream(fs, CompressionMode.Decompress)) {
                         gzipStream.CopyTo(ms);
                     }

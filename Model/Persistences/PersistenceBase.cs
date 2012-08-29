@@ -14,7 +14,7 @@ namespace WhereAreThem.Model.Persistences {
         }
 
         public virtual Folder Load(string path) {
-            using (FileStream stream = new FileStream(path, FileMode.Open)) {
+            using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read)) {
                 return Load(stream);
             }
         }
