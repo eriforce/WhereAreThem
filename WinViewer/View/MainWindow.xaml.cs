@@ -78,20 +78,20 @@ namespace WhereAreThem.WinViewer.View {
             e.Handled = true;
         }
 
-        private void FolderTreeSelected(object sender, RoutedEventArgs e) {
+        private async void FolderTreeSelected(object sender, RoutedEventArgs e) {
             _selectedTreeViewItem = (TreeViewItem)e.OriginalSource;
 
             TreeView treeView = (TreeView)sender;
-            LoadDriveAsync(treeView.SelectedItem);
+            await LoadDriveAsync(treeView.SelectedItem);
             VM.SelectedFolder = (Folder)treeView.SelectedItem;
             List<Folder> stack = new List<Folder>();
             GetFolderStack(_selectedTreeViewItem, stack);
             VM.SelectedFolderStack = stack;
         }
 
-        private void FolderTreeExpanded(object sender, RoutedEventArgs e) {
+        private async void FolderTreeExpanded(object sender, RoutedEventArgs e) {
             TreeViewItem treeViewItem = (TreeViewItem)e.OriginalSource;
-            LoadDriveAsync(treeViewItem.Header);
+            await LoadDriveAsync(treeViewItem.Header);
         }
 
         private void DataGridMouseDoubleClick(object sender, MouseButtonEventArgs e) {
@@ -122,10 +122,10 @@ namespace WhereAreThem.WinViewer.View {
             VM.SelectedItem = e.Result.Item;
         }
 
-        private void LoadDriveAsync(object item) {
+        private async Task LoadDriveAsync(object item) {
             if (item is Drive) {
                 Drive drive = (Drive)item;
-                VM.BusyWith("Loading {0} ...".FormatWith(drive.Name), drive.Load);
+                await VM.BusyAsync("Loading {0} ...".FormatWith(drive.Name), drive.Load);
             }
         }
 

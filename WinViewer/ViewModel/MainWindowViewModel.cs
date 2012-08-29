@@ -61,17 +61,20 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public ICommand UpdateCommand {
             get {
                 if (_updateCommand == null) {
-                    _updateCommand = new RelayCommand((p) => {
+                    _updateCommand = new RelayCommand(async (p) => {
                         List<Folder> folders = SelectedFolderStack.Skip(1).ToList();
                         folders.Add(SelectedFolder);
                         if (p != SelectedFolder)
                             folders.Add((Folder)p);
 
-                        BusyWith("Scanning ...", () => {
+                        await BusyAsync("Scanning ...", () => {
                             Folder driveFolder = folders.First();
                             string path = Path.Combine(folders.Select(f => f.Name).ToArray());
                             if (Directory.Exists(path))
-                                App.Scanner.ScanUpdate(path);
+                                if (p is Drive)
+                                    App.Scanner.Scan(path);
+                                else
+                                    App.Scanner.ScanUpdate(path);
                             else {
                                 Folder parent = folders[folders.Count - 2];
                                 parent.Folders.Remove(folders.Last());
@@ -83,9 +86,11 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             drive.Load();
                         });
                     }, (p) => {
-                        return (p is Folder) && !(p is Computer)
-                            && (SelectedFolderStack != null) && SelectedFolderStack.Any()
-                            && (SelectedFolderStack.First().Name == Environment.MachineName);
+                        if (!(p is Folder) || (p is Computer))
+                            return false;
+                        if ((p is Drive) && (SelectedFolder is Computer))
+                            return SelectedFolder.Name == Environment.MachineName;
+                        return SelectedFolderStack.First().Name == Environment.MachineName;
                     });
                 }
                 return _updateCommand;
@@ -126,16 +131,12 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public event OpeningPropertiesEventHandler OpeningProperties;
 
         public MainWindowViewModel() {
-            App.Scanner.PrintLine += ScannerPrintLine;
+            App.Scanner.PrintLine += (s, e) => { BusyContent = e.String; };
             Computers = App.Loader.MachineNames.Select(n => new Computer() {
                 Name = n,
                 Folders = App.Loader.GetDrives(n).Select(
                     d => (Folder)new Drive(n, d.Name, d.CreatedDateUtc)).ToList()
             }).ToList();
-        }
-
-        private void ScannerPrintLine(object sender, StringEventArgs e) {
-            BusyContent = e.String;
         }
     }
 }
