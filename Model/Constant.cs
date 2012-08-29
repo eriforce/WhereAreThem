@@ -13,22 +13,22 @@ namespace WhereAreThem.Model {
         private static IPersistence _persistence;
         public static IPersistence Persistence {
             get {
-                if (_persistence == null)
-                    LoadPersistence();
+                if (_persistence == null) {
+                    Type type = LoadType("persistence");
+                    if (type.IsGenericType)
+                        type = type.MakeGenericType(LoadType("persistenceArgs"));
+                    _persistence = Activator.CreateInstance(type) as IPersistence;
+                }
                 return _persistence;
             }
         }
 
-        private static void LoadPersistence() {
-            string persistenceType = ConfigurationManager.AppSettings["persistence"];
-            string typeArgs = ConfigurationManager.AppSettings["persistenceArgs"];
-
-            Type type = Type.GetType(persistenceType);
+        private static Type LoadType(string key) {
+            string typeName = ConfigurationManager.AppSettings[key];
+            Type type = Type.GetType(typeName);
             if (type == null)
-                throw new ApplicationException("Cannot load {0}.".FormatWith(persistenceType));
-            if (!typeArgs.IsNullOrEmpty())
-                type = type.MakeGenericType(Type.GetType(typeArgs));
-            _persistence = Activator.CreateInstance(type) as IPersistence;
+                throw new ApplicationException("Cannot load {0}.".FormatWith(typeName));
+            return type;
         }
     }
 }
