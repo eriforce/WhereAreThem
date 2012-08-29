@@ -67,7 +67,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         if (p != SelectedFolder)
                             folders.Add((Folder)p);
 
-                        await BusyAsync("Scanning ...", Task.Run(() => {
+                        await BusyAsync("Scanning ...", () => {
                             Folder driveFolder = folders.First();
                             string path = Path.Combine(folders.Select(f => f.Name).ToArray());
                             if (Directory.Exists(path))
@@ -81,7 +81,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             Computer computer = Computers.Single(c => c.Name == Environment.MachineName);
                             Drive drive = (Drive)computer.Folders.Single(d => d.Name == driveFolder.Name);
                             drive.Load();
-                        }));
+                        });
                     }, (p) => {
                         return (p is Folder) && !(p is Computer)
                             && (SelectedFolderStack != null) && SelectedFolderStack.Any()

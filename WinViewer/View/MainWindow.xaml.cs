@@ -125,8 +125,7 @@ namespace WhereAreThem.WinViewer.View {
         private async Task LoadDriveAsync(object item) {
             if (item is Drive) {
                 Drive drive = (Drive)item;
-                await VM.BusyAsync("Loading {0} ...".FormatWith(drive.Name),
-                    Task.Run(() => drive.Load()));
+                await VM.BusyAsync("Loading {0} ...".FormatWith(drive.Name), drive.Load);
             }
         }
 

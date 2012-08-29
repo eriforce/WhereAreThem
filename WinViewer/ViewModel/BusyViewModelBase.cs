@@ -25,10 +25,10 @@ namespace WhereAreThem.WinViewer.ViewModel {
             }
         }
 
-        public async Task BusyAsync(string content, Task task) {
+        public async Task BusyAsync(string content, Action action) {
             BusyContent = content;
             IsBusy = true;
-            await task;
+            await Task.Run(action);
             IsBusy = false;
         }
     }
