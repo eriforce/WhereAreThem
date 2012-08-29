@@ -70,20 +70,19 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         await BusyAsync("Scanning ...", () => {
                             Folder driveFolder = folders.First();
                             string path = Path.Combine(folders.Select(f => f.Name).ToArray());
-                            if (Directory.Exists(path))
+                            if (Directory.Exists(path)) {
                                 if (p is Drive)
                                     App.Scanner.Scan(path);
                                 else
                                     App.Scanner.ScanUpdate(path);
+                            }
                             else {
                                 Folder parent = folders[folders.Count - 2];
                                 parent.Folders.Remove(folders.Last());
                                 App.Scanner.Save(driveFolder);
                             }
 
-                            Computer computer = Computers.Single(c => c.Name == Environment.MachineName);
-                            Drive drive = (Drive)computer.Folders.Single(d => d.Name == driveFolder.Name);
-                            drive.Load();
+                            ((Drive)driveFolder).Load();
                         });
                     }, (p) => {
                         if (!(p is Folder) || (p is Computer))
@@ -137,6 +136,20 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 Folders = App.Loader.GetDrives(n).Select(
                     d => (Folder)new Drive(n, d.Name, d.CreatedDateUtc)).ToList()
             }).ToList();
+            InsertLocalComputer();
+        }
+
+        private void InsertLocalComputer() {
+            Computer computer = Computers.SingleOrDefault(c => c.Name.Equals(Environment.MachineName, StringComparison.OrdinalIgnoreCase));
+            if (computer == null) {
+                computer = new Computer() { Name = Environment.MachineName, Folders = new List<Folder>() };
+                Computers.Add(computer);
+            }
+            foreach (DriveInfo drive in DriveInfo.GetDrives()) {
+                if ((drive.DriveType == DriveType.Fixed) && !computer.Folders.Any(f => f.Name == drive.Name))
+                    computer.Folders.Add(new Drive(Environment.MachineName, drive.Name, DateTime.UtcNow) { IsFake = true, Folders = null });
+            }
+            computer.Folders.Sort();
         }
     }
 }

@@ -28,8 +28,15 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public async Task BusyAsync(string content, Action action) {
             BusyContent = content;
             IsBusy = true;
-            await Task.Run(action);
-            IsBusy = false;
+            try {
+                await Task.Run(action);
+            }
+            catch {
+                throw;
+            }
+            finally {
+                IsBusy = false;
+            }
         }
     }
 }

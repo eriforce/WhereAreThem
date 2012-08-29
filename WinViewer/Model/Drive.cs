@@ -9,6 +9,8 @@ namespace WhereAreThem.WinViewer.Model {
     public class Drive : Folder, INotifyPropertyChanged {
         private string _machineName;
 
+        public bool IsFake { get; set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Drive(string machineName, string driveName, DateTime createdDateUtc) {
@@ -24,6 +26,7 @@ namespace WhereAreThem.WinViewer.Model {
             CreatedDateUtc = drive.CreatedDateUtc;
             Files = drive.Files;
             Folders = drive.Folders;
+            IsFake = false;
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs("Folders"));
         }

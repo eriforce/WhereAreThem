@@ -22,7 +22,8 @@ namespace WhereAreThem.Model {
 
         public string[] MachineNames {
             get {
-                return Directory.GetDirectories(_path).Select(p => Path.GetFileName(p)).ToArray();
+                return !Directory.Exists(_path) ? new string[] { } :
+                    Directory.GetDirectories(_path).Select(p => Path.GetFileName(p)).ToArray();
             }
         }
 
