@@ -61,13 +61,13 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public ICommand UpdateCommand {
             get {
                 if (_updateCommand == null) {
-                    _updateCommand = new RelayCommand(async (p) => {
+                    _updateCommand = new RelayCommand((p) => {
                         List<Folder> folders = SelectedFolderStack.Skip(1).ToList();
                         folders.Add(SelectedFolder);
                         if (p != SelectedFolder)
                             folders.Add((Folder)p);
 
-                        await BusyAsync("Scanning ...", () => {
+                        BusyWith("Scanning ...", () => {
                             Folder driveFolder = folders.First();
                             string path = Path.Combine(folders.Select(f => f.Name).ToArray());
                             if (Directory.Exists(path))
