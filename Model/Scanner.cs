@@ -70,6 +70,7 @@ namespace WhereAreThem.Model {
                 Directory.CreateDirectory(_machinePath);
             drive.CreatedDateUtc = DateTime.UtcNow;
             _persistence.Save(drive, listPath);
+            OnPrintLine("Scanning of {0} has completed.".FormatWith(drive.Name));
         }
 
         private void UpdateFolder(Folder root, string[] pathParts) {
