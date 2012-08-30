@@ -8,8 +8,8 @@
         <ContextMenu x:Key="watMenu">
             <MenuItem Header="Copy" CommandParameter="{Binding}"
                       Command="{Binding DataContext.CopyCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
-            <MenuItem Header="Update" CommandParameter="{Binding}"
-                      Command="{Binding DataContext.UpdateCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+            <MenuItem Header="Scan" CommandParameter="{Binding}"
+                      Command="{Binding DataContext.ScanCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
             <MenuItem Header="Properties" CommandParameter="{Binding}"
                       Command="{Binding DataContext.OpenPropertiesCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
         </ContextMenu>
@@ -82,6 +82,6 @@
             <StatusBarItem Content="{Binding StatusBarText}" />
         </StatusBar>
 
-        <t:RadBusyIndicator IsBusy="{Binding IsBusy}" BusyContent="{Binding BusyContent}" Grid.ColumnSpan="2"  />
+        <t:RadBusyIndicator IsBusy="{Binding IsBusy}" BusyContent="{Binding BusyContent}" Grid.ColumnSpan="2" />
     </Grid>
 </Window>

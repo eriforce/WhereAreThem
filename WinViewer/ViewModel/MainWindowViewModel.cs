@@ -21,7 +21,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         private string _statusBarText;
         private Folder _selectedFolder;
         private FileSystemItem _selectedItem;
-        private ICommand _updateCommand;
+        private ICommand _scanCommand;
         private ICommand _copyCommand;
         private ICommand _openPropertiesCommand;
 
@@ -58,16 +58,16 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 RaiseChange(() => SelectedItem);
             }
         }
-        public ICommand UpdateCommand {
+        public ICommand ScanCommand {
             get {
-                if (_updateCommand == null) {
-                    _updateCommand = new RelayCommand(async (p) => {
+                if (_scanCommand == null) {
+                    _scanCommand = new RelayCommand(async (p) => {
                         List<Folder> folders = SelectedFolderStack.Skip(1).ToList();
                         folders.Add(SelectedFolder);
                         if (p != SelectedFolder)
                             folders.Add((Folder)p);
 
-                        await BusyAsync("Scanning ...", () => {
+                        await BusyAsync("Scanning {0} ...".FormatWith(((Folder)p).Name), () => {
                             Folder driveFolder = folders.First();
                             string path = Path.Combine(folders.Select(f => f.Name).ToArray());
                             if (Directory.Exists(path)) {
@@ -78,7 +78,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             }
                             else {
                                 Folder parent = folders[folders.Count - 2];
-                                parent.Folders.Remove(folders.Last());
+                                parent.Folders.Remove((Folder)p);
                                 App.Scanner.Save(driveFolder);
                             }
 
@@ -92,7 +92,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         return SelectedFolderStack.First().Name == Environment.MachineName;
                     });
                 }
-                return _updateCommand;
+                return _scanCommand;
             }
         }
         public ICommand CopyCommand {
@@ -130,7 +130,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public event OpeningPropertiesEventHandler OpeningProperties;
 
         public MainWindowViewModel() {
-            App.Scanner.PrintLine += (s, e) => { BusyContent = e.String; };
+            App.Scanner.PrintLine += (s, e) => { StatusBarText = e.String; };
             Computers = App.Loader.MachineNames.Select(n => new Computer() {
                 Name = n,
                 Folders = App.Loader.GetDrives(n).Select(
