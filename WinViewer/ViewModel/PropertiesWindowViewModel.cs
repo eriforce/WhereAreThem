@@ -7,11 +7,13 @@ using PureLib.Common;
 using PureLib.WPF;
 using WhereAreThem.Model.Models;
 using IO = System.IO;
+using System.Windows.Input;
 
 namespace WhereAreThem.WinViewer.ViewModel {
     public class PropertiesWindowViewModel : ViewModelBase {
-        private List<Folder> _itemStack { get; set; }
-        private PropertyInfo _propertyInfo { get; set; }
+        private List<Folder> _itemStack;
+        private PropertyInfo _propertyInfo;
+        private ICommand _okCommand;
 
         public FileSystemItem Item { get; private set; }
         public string FileSystemType {
@@ -38,6 +40,13 @@ namespace WhereAreThem.WinViewer.ViewModel {
         }
         public bool IsFile {
             get { return Item is File; }
+        }
+        public ICommand OkCommand {
+            get {
+                if (_okCommand == null)
+                    _okCommand = new RelayCommand((p) => { View.Close(); });
+                return _okCommand;
+            }
         }
 
         public PropertiesWindowViewModel(FileSystemItem item, List<Folder> itemStack) {
