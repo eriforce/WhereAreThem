@@ -16,7 +16,7 @@ namespace WhereAreThem.Converter {
             IPersistence target = new CompressedPersistence<StringPersistence>();
 
             string[] lists = IO.Directory.GetFiles(ConfigurationManager.AppSettings["outputPath"], 
-                "*.{0}".FormatWith(Constant.ListExt), IO.SearchOption.AllDirectories);
+                "*.*.wat", IO.SearchOption.AllDirectories);
             foreach (string file in lists) {
                 Folder folder = source.Load(file);
                 target.Save(folder, file);

@@ -73,7 +73,7 @@
     <Compile Include="Event\LocatingItemEventArgs.cs" />
     <Compile Include="Event\OpeningPropertiesEventArgs.cs" />
     <Compile Include="Model\Computer.cs" />
-    <Compile Include="Model\Drive.cs" />
+    <Compile Include="Model\DriveModel.cs" />
     <Compile Include="Model\IconHelper.cs" />
     <Compile Include="Model\ItemType.cs" />
     <Compile Include="Model\SearchResult.cs" />

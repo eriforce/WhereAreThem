@@ -16,21 +16,18 @@ namespace WhereAreThem.WinViewer {
     public partial class App : SingleInstanceApp {
         private static Loader _loader;
         private static Scanner _scanner;
-        private static string _path {
-            get { return ConfigurationManager.AppSettings["path"].WrapPath(); }
-        }
 
         public static Loader Loader {
             get {
                 if (_loader == null)
-                    _loader = new Loader(_path, Constant.Persistence);
+                    _loader = new Loader(Constant.Path, Constant.Persistence);
                 return _loader;
             }
         }
         public static Scanner Scanner {
             get {
                 if (_scanner == null)
-                    _scanner = new Scanner(_path, Constant.Persistence);
+                    _scanner = new Scanner(Constant.Path, Constant.Persistence);
                 return _scanner;
             }
         }

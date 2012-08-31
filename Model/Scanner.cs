@@ -9,27 +9,23 @@ using WhereAreThem.Model.Persistences;
 using IO = System.IO;
 
 namespace WhereAreThem.Model {
-    public class Scanner {
+    public class Scanner : ListBase {
         private const FileAttributes filter = FileAttributes.Hidden | FileAttributes.System;
         private readonly string driveSuffix = "{0}{1}".FormatWith(Path.VolumeSeparatorChar, Path.DirectorySeparatorChar);
-        private string _machinePath;
-        private IPersistence _persistence;
 
-        public event StringEventHandler PrintLine;
-
-        public Scanner(string outputPath, IPersistence persistence) {
-            _machinePath = Path.Combine(outputPath, Environment.MachineName);
-            _persistence = persistence;
+        public Scanner(string outputPath, IPersistence persistence)
+            : base(outputPath, persistence) {
         }
 
-        public Folder Scan(string drive) {
-            string driveLetter = drive.EndsWith(driveSuffix) ? GetDriveLetter(drive) : drive;
+        public Drive Scan(string path) {
+            string driveLetter = path.EndsWith(driveSuffix) ? Drive.GetDriveLetter(path) : path;
             Folder driveFolder = GetFolder(new DirectoryInfo("{0}{1}".FormatWith(driveLetter, driveSuffix)));
-            Save(GetListPath(driveLetter), driveFolder);
-            return driveFolder;
+            Drive drive = Drive.FromFolder(driveFolder, new DriveInfo(driveFolder.Name).DriveType);
+            Save(Environment.MachineName, drive);
+            return drive;
         }
 
-        public Folder ScanUpdate(string path) {
+        public Drive ScanUpdate(string path, DriveType driveType) {
             if (path.IsNullOrEmpty())
                 throw new ArgumentNullException("ScanUpdate path is null.");
             if (!Directory.Exists(path))
@@ -37,37 +33,25 @@ namespace WhereAreThem.Model {
             
             string[] parts = path.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
             parts[0] += Path.DirectorySeparatorChar;
-            string listPath = GetListPath(GetDriveLetter(parts[0]));
+            string listPath = GetListPath(Environment.MachineName, Drive.GetDriveLetter(parts[0]), driveType);
             if (!IO.File.Exists(listPath))
                 throw new FileNotFoundException("List '{0}' cannot be found.".FormatWith(listPath));
-            
-            Folder driveFolder = _persistence.Load(listPath);
-            UpdateFolder(driveFolder, parts);
-            Save(listPath, driveFolder);
-            return driveFolder;
+
+            Drive drive = Drive.FromFolder(_persistence.Load(listPath), driveType);
+            UpdateFolder(drive, parts);
+            Save(Environment.MachineName, drive);
+            return drive;
         }
 
-        public void Save(Folder drive) {
-            Save(GetListPath(GetDriveLetter(drive.Name)), drive);
-        }
-        
-        private void OnPrintLine(string s) {
-            if (PrintLine != null)
-                PrintLine(this, new StringEventArgs() { String = s });
-        }
-
-        private string GetDriveLetter(string path) {
-            return path.Substring(0, path.IndexOf(Path.VolumeSeparatorChar));
-        }
-
-        private string GetListPath(string driveLetter) {
-            return Path.Combine(_machinePath, Path.ChangeExtension(driveLetter, Constant.ListExt));
+        public void Save(string machineName, Drive drive) {
+            Save(GetListPath(machineName, drive.DriveLetter, drive.DriveType), (Folder)drive);
         }
 
         private void Save(string listPath, Folder drive) {
             OnPrintLine("Saving {0} ...".FormatWith(drive.Name));
-            if (!Directory.Exists(_machinePath))
-                Directory.CreateDirectory(_machinePath);
+            string directory = Path.GetDirectoryName(listPath);
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
             drive.CreatedDateUtc = DateTime.UtcNow;
             _persistence.Save(drive, listPath);
             OnPrintLine("Scanning of {0} has completed.".FormatWith(drive.Name));

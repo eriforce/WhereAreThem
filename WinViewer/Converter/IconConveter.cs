@@ -20,10 +20,12 @@ namespace WhereAreThem.WinViewer.Converter {
 
             Icon icon;
             if (type == ItemType.File)
-                icon = IconReader.GetFileIcon(IO.Path.GetExtension(((File)value).Name).ToLower(),
-                    size, false);
-            else
+                icon = IconReader.GetFileIcon(IO.Path.GetExtension(((File)value).Name).ToLower(), size, false);
+            else {
+                if ((type == ItemType.DriveModel) && !Enum.TryParse<ItemType>(((DriveModel)value).DriveType.ToString(), out type))
+                    return null;
                 icon = IconReader.GetIcon(type, size);
+            }
             return icon.ToImageSource();
         }
 

@@ -37,21 +37,33 @@ namespace WhereAreThem.WinViewer.Model {
         public static Icon GetIcon(ItemType type, IconSize size) {
             int index = 0;
             switch (type) {
-                case ItemType.Computer:
-                    index = 15;
-                    break;
-                case ItemType.Drive:
-                    index = 8;
+                case ItemType.File:
+                    index = 2;
                     break;
                 case ItemType.Folder:
-                    index = 4;
+                    index = 3;
                     break;
-                case ItemType.File:
-                    index = 16795;
+                case ItemType.Computer:
+                    index = 104;
+                    break;
+                case ItemType.CDRom:
+                    index = 25;
+                    break;
+                case ItemType.Fixed:
+                    index = 27;
+                    break;
+                case ItemType.Network:
+                    index = 28;
+                    break;
+                case ItemType.Ram:
+                    index = 29;
+                    break;
+                case ItemType.Removable:
+                    index = 30;
                     break;
             }
             IntPtr hIconLarge = IntPtr.Zero, hIconSmall = IntPtr.Zero;
-            Shell32.ExtractIconEx("shell32.dll", index, ref hIconLarge, ref hIconSmall, 1);
+            Shell32.ExtractIconEx("imageres.dll", index, ref hIconLarge, ref hIconSmall, 1);
             return GetIcon(size == IconSize.Small ? hIconSmall : hIconLarge);
         }
 

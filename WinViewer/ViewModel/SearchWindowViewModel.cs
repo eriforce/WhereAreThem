@@ -87,7 +87,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         if (itemExists)
                             Process.Start("explorer.exe", @"/select,{0}".FormatWith(path));
                         else
-                            MessageBox.Show(View, "{0} doesn't exist on your disk.");
+                            MessageBox.Show(View, "{0} doesn't exist on your disk.".FormatWith(path));
                     }, (p) => { return RootStack.First().Name == Environment.MachineName; });
                 return _locateOnDiskCommand;
             }

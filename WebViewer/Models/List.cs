@@ -24,7 +24,7 @@ namespace WhereAreThem.WebViewer.Models {
             if (path.IsNullOrEmpty())
                 return new Folder() {
                     Name = machineName,
-                    Folders = _loader.GetDrives(machineName)
+                    Folders = new List<Folder>(_loader.GetDrives(machineName))
                 };
             else {
                 string[] parts = path.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);

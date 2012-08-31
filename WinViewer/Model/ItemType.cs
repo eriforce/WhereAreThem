@@ -7,7 +7,13 @@ namespace WhereAreThem.WinViewer.Model {
     public enum ItemType {
         File,
         Folder,
-        Drive,
         Computer,
+        DriveModel,
+
+        Removable,
+        Fixed,
+        Network,
+        CDRom,
+        Ram,
     }
 }

@@ -16,6 +16,7 @@ using WhereAreThem.Model;
 using WhereAreThem.Model.Models;
 using WhereAreThem.WinViewer.Event;
 using WhereAreThem.WinViewer.Model;
+using System.Configuration;
 
 namespace WhereAreThem.WinViewer.ViewModel {
     public class MainWindowViewModel : BusyViewModelBase {
@@ -63,32 +64,33 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get {
                 if (_scanCommand == null) {
                     _scanCommand = new RelayCommand((p) => {
-                        List<Folder> folders = SelectedFolderStack.Skip(1).ToList();
+                        List<Folder> folders = new List<Folder>(SelectedFolderStack);
                         folders.Add(SelectedFolder);
                         if (p != SelectedFolder)
                             folders.Add((Folder)p);
 
                         BusyWith("Scanning {0} ...".FormatWith(((Folder)p).Name), () => {
-                            Folder driveFolder = folders.First();
+                            Folder machine = folders[0];
+                            DriveModel drive = (DriveModel)folders[1];
                             string path = Path.Combine(folders.Select(f => f.Name).ToArray());
                             if (Directory.Exists(path)) {
-                                if (p is Drive)
+                                if (p is DriveModel)
                                     App.Scanner.Scan(path);
                                 else
-                                    App.Scanner.ScanUpdate(path);
+                                    App.Scanner.ScanUpdate(path, drive.DriveType);
                             }
                             else {
                                 Folder parent = folders[folders.Count - 2];
                                 parent.Folders.Remove((Folder)p);
-                                App.Scanner.Save(driveFolder);
+                                App.Scanner.Save(folders.First().Name, drive);
                             }
 
-                            ((Drive)driveFolder).Load();
+                            drive.Load();
                         });
                     }, (p) => {
                         if (!(p is Folder) || (p is Computer))
                             return false;
-                        if ((p is Drive) && (SelectedFolder is Computer))
+                        if ((p is DriveModel) && (SelectedFolder is Computer))
                             return SelectedFolder.Name == Environment.MachineName;
                         return SelectedFolderStack.First().Name == Environment.MachineName;
                     });
@@ -135,7 +137,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             Computers = App.Loader.MachineNames.Select(n => new Computer() {
                 Name = n,
                 Folders = App.Loader.GetDrives(n).Select(
-                    d => (Folder)new Drive(n, d.Name, d.CreatedDateUtc)).ToList()
+                    d => (Folder)new DriveModel(n, d.Name, d.CreatedDateUtc, d.DriveType)).ToList()
             }).ToList();
             InsertLocalComputer();
         }
@@ -146,9 +148,13 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 computer = new Computer() { Name = Environment.MachineName, Folders = new List<Folder>() };
                 Computers.Add(computer);
             }
+
+            DriveType[] driveTypes = ConfigurationManager.AppSettings["driveTypes"].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => (DriveType)Enum.Parse(typeof(DriveType), s)).ToArray();
             foreach (DriveInfo drive in DriveInfo.GetDrives()) {
-                if ((drive.DriveType == DriveType.Fixed) && !computer.Folders.Any(f => f.Name == drive.Name))
-                    computer.Folders.Add(new Drive(Environment.MachineName, drive.Name, DateTime.UtcNow) { IsFake = true, Folders = null });
+                if (driveTypes.Contains(drive.DriveType) && !computer.Folders.Any(f => f.Name == drive.Name))
+                    computer.Folders.Add(new DriveModel(
+                        Environment.MachineName, drive.Name, DateTime.UtcNow, drive.DriveType) { IsFake = true, Folders = null });
             }
             computer.Folders.Sort();
         }

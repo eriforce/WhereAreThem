@@ -38,7 +38,7 @@
             <ColumnDefinition Width="3*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <Image Source="{Binding Item, Converter={StaticResource IconConverter}, ConverterParameter=Large}" Width="32" Height="32" Margin="8,4" HorizontalAlignment="Left"></Image>
+        <Image Source="{Binding Item, Converter={StaticResource IconConverter}, ConverterParameter=Large}" Width="32" Height="32" Margin="8" HorizontalAlignment="Left"></Image>
         <TextBox Text="{Binding Item.Name}" Grid.Row="0" Height="23" IsReadOnly="True" Style="{StaticResource Content}"></TextBox>
         
         <Separator Grid.Row="1" Style="{StaticResource Separator}"></Separator>

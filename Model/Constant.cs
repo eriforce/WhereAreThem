@@ -8,27 +8,26 @@ using WhereAreThem.Model.Persistences;
 
 namespace WhereAreThem.Model {
     public static class Constant {
+        private static readonly Dictionary<string, Type> persistenceTypes = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase) {
+            { PersistenceType.Txt.ToString(), typeof(StringPersistence) },
+            { PersistenceType.Json.ToString(), typeof(JsonPersistence) },
+            { PersistenceType.Xml.ToString(), typeof(XmlPersistence) },
+        };
+        private static readonly bool enableCompression = bool.Parse(ConfigurationManager.AppSettings["enableCompression"]);
+
         public const string ListExt = "wat";
 
-        private static IPersistence _persistence;
-        public static IPersistence Persistence {
-            get {
-                if (_persistence == null) {
-                    Type type = LoadType("persistence");
-                    if (type.IsGenericType)
-                        type = type.MakeGenericType(LoadType("persistenceArgs"));
-                    _persistence = Activator.CreateInstance(type) as IPersistence;
-                }
-                return _persistence;
-            }
+        public static IPersistence Persistence { get; private set; }
+        public static string Path {
+            get { return ConfigurationManager.AppSettings["path"].WrapPath(); }
         }
 
-        private static Type LoadType(string key) {
-            string typeName = ConfigurationManager.AppSettings[key];
-            Type type = Type.GetType(typeName);
-            if (type == null)
-                throw new ApplicationException("Cannot load {0}.".FormatWith(typeName));
-            return type;
+        static Constant() {
+            bool enableCompression = bool.Parse(ConfigurationManager.AppSettings["enableCompression"]);
+            Type type = persistenceTypes[ConfigurationManager.AppSettings["persistenceType"]];
+            if (enableCompression)
+                type = typeof(CompressedPersistence<>).MakeGenericType(type);
+            Persistence = Activator.CreateInstance(type) as IPersistence;
         }
     }
 }
