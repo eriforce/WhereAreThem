@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Input;
 using PureLib.Common;
 using PureLib.WPF;
+using PureLib.WPF.BusyControl;
 using WhereAreThem.Model;
 using WhereAreThem.Model.Models;
 using WhereAreThem.WinViewer.Event;
@@ -61,13 +62,13 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public ICommand ScanCommand {
             get {
                 if (_scanCommand == null) {
-                    _scanCommand = new RelayCommand(async (p) => {
+                    _scanCommand = new RelayCommand((p) => {
                         List<Folder> folders = SelectedFolderStack.Skip(1).ToList();
                         folders.Add(SelectedFolder);
                         if (p != SelectedFolder)
                             folders.Add((Folder)p);
 
-                        await BusyAsync("Scanning {0} ...".FormatWith(((Folder)p).Name), () => {
+                        BusyWith("Scanning {0} ...".FormatWith(((Folder)p).Name), () => {
                             Folder driveFolder = folders.First();
                             string path = Path.Combine(folders.Select(f => f.Name).ToArray());
                             if (Directory.Exists(path)) {

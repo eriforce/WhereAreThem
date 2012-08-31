@@ -82,7 +82,7 @@ namespace WhereAreThem.WinViewer.View {
             _selectedTreeViewItem = (TreeViewItem)e.OriginalSource;
 
             TreeView treeView = (TreeView)sender;
-            await LoadDriveAsync(treeView.SelectedItem);
+            await LoadIfDriveAsync(treeView.SelectedItem);
             VM.SelectedFolder = (Folder)treeView.SelectedItem;
             List<Folder> stack = new List<Folder>();
             GetFolderStack(_selectedTreeViewItem, stack);
@@ -91,7 +91,7 @@ namespace WhereAreThem.WinViewer.View {
 
         private async void FolderTreeExpanded(object sender, RoutedEventArgs e) {
             TreeViewItem treeViewItem = (TreeViewItem)e.OriginalSource;
-            await LoadDriveAsync(treeViewItem.Header);
+            await LoadIfDriveAsync(treeViewItem.Header);
         }
 
         private void DataGridMouseDoubleClick(object sender, MouseButtonEventArgs e) {
@@ -122,13 +122,13 @@ namespace WhereAreThem.WinViewer.View {
             VM.SelectedItem = e.Result.Item;
         }
 
-        private async Task LoadDriveAsync(object item) {
+        private async Task LoadIfDriveAsync(object item) {
             if (item is Drive) {
                 Drive drive = (Drive)item;
                 if (drive.IsFake)
                     MessageBox.Show(this, "You need to scan this drive first.");
                 else
-                    await VM.BusyAsync("Loading {0} ...".FormatWith(drive.Name), drive.Load);
+                    await VM.BusyWithAsync("Loading {0} ...".FormatWith(drive.Name), drive.Load);
             }
         }
 

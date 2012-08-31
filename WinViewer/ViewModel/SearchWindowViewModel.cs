@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using PureLib.Common;
 using PureLib.WPF;
+using PureLib.WPF.BusyControl;
 using WhereAreThem.Model.Models;
 using WhereAreThem.WinViewer.Event;
 using WhereAreThem.WinViewer.Model;
@@ -55,20 +56,18 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public ICommand SearchCommand {
             get {
                 if (_searchCommand == null)
-                    _searchCommand = new RelayCommand(async (p) => {
-                        Results.Clear();
-                        await BusyAsync("Searching {0} ...".FormatWith(_location), 
-                            () => SearchInFolder(Root, RootStack));
+                    _searchCommand = new RelayCommand((p) => {
+                        BusyWith("Searching {0} ...".FormatWith(_location), () => {
+                            List<SearchResult> results = new List<SearchResult>();
+                            SearchInFolder(results, Root, RootStack);
+                            Results = new ObservableCollection<SearchResult>(results);
+                        });
                     }, (p) => { return !SearchPattern.IsNullOrEmpty(); });
                 return _searchCommand;
             }
         }
 
         public event LocatingItemEventHandler LocatingItem;
-
-        public SearchWindowViewModel() {
-            Results = new ObservableCollection<SearchResult>();
-        }
 
         public void RefreshWindowTitle() {
             RaiseChange(() => WindowTitle);
@@ -80,13 +79,13 @@ namespace WhereAreThem.WinViewer.ViewModel {
             View.Close();
         }
 
-        private void SearchInFolder(Folder folder, List<Folder> folderStack) {
+        private void SearchInFolder(List<SearchResult> results, Folder folder, List<Folder> folderStack) {
             if (folder.Files != null) {
                 List<Folder> stack = new List<Folder>(folderStack);
                 stack.Add(folder);
                 foreach (File f in folder.Files) {
                     if (Regex.IsMatch(f.Name, SearchPattern.WildcardToRegex(), RegexOptions.IgnoreCase))
-                        AddToResult(f, stack);
+                        results.Add(new SearchResult(f, folderStack));
                 }
             }
             if (folder.Folders != null) {
@@ -94,14 +93,10 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 stack.Add(folder);
                 foreach (Folder f in folder.Folders) {
                     if (Regex.IsMatch(f.Name, SearchPattern.WildcardToRegex(), RegexOptions.IgnoreCase))
-                        AddToResult(f, stack);
-                    SearchInFolder(f, stack);
+                        results.Add(new SearchResult(f, folderStack));
+                    SearchInFolder(results, f, stack);
                 }
             }
-        }
-
-        private void AddToResult(FileSystemItem item, List<Folder> folderStack) {
-            RunOnUIThread(() => Results.Add(new SearchResult(item, folderStack)));
         }
     }
 }

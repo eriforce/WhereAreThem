@@ -43,7 +43,8 @@
     <ApplicationIcon>Resources\ef.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PureLib.Client">
+    <Reference Include="PureLib.Client, Version=1.2.0.106, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\PureLib\Build\PureLib.Client.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -57,10 +58,6 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="Telerik.Windows.Controls, Version=2010.2.924.35, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Lib\Telerik.Windows.Controls.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -80,7 +77,6 @@
     <Compile Include="Model\IconHelper.cs" />
     <Compile Include="Model\ItemType.cs" />
     <Compile Include="Model\SearchResult.cs" />
-    <Compile Include="ViewModel\BusyViewModelBase.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\PropertiesWindowViewModel.cs" />
     <Compile Include="ViewModel\SearchWindowViewModel.cs" />
@@ -128,9 +124,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\ef.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Lib\Telerik.Windows.Controls.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,7 +1,7 @@
 ﻿<Window x:Class="WhereAreThem.WinViewer.View.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:t="http://schemas.telerik.com/2008/xaml/presentation"
+        xmlns:p="clr-namespace:PureLib.WPF.BusyControl;assembly=PureLib.Client"
         xmlns:m="clr-namespace:WhereAreThem.Model.Models;assembly=WhereAreThem.Model"
         Title="WhereAreThem WinViewer" Height="400" Width="600" WindowState="Maximized" Icon="/WhereAreThem.WinViewer;component/Resources/ef.ico">
     <Window.Resources>
@@ -14,74 +14,74 @@
                       Command="{Binding DataContext.OpenPropertiesCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
         </ContextMenu>
     </Window.Resources>
-    
-    <Grid Margin="6">
-        <Grid.RowDefinitions>
-            <RowDefinition></RowDefinition>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"></ColumnDefinition>
-            <ColumnDefinition Width="3*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
 
-        <TreeView ItemsSource="{Binding Computers}" TreeViewItem.Selected="FolderTreeSelected" TreeViewItem.Expanded="FolderTreeExpanded" Grid.Column="0" Margin="0,0,2,0">
-            <TreeView.ItemContainerStyle>
-                <Style TargetType="{x:Type TreeViewItem}">
-                    <EventSetter Event="PreviewMouseRightButtonDown" Handler="FolderTreeMouseRightClick" />
-                    <Setter Property="ContextMenu" Value="{StaticResource watMenu}" />
-                    <Setter Property="Margin" Value="2" />
-                </Style>
-            </TreeView.ItemContainerStyle>
-            
-            <TreeView.Resources>
-                <HierarchicalDataTemplate DataType="{x:Type m:Folder}" ItemsSource="{Binding Folders}">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{Binding Converter={StaticResource IconConverter}}"></Image>
-                        <TextBlock Text="{Binding Name}" Padding="2,0" />
-                    </StackPanel>
-                </HierarchicalDataTemplate>
-            </TreeView.Resources>
-        </TreeView>
-        
-        <GridSplitter Grid.Column="0" Width="2" ResizeDirection="Columns" HorizontalAlignment="Right" VerticalAlignment="Stretch"/>
-        <GridSplitter Grid.Column="1" Width="2" ResizeDirection="Columns" HorizontalAlignment="Left" VerticalAlignment="Stretch"/>
+    <p:BusyIndicator IsBusy="{Binding IsBusy}" BusyContent="{Binding BusyContent}" Grid.ColumnSpan="2">
+        <Grid Margin="6">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition Width="3*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
 
-        <DataGrid ItemsSource="{Binding SelectedFolder.Items}" SelectedItem="{Binding SelectedItem}" Grid.Column="1" Margin="2,0,0,22"
+            <TreeView ItemsSource="{Binding Computers}" TreeViewItem.Selected="FolderTreeSelected" TreeViewItem.Expanded="FolderTreeExpanded" Grid.Column="0" Margin="0,0,2,0">
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <EventSetter Event="PreviewMouseRightButtonDown" Handler="FolderTreeMouseRightClick" />
+                        <Setter Property="ContextMenu" Value="{StaticResource watMenu}" />
+                        <Setter Property="Margin" Value="2" />
+                    </Style>
+                </TreeView.ItemContainerStyle>
+
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate DataType="{x:Type m:Folder}" ItemsSource="{Binding Folders}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{Binding Converter={StaticResource IconConverter}}"></Image>
+                            <TextBlock Text="{Binding Name}" Padding="2,0" />
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                </TreeView.Resources>
+            </TreeView>
+
+            <GridSplitter Grid.Column="0" Width="2" ResizeDirection="Columns" HorizontalAlignment="Right" VerticalAlignment="Stretch"/>
+            <GridSplitter Grid.Column="1" Width="2" ResizeDirection="Columns" HorizontalAlignment="Left" VerticalAlignment="Stretch"/>
+
+            <DataGrid ItemsSource="{Binding SelectedFolder.Items}" SelectedItem="{Binding SelectedItem}" Grid.Column="1" Margin="2,0,0,22"
                   MouseDoubleClick="DataGridMouseDoubleClick" SelectionChanged="DataGridSelectionChanged" IsReadOnly="True"
                   AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" GridLinesVisibility="None">
-            <DataGrid.Resources>
-                <Style TargetType="{x:Type DataGridCell}">
-                    <Setter Property="ContextMenu" Value="{StaticResource watMenu}" />
-                    <Setter Property="Margin" Value="2"></Setter>
-                </Style>
-            </DataGrid.Resources>
-            <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Name">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Image Source="{Binding Converter={StaticResource IconConverter}}"></Image>
-                                <TextBlock Text="{Binding Name}" Margin="2,0,0,0" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Size">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Size, Converter={StaticResource SizeConverter}}" HorizontalAlignment="Right" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Created" Binding="{Binding CreatedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Modified" Binding="{Binding ModifiedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}"></DataGridTextColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-        
-        <StatusBar Grid.Column="1" VerticalAlignment="Bottom">
-            <StatusBarItem Content="{Binding StatusBarText}" />
-        </StatusBar>
+                <DataGrid.Resources>
+                    <Style TargetType="{x:Type DataGridCell}">
+                        <Setter Property="ContextMenu" Value="{StaticResource watMenu}" />
+                        <Setter Property="Margin" Value="2"></Setter>
+                    </Style>
+                </DataGrid.Resources>
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Name">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="{Binding Converter={StaticResource IconConverter}}"></Image>
+                                    <TextBlock Text="{Binding Name}" Margin="2,0,0,0" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Size">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Size, Converter={StaticResource SizeConverter}}" HorizontalAlignment="Right" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Created" Binding="{Binding CreatedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Modified" Binding="{Binding ModifiedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}"></DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
 
-        <t:RadBusyIndicator IsBusy="{Binding IsBusy}" BusyContent="{Binding BusyContent}" Grid.ColumnSpan="2" />
-    </Grid>
+            <StatusBar Grid.Column="1" VerticalAlignment="Bottom">
+                <StatusBarItem Content="{Binding StatusBarText}" />
+            </StatusBar>
+        </Grid>
+    </p:BusyIndicator>
 </Window>
