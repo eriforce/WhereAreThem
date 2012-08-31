@@ -44,7 +44,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public ICommand OkCommand {
             get {
                 if (_okCommand == null)
-                    _okCommand = new RelayCommand((p) => { View.Close(); });
+                    _okCommand = new RelayCommand((p) => View.Close());
                 return _okCommand;
             }
         }

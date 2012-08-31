@@ -3,6 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:p="clr-namespace:PureLib.WPF.BusyControl;assembly=PureLib.Client"
         Title="{Binding WindowTitle}" Height="500" Width="800" WindowStartupLocation="CenterOwner" Icon="/WhereAreThem.WinViewer;component/Resources/ef.ico">
+    <Window.Resources>
+        <ContextMenu x:Key="searchMenu">
+            <MenuItem Header="Locate" Command="{Binding DataContext.LocateCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+            <MenuItem Header="Locate on disk" Command="{Binding DataContext.LocateOnDiskCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+        </ContextMenu>
+    </Window.Resources>
+
     <p:BusyIndicator IsBusy="{Binding IsBusy}" BusyContent="{Binding BusyContent}" Grid.ColumnSpan="2">
         <Grid Margin="6">
             <Grid.RowDefinitions>
@@ -17,6 +24,7 @@
                   AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" GridLinesVisibility="None">
                 <DataGrid.Resources>
                     <Style TargetType="{x:Type DataGridCell}">
+                        <Setter Property="ContextMenu" Value="{StaticResource searchMenu}" />
                         <Setter Property="Margin" Value="2"></Setter>
                     </Style>
                 </DataGrid.Resources>

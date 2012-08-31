@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using PureLib.Common;
 using PureLib.WPF;
@@ -21,6 +23,8 @@ namespace WhereAreThem.WinViewer.ViewModel {
         private ObservableCollection<SearchResult> _results;
         private string _searchPattern;
         private ICommand _searchCommand;
+        private ICommand _locateCommand;
+        private ICommand _locateOnDiskCommand;
         private string _location {
             get { return IO.Path.Combine(RootStack.Select(f => f.Name).Union(new string[] { Root.Name }).ToArray()); }
         }
@@ -66,6 +70,28 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 return _searchCommand;
             }
         }
+        public ICommand LocateCommand {
+            get {
+                if (_locateCommand == null)
+                    _locateCommand = new RelayCommand((p) => OnLocatingItem());
+                return _locateCommand;
+            }
+        }
+        public ICommand LocateOnDiskCommand {
+            get {
+                if (_locateOnDiskCommand == null)
+                    _locateOnDiskCommand = new RelayCommand((p) => {
+                        string path = IO.Path.Combine(SelectedSearchResult.ItemPath, SelectedSearchResult.Item.Name);
+                        bool itemExists = ((SelectedSearchResult.Item is File) && IO.File.Exists(path))
+                            || ((SelectedSearchResult.Item is Folder) && IO.Directory.Exists(path));
+                        if (itemExists)
+                            Process.Start("explorer.exe", @"/select,{0}".FormatWith(path));
+                        else
+                            MessageBox.Show(View, "{0} doesn't exist on your disk.");
+                    }, (p) => { return RootStack.First().Name == Environment.MachineName; });
+                return _locateOnDiskCommand;
+            }
+        }
 
         public event LocatingItemEventHandler LocatingItem;
 
@@ -85,7 +111,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 stack.Add(folder);
                 foreach (File f in folder.Files) {
                     if (Regex.IsMatch(f.Name, SearchPattern.WildcardToRegex(), RegexOptions.IgnoreCase))
-                        results.Add(new SearchResult(f, folderStack));
+                        results.Add(new SearchResult(f, stack));
                 }
             }
             if (folder.Folders != null) {
@@ -93,7 +119,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 stack.Add(folder);
                 foreach (Folder f in folder.Folders) {
                     if (Regex.IsMatch(f.Name, SearchPattern.WildcardToRegex(), RegexOptions.IgnoreCase))
-                        results.Add(new SearchResult(f, folderStack));
+                        results.Add(new SearchResult(f, stack));
                     SearchInFolder(results, f, stack);
                 }
             }
