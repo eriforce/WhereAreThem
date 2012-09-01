@@ -103,6 +103,7 @@ namespace WhereAreThem.WinViewer.View {
                 _selectedTreeViewItem.UpdateLayout();
                 _selectedTreeViewItem = (TreeViewItem)_selectedTreeViewItem.ItemContainerGenerator.ContainerFromItem(item);
                 _selectedTreeViewItem.IsSelected = true;
+                _selectedTreeViewItem.BringIntoView();
             }
         }
 

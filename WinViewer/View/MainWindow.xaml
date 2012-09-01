@@ -13,6 +13,8 @@
             <MenuItem Header="Properties" CommandParameter="{Binding}"
                       Command="{Binding DataContext.OpenPropertiesCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
         </ContextMenu>
+        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{x:Static SystemColors.HighlightColor}" />
+        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{x:Static SystemColors.HighlightTextColor}" />
     </Window.Resources>
 
     <p:BusyIndicator IsBusy="{Binding IsBusy}" BusyContent="{Binding BusyContent}" Grid.ColumnSpan="2">
