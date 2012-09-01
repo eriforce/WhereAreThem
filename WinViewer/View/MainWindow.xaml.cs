@@ -125,10 +125,9 @@ namespace WhereAreThem.WinViewer.View {
         private async Task LoadIfDriveAsync(object item) {
             if (item is DriveModel) {
                 DriveModel drive = (DriveModel)item;
-                if (drive.IsFake)
+                bool loaded = await VM.BusyWithAsync<bool>("Loading {0} ...".FormatWith(drive.Name), drive.Load);
+                if (!loaded)
                     MessageBox.Show(this, "You need to scan this drive first.");
-                else
-                    await VM.BusyWithAsync("Loading {0} ...".FormatWith(drive.Name), drive.Load);
             }
         }
 

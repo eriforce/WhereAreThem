@@ -92,7 +92,8 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             return false;
                         if ((p is DriveModel) && (SelectedFolder is Computer))
                             return SelectedFolder.Name == Environment.MachineName;
-                        return SelectedFolderStack.First().Name == Environment.MachineName;
+                        return SelectedFolderStack.Any() 
+                            && (SelectedFolderStack.First().Name == Environment.MachineName);
                     });
                 }
                 return _scanCommand;
@@ -154,7 +155,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             foreach (DriveInfo drive in DriveInfo.GetDrives()) {
                 if (driveTypes.Contains(drive.DriveType) && !computer.Folders.Any(f => f.Name == drive.Name))
                     computer.Folders.Add(new DriveModel(
-                        Environment.MachineName, drive.Name, DateTime.UtcNow, drive.DriveType) { IsFake = true, Folders = null });
+                        Environment.MachineName, drive.Name, DateTime.UtcNow, drive.DriveType) { Folders = null });
             }
             computer.Folders.Sort();
         }

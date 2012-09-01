@@ -9,8 +9,7 @@ using WhereAreThem.Model.Models;
 namespace WhereAreThem.WinViewer.Model {
     public class DriveModel : Drive, INotifyPropertyChanged {
         private string _machineName;
-
-        public bool IsFake { get; set; }
+        private bool _hasLoaded;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -23,15 +22,23 @@ namespace WhereAreThem.WinViewer.Model {
             Folders = new List<Folder>() { new Folder() };
         }
 
-        public void Load() {
-            Folder drive = App.Loader.GetDrive(_machineName, Name);
-            CreatedDateUtc = drive.CreatedDateUtc;
-            Files = drive.Files;
-            Folders = drive.Folders;
-            IsFake = false;
-            if (PropertyChanged != null) {
-                PropertyChanged(this, new PropertyChangedEventArgs("Folders"));
-                PropertyChanged(this, new PropertyChangedEventArgs("Items"));
+        public bool Load() {
+            try {
+                Folder drive = App.Loader.GetDrive(_machineName, Name);
+                if (!_hasLoaded || (CreatedDateUtc != drive.CreatedDateUtc)) {
+                    _hasLoaded = true;
+                    CreatedDateUtc = drive.CreatedDateUtc;
+                    Files = drive.Files;
+                    Folders = drive.Folders;
+                    if (PropertyChanged != null) {
+                        PropertyChanged(this, new PropertyChangedEventArgs("Folders"));
+                        PropertyChanged(this, new PropertyChangedEventArgs("Items"));
+                    }
+                }
+                return true;
+            }
+            catch (FileNotFoundException) {
+                return false;
             }
         }
     }
