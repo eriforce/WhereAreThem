@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 
 namespace WhereAreThem.Model.Models {
+    [DataContract]
     public abstract class FileSystemItem : IComparable<FileSystemItem> {
         [DataMember]
         public string Name { get; set; }

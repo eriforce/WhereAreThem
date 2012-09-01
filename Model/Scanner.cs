@@ -44,7 +44,7 @@ namespace WhereAreThem.Model {
         }
 
         public void Save(string machineName, Drive drive) {
-            Save(GetListPath(machineName, drive.DriveLetter, drive.DriveType), (Folder)drive);
+            Save(GetListPath(machineName, drive.DriveLetter, drive.DriveType), drive.ToFolder());
         }
 
         private void Save(string listPath, Folder drive) {

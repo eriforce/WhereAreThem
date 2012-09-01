@@ -7,13 +7,20 @@ using System.Text;
 using PureLib.Common;
 
 namespace WhereAreThem.Model.Models {
-    [DataContract]
     public class Drive : Folder {
-        [DataMember]
         public DriveType DriveType { get; set; }
 
         public string DriveLetter {
             get { return GetDriveLetter(Name); }
+        }
+
+        public Folder ToFolder() {
+            return new Folder() {
+                Name = Name,
+                CreatedDateUtc = CreatedDateUtc,
+                Folders = Folders,
+                Files = Files,
+            };
         }
 
         public static string GetDriveLetter(string path) {
