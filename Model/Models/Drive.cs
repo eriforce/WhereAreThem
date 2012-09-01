@@ -7,6 +7,7 @@ using System.Text;
 using PureLib.Common;
 
 namespace WhereAreThem.Model.Models {
+    [DataContract]
     public class Drive : Folder {
         [DataMember]
         public DriveType DriveType { get; set; }

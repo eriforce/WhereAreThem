@@ -37,6 +37,9 @@ namespace WhereAreThem.WinViewer.Model {
                 }
                 return true;
             }
+            catch (DirectoryNotFoundException) {
+                return false;
+            }
             catch (FileNotFoundException) {
                 return false;
             }

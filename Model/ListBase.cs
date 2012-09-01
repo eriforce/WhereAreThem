@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PureLib.Common;
 using WhereAreThem.Model.Persistences;
 
 namespace WhereAreThem.Model {
@@ -24,7 +25,7 @@ namespace WhereAreThem.Model {
         }
 
         protected string GetListPath(string machineName, string driveLetter, DriveType driveType) {
-            return Path.Combine(_outputPath, machineName, string.Join(".", driveLetter, driveType, Constant.ListExt));
+            return Path.Combine(_outputPath, machineName, "{0}.{1}.{2}".FormatWith(driveLetter, driveType, Constant.ListExt));
         }
     }
 }

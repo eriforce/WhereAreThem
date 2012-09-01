@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 
 namespace WhereAreThem.Model.Models {
+    [DataContract]
     public class File : FileSystemItem {
         [DataMember]
         public long FileSize { get; set; }

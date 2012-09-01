@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 
 namespace WhereAreThem.Model.Models {
+    [DataContract]
     public class Folder : FileSystemItem {
         [DataMember]
         public List<Folder> Folders { get; set; }

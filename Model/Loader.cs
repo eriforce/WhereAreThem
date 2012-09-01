@@ -42,7 +42,7 @@ namespace WhereAreThem.Model {
                 _machineCache.Add(machineName, new Folder() { Name = machineName, Folders = new List<Folder>() });
 
             string driveLetter = Drive.GetDriveLetter(path);
-            string listPath = Directory.GetFiles(Path.Combine(_outputPath, machineName), "{0}.*.{1}".FormatWith(driveLetter, Constant.ListExt)).SingleOrDefault();
+            string listPath = Directory.GetFiles(machinePath, "{0}.*.{1}".FormatWith(driveLetter, Constant.ListExt)).SingleOrDefault();
             if (listPath.IsNullOrEmpty())
                 throw new FileNotFoundException("Drive {0} of {1} cannot be found.".FormatWith(driveLetter, machineName));
             DriveType driveType = (DriveType)Enum.Parse(typeof(DriveType), listPath.Split('.')[1]);
