@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -13,7 +14,13 @@ namespace WhereAreThem.WebViewer.Models {
         public const string ActionIndex = "Index";
         public const string ActionExplorer = "Explorer";
         public const string ActionSearchResult = "SearchResult";
-        public const string DetailsViewSessionName = "DetailsView";
+        public const string ExplorerViewSessionName = "ExplorerView";
+
+        public static ExplorerView GetExplorerView(this HttpSessionStateBase session) {
+            return (ExplorerView)((session[ExplorerViewSessionName] == null)
+                ? Enum.Parse(typeof(ExplorerView), ConfigurationManager.AppSettings["explorerView"])
+                : session[ExplorerViewSessionName]);
+        }
 
         public static string ToExplorerString(this DateTime time) {
             return time.ToString("yyyy-MM-dd HH:mm:ss");

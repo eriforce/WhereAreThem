@@ -46,7 +46,7 @@
 }
 
 <div class="explorerContainer">
-    @if (Session[Extensions.DetailsViewSessionName] == null) {
+    @if (Session.GetExplorerView() == ExplorerView.List) {
         int count = 0;
         <table class="viewer explorer list"><tbody>
         @if (Model.Folders != null) {
@@ -81,7 +81,7 @@
         }
         </tbody></table>
     }
-    else {
+    else if (Session.GetExplorerView() == ExplorerView.Details) {
         <table class="viewer explorer">
             <thead>
                 <tr>

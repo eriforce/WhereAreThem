@@ -16,11 +16,8 @@ namespace WhereAreThem.WebViewer.Controllers {
             return View(List.MachineNames);
         }
 
-        public RedirectResult ToggleView() {
-            if (Session[Extensions.DetailsViewSessionName] == null)
-                Session[Extensions.DetailsViewSessionName] = new object();
-            else
-                Session[Extensions.DetailsViewSessionName] = null;
+        public RedirectResult ChangeView(ExplorerView view) {
+            Session[Extensions.ExplorerViewSessionName] = view;
             return Redirect(Request.UrlReferrer.AbsoluteUri);
         }
 

@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using WhereAreThem.WebViewer.Models;
+
+<!DOCTYPE html>
 <html>
 <head>
     <title>@ViewBag.Title</title>
@@ -18,7 +20,14 @@
             <div id="menucontainer">
                 <ul id="menu">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("Toggle View", "ToggleView", "Home")</li>
+                    <li><a class="changeView" href="#">Change View</a></li>
+                </ul>
+                <ul id="explorerViewMenu" class="contextMenu">
+                    @foreach (ExplorerView view in Enum.GetValues(typeof(ExplorerView))) {
+                        <li>
+                            @Html.ActionLink(view.ToString(), "ChangeView", "Home", new { view = view }, null)
+                        </li>
+                    }
                 </ul>
             </div>
         </div>

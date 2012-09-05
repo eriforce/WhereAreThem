@@ -6,6 +6,17 @@ $(document).ready(function () {
         $(this).attr('title', $(this).text()).html($(this).text().split('').join(zwsp));
     });
 
+    // enable menu on changing view
+    var changeViewButton = $('a.changeView');
+    changeViewButton.click(function () {
+        return false;
+    }).contextMenu({
+        menu: 'ul#explorerViewMenu',
+        isContextMenu: false,
+        top: 30,
+        left: 22,
+    });
+
     // add watermark to search box
     var watermarkClassName = 'watermark';
     var isSearchBoxSelected = false;
@@ -338,7 +349,7 @@ if (jQuery) (function () {
                             else {
                                 $(menu).css({
                                     top: offset.top + o.top,
-                                    left: offset.left + el.outerWidth()
+                                    left: offset.left + o.left
                                 });
                             }
 
