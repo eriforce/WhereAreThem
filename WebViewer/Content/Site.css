@@ -117,8 +117,12 @@ table.explorer tbody tr span.item {
 }
 
 table.explorer tbody tr a, table.explorer tbody tr span.item {
-    border: 1px solid #fff;
+    border: 1px solid transparent;
     border-radius: 3px;
+}
+
+table.explorer:not(.list) {
+    white-space: normal;
 }
 
 table.explorer:not(.list) tbody tr:not(.selected):hover a, table.explorer:not(.list) tbody tr:not(.selected):hover span.item {

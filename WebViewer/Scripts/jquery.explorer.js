@@ -13,8 +13,8 @@ $(document).ready(function () {
     }).contextMenu({
         menu: 'ul#explorerViewMenu',
         isContextMenu: false,
-        top: 30,
-        left: 22,
+        top: changeViewButton.height(),
+        left: 0
     });
 
     // add watermark to search box
