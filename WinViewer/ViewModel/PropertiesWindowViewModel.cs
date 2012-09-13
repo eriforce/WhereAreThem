@@ -30,7 +30,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 string strFilesCount = string.Empty;
                 if (IsFolder) {
                     Folder folder = (Folder)Item;
-                    strFilesCount = string.Format("{0} Files, {1} Folders", _propertyInfo.FolderCountString, _propertyInfo.FileCountString);
+                    strFilesCount = string.Format("{0} Files, {1} Folders", _propertyInfo.FileCountString, _propertyInfo.FolderCountString);
                 }
                 return strFilesCount;
             }

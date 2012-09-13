@@ -155,7 +155,7 @@ $(document).ready(function () {
 
                 $.ajax({
                     type: "POST",
-                    url: "/Home/GetProperties",
+                    url: "../Home/GetProperties",
                     traditional: true,
                     dataType: "json",
                     data: {
