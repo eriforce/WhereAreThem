@@ -13,19 +13,21 @@
     <p:BusyIndicator IsBusy="{Binding IsBusy}" BusyContent="{Binding BusyContent}" Grid.ColumnSpan="2">
         <Grid Margin="6">
             <Grid.RowDefinitions>
-                <RowDefinition Height="27"></RowDefinition>
-                <RowDefinition></RowDefinition>
+                <RowDefinition Height="27" />
+                <RowDefinition />
             </Grid.RowDefinitions>
 
-            <TextBox x:Name="txtSearch" Text="{Binding SearchPattern, UpdateSourceTrigger=PropertyChanged}" Height="23" Margin="0,0,81,0" VerticalAlignment="Top"></TextBox>
-            <Button Command="{Binding SearchCommand}" IsDefault="True" Content="Search" Width="75" Height="23" VerticalAlignment="Top" HorizontalAlignment="Right"></Button>
+            <TextBox x:Name="txtSearch" Text="{Binding SearchPattern, UpdateSourceTrigger=PropertyChanged}" Height="23" Margin="0,0,200,0" VerticalAlignment="Top" />
+            <CheckBox IsChecked="{Binding IncludeFolders}" Content="Folders" Width="60" Margin="0,0,135,0" VerticalAlignment="Center" HorizontalAlignment="Right" />
+            <CheckBox IsChecked="{Binding IncludeFiles}" Content="Files" Width="50" Margin="0,0,80,0" VerticalAlignment="Center" HorizontalAlignment="Right" />
+            <Button Command="{Binding SearchCommand}" IsDefault="True" Content="Search" Width="75" Height="23" VerticalAlignment="Top" HorizontalAlignment="Right" />
 
             <DataGrid ItemsSource="{Binding Results}" SelectedItem="{Binding SelectedSearchResult}" Grid.Row="1" MouseDoubleClick="DataGrid_MouseDoubleClick"
                   AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" GridLinesVisibility="None">
                 <DataGrid.Resources>
                     <Style TargetType="{x:Type DataGridCell}">
                         <Setter Property="ContextMenu" Value="{StaticResource searchMenu}" />
-                        <Setter Property="Margin" Value="2"></Setter>
+                        <Setter Property="Margin" Value="2" />
                     </Style>
                 </DataGrid.Resources>
                 <DataGrid.Columns>
@@ -33,7 +35,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Source="{Binding Item, Converter={StaticResource IconConverter}}"></Image>
+                                    <Image Source="{Binding Item, Converter={StaticResource IconConverter}}" />
                                     <TextBlock Text="{Binding Item.Name}" Margin="2,0,0,0" />
                                 </StackPanel>
                             </DataTemplate>
@@ -47,8 +49,8 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Path" Binding="{Binding ItemPath}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Created" Binding="{Binding Item.CreatedDateUtc, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Modified" Binding="{Binding Item.ModifiedDateUtc, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Created" Binding="{Binding Item.CreatedDateUtc, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}" />
+                    <DataGridTextColumn Header="Modified" Binding="{Binding Item.ModifiedDateUtc, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}" />
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

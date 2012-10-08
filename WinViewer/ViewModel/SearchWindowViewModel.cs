@@ -22,6 +22,8 @@ namespace WhereAreThem.WinViewer.ViewModel {
         private SearchResult _selectedSearchResult;
         private ObservableCollection<SearchResult> _results;
         private string _searchPattern;
+        private bool _includeFolders = true;
+        private bool _includeFiles = true;
         private ICommand _searchCommand;
         private ICommand _locateCommand;
         private ICommand _locateOnDiskCommand;
@@ -52,6 +54,20 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 RaiseChange(() => SearchPattern);
             }
         }
+        public bool IncludeFolders {
+            get { return _includeFolders; }
+            set {
+                _includeFolders = value;
+                RaiseChange(() => IncludeFolders);
+            }
+        }
+        public bool IncludeFiles {
+            get { return _includeFiles; }
+            set {
+                _includeFiles = value;
+                RaiseChange(() => IncludeFiles);
+            }
+        }
         public string WindowTitle {
             get {
                 return "Search in {0} of {1}".FormatWith(_location, RootStack.First().Name);
@@ -66,7 +82,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             SearchInFolder(results, Root, RootStack);
                             Results = new ObservableCollection<SearchResult>(results);
                         });
-                    }, (p) => { return !SearchPattern.IsNullOrEmpty(); });
+                    }, (p) => { return !SearchPattern.IsNullOrEmpty() && (IncludeFolders || IncludeFiles); });
                 return _searchCommand;
             }
         }
@@ -106,7 +122,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         }
 
         private void SearchInFolder(List<SearchResult> results, Folder folder, List<Folder> folderStack) {
-            if (folder.Files != null) {
+            if (IncludeFiles && (folder.Files != null)) {
                 List<Folder> stack = new List<Folder>(folderStack);
                 stack.Add(folder);
                 foreach (File f in folder.Files) {
@@ -118,7 +134,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 List<Folder> stack = new List<Folder>(folderStack);
                 stack.Add(folder);
                 foreach (Folder f in folder.Folders) {
-                    if (Regex.IsMatch(f.Name, SearchPattern.WildcardToRegex(), RegexOptions.IgnoreCase))
+                    if (IncludeFolders && Regex.IsMatch(f.Name, SearchPattern.WildcardToRegex(), RegexOptions.IgnoreCase))
                         results.Add(new SearchResult(f, stack));
                     SearchInFolder(results, f, stack);
                 }
