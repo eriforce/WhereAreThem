@@ -24,11 +24,11 @@ namespace WhereAreThem.Model.Models {
         }
 
         public static string GetDriveLetter(string path) {
-            return path.Substring(0, path.IndexOf(Path.VolumeSeparatorChar));
+            return path.Substring(0, path.IndexOf(Path.VolumeSeparatorChar)).ToUpper();
         }
 
         public static string GetDrivePath(string letter) {
-            return "{0}{1}{2}".FormatWith(letter, Path.VolumeSeparatorChar, Path.DirectorySeparatorChar);
+            return "{0}{1}{2}".FormatWith(letter.ToUpper(), Path.VolumeSeparatorChar, Path.DirectorySeparatorChar);
         }
 
         public static Drive FromFolder(Folder folder, DriveType driveType) {

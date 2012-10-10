@@ -53,8 +53,10 @@ namespace WhereAreThem.Model {
                 DateTime listTimestamp = new FileInfo(listPath).LastWriteTimeUtc;
                 driveFolder = machine.Folders.SingleOrDefault(d => d.Name == Drive.GetDrivePath(driveLetter));
                 if ((driveFolder == null) || (driveFolder.CreatedDateUtc != listTimestamp)) {
-                    machine.Folders.Remove(driveFolder);
+                    if (driveFolder != null)
+                        machine.Folders.Remove(driveFolder);
                     driveFolder = Drive.FromFolder(_persistence.Load(listPath), driveType);
+                    driveFolder.Name = Drive.GetDrivePath(driveLetter);
                     driveFolder.CreatedDateUtc = listTimestamp;
                     machine.Folders.Add(driveFolder);
                 }
