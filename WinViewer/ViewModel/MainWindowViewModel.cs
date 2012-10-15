@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -16,7 +17,6 @@ using WhereAreThem.Model;
 using WhereAreThem.Model.Models;
 using WhereAreThem.WinViewer.Event;
 using WhereAreThem.WinViewer.Model;
-using System.Configuration;
 
 namespace WhereAreThem.WinViewer.ViewModel {
     public class MainWindowViewModel : BusyViewModelBase {
@@ -64,12 +64,12 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get {
                 if (_scanCommand == null) {
                     _scanCommand = new RelayCommand((p) => {
-                        List<Folder> folders = new List<Folder>(SelectedFolderStack);
-                        folders.Add(SelectedFolder);
-                        if (p != SelectedFolder)
-                            folders.Add((Folder)p);
-
                         BusyWith("Scanning {0} ...".FormatWith(((Folder)p).Name), () => {
+                            List<Folder> folders = new List<Folder>(SelectedFolderStack);
+                            folders.Add(SelectedFolder);
+                            if (p != SelectedFolder)
+                                folders.Add((Folder)p);
+
                             Folder machine = folders[0];
                             DriveModel drive = (DriveModel)folders[1];
                             string path = Path.Combine(folders.Select(f => f.Name).ToArray());
