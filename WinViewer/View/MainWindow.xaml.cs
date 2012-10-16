@@ -50,8 +50,19 @@ namespace WhereAreThem.WinViewer.View {
 
             VM = new MainWindowViewModel();
             VM.View = this;
-            VM.OpeningProperties += new OpeningPropertiesEventHandler(OnOpeningProperties);
+            VM.OpeningProperties += OnOpeningProperties;
             DataContext = VM;
+        }
+
+        private void OnLocatingItem(object sender, LocatingItemEventArgs e) {
+            TreeViewItem treeViewItem = GetRootTreeViewItem(_selectedTreeViewItem);
+            for (int i = 1; i < e.Stack.Count; i++) {
+                treeViewItem.IsExpanded = true;
+                treeViewItem.UpdateLayout();
+                treeViewItem = (TreeViewItem)treeViewItem.ItemContainerGenerator.ContainerFromItem(e.Stack[i]);
+            }
+            treeViewItem.IsSelected = true;
+            VM.SelectedItem = e.Item;
         }
 
         private void OnOpeningProperties(object sender, OpeningPropertiesEventArgs e) {
@@ -73,15 +84,15 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void FolderTreeMouseRightClick(object sender, MouseButtonEventArgs e) {
-            TreeViewItem item = GetParentTreeNode(e.OriginalSource as DependencyObject);
+            TreeViewItem item = GetParentTreeViewItem(e.OriginalSource as DependencyObject);
             item.Focus();
             e.Handled = true;
         }
 
         private async void FolderTreeSelected(object sender, RoutedEventArgs e) {
             _selectedTreeViewItem = (TreeViewItem)e.OriginalSource;
-
             TreeView treeView = (TreeView)sender;
+
             await LoadIfDriveAsync(treeView.SelectedItem);
             VM.SelectedFolder = (Folder)treeView.SelectedItem;
             List<Folder> stack = new List<Folder>();
@@ -112,17 +123,6 @@ namespace WhereAreThem.WinViewer.View {
                 ((DataGrid)sender).ScrollIntoView(VM.SelectedItem);
         }
 
-        private void OnLocatingItem(object sender, LocatingItemEventArgs e) {
-            TreeViewItem treeViewItem = GetRootTreeViewItem(_selectedTreeViewItem);
-            for (int i = 1; i < e.Result.Stack.Count; i++) {
-                treeViewItem.IsExpanded = true;
-                treeViewItem.UpdateLayout();
-                treeViewItem = (TreeViewItem)treeViewItem.ItemContainerGenerator.ContainerFromItem(e.Result.Stack[i]);
-            }
-            treeViewItem.IsSelected = true;
-            VM.SelectedItem = e.Result.Item;
-        }
-
         private async Task LoadIfDriveAsync(object item) {
             if (item is DriveModel) {
                 DriveModel drive = (DriveModel)item;
@@ -133,7 +133,7 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void GetFolderStack(TreeViewItem item, List<Folder> stack) {
-            TreeViewItem parent = GetParentTreeNode(item);
+            TreeViewItem parent = GetParentTreeViewItem(item);
             if (parent != null) {
                 stack.Insert(0, (Folder)parent.Header);
                 GetFolderStack(parent, stack);
@@ -141,14 +141,14 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private TreeViewItem GetRootTreeViewItem(TreeViewItem item) {
-            TreeViewItem parent = GetParentTreeNode(item);
+            TreeViewItem parent = GetParentTreeViewItem(item);
             if (parent != null)
                 return GetRootTreeViewItem(parent);
             else // parent is TreeView
                 return item;
         }
 
-        private TreeViewItem GetParentTreeNode(DependencyObject item) {
+        private TreeViewItem GetParentTreeViewItem(DependencyObject item) {
             DependencyObject parent = item;
             do {
                 parent = VisualTreeHelper.GetParent(parent);

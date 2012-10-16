@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using WhereAreThem.WinViewer.Model;
+using WhereAreThem.Model.Models;
 
 namespace WhereAreThem.WinViewer.Event {
     public class LocatingItemEventArgs : EventArgs {
-        public SearchResult Result { get; private set; }
+        public FileSystemItem Item { get; private set; }
+        public List<Folder> Stack { get; private set; }
 
-        public LocatingItemEventArgs(SearchResult result) {
-            Result = result;
+        public LocatingItemEventArgs(FileSystemItem item, List<Folder> stack) {
+            Item = item;
+            Stack = stack;
         }
     }
 

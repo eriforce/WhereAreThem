@@ -117,7 +117,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
 
         public void OnLocatingItem() {
             if (LocatingItem != null)
-                LocatingItem(this, new LocatingItemEventArgs(SelectedSearchResult));
+                LocatingItem(this, new LocatingItemEventArgs(SelectedSearchResult.Item, SelectedSearchResult.Stack));
             View.Close();
         }
 

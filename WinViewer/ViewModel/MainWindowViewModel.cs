@@ -63,13 +63,14 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public ICommand ScanCommand {
             get {
                 if (_scanCommand == null) {
-                    _scanCommand = new RelayCommand((p) => {
-                        BusyWith("Scanning {0} ...".FormatWith(((Folder)p).Name), () => {
-                            List<Folder> folders = new List<Folder>(SelectedFolderStack);
-                            folders.Add(SelectedFolder);
-                            if (p != SelectedFolder)
-                                folders.Add((Folder)p);
+                    _scanCommand = new RelayCommand(async (p) => {
+                        Folder pFolder = (Folder)p;
+                        List<Folder> folders = new List<Folder>(SelectedFolderStack);
+                        folders.Add(SelectedFolder);
+                        if (pFolder != SelectedFolder)
+                            folders.Add(pFolder);
 
+                        await BusyWithAsync("Scanning {0} ...".FormatWith(pFolder.Name), () => {
                             Folder machine = folders[0];
                             DriveModel drive = (DriveModel)folders[1];
                             string path = Path.Combine(folders.Select(f => f.Name).ToArray());
@@ -81,7 +82,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             }
                             else {
                                 Folder parent = folders[folders.Count - 2];
-                                parent.Folders.Remove((Folder)p);
+                                parent.Folders.Remove(pFolder);
                                 App.Scanner.Save(folders.First().Name, drive);
                             }
 
@@ -92,7 +93,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             return false;
                         if ((p is DriveModel) && (SelectedFolder is Computer))
                             return SelectedFolder.Name == Environment.MachineName;
-                        return SelectedFolderStack.Any() 
+                        return SelectedFolderStack.Any()
                             && (SelectedFolderStack.First().Name == Environment.MachineName);
                     });
                 }
