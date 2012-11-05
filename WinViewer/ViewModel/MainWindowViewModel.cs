@@ -68,8 +68,8 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 stack.Add(SelectedFolder);
                 Location = IO.Path.Combine(stack.Select(f => f.Name).ToArray());
 
-                if ((Navigation.CurrentEntry == null) || (SelectedFolder != Navigation.CurrentEntry.Item))
-                    Navigation.AddBackEntry(new LocatingItemEventArgs(SelectedFolder, SelectedFolderStack));
+                if ((Navigation.CurrentEntry == null) || (SelectedFolder != Navigation.CurrentEntry.Stack.Last()))
+                    Navigation.AddBackEntry(new LocatingItemEventArgs(null, stack));
             }
         }
         public List<Folder> SelectedFolderStack { get; set; }
@@ -175,10 +175,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get {
                 if (_goUpCommand == null)
                     _goUpCommand = new RelayCommand((p) => {
-                        Folder folder = SelectedFolderStack.Last();
-                        List<Folder> stack = new List<Folder>(SelectedFolderStack);
-                        stack.RemoveAt(SelectedFolderStack.Count - 1);
-                        OnNavigatingFolder(new LocatingItemEventArgs(folder, stack));
+                        OnNavigatingFolder(new LocatingItemEventArgs(null, SelectedFolderStack));
                     }, (p) => (SelectedFolderStack != null) && SelectedFolderStack.Any());
                 return _goUpCommand;
             }

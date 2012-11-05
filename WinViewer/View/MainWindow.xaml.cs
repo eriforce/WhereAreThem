@@ -51,29 +51,19 @@ namespace WhereAreThem.WinViewer.View {
             VM = new MainWindowViewModel();
             VM.View = this;
             VM.OpeningProperties += OnOpeningProperties;
-            VM.NavigatingFolder += OnNavigatingFolder;
+            VM.NavigatingFolder += OnLocatingItem;
             DataContext = VM;
         }
 
         private void OnLocatingItem(object sender, LocatingItemEventArgs e) {
-            LocateFolderInTree(e.Stack);
-            VM.SelectedItem = e.Item;
-        }
-
-        private void OnNavigatingFolder(object sender, LocatingItemEventArgs e) {
-            List<Folder> stack = new List<Folder>(e.Stack);
-            stack.Add((Folder)e.Item);
-            LocateFolderInTree(stack);
-        }
-
-        private void LocateFolderInTree(List<Folder> folderStack) {
             TreeViewItem treeViewItem = GetRootTreeViewItem(_selectedTreeViewItem);
-            for (int i = 1; i < folderStack.Count; i++) {
+            for (int i = 1; i < e.Stack.Count; i++) {
                 treeViewItem.IsExpanded = true;
                 treeViewItem.UpdateLayout();
-                treeViewItem = (TreeViewItem)treeViewItem.ItemContainerGenerator.ContainerFromItem(folderStack[i]);
+                treeViewItem = (TreeViewItem)treeViewItem.ItemContainerGenerator.ContainerFromItem(e.Stack[i]);
             }
             treeViewItem.IsSelected = true;
+            VM.SelectedItem = e.Item;
         }
 
         private void OnOpeningProperties(object sender, OpeningPropertiesEventArgs e) {
