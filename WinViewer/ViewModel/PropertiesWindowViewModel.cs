@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Input;
 using PureLib.Common;
 using PureLib.WPF;
 using WhereAreThem.Model.Models;
 using IO = System.IO;
-using System.Windows.Input;
 
 namespace WhereAreThem.WinViewer.ViewModel {
     public class PropertiesWindowViewModel : ViewModelBase {

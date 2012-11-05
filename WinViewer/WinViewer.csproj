@@ -76,6 +76,7 @@
     <Compile Include="Model\DriveModel.cs" />
     <Compile Include="Model\IconHelper.cs" />
     <Compile Include="Model\ItemType.cs" />
+    <Compile Include="Model\NavigationService.cs" />
     <Compile Include="Model\SearchResult.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\PropertiesWindowViewModel.cs" />

@@ -17,23 +17,36 @@ using WhereAreThem.Model;
 using WhereAreThem.Model.Models;
 using WhereAreThem.WinViewer.Event;
 using WhereAreThem.WinViewer.Model;
+using IO = System.IO;
 
 namespace WhereAreThem.WinViewer.ViewModel {
     public class MainWindowViewModel : BusyViewModelBase {
         private string _statusBarText;
+        private string _location;
         private Folder _selectedFolder;
         private FileSystemItem _selectedItem;
         private ICommand _scanCommand;
         private ICommand _copyCommand;
         private ICommand _openPropertiesCommand;
+        private ICommand _goBackCommand;
+        private ICommand _goForwardCommand;
+        private ICommand _goUpCommand;
 
         public List<Computer> Computers { get; private set; }
+        public ExplorerNavigationService Navigation { get; private set; }
 
         public string StatusBarText {
             get { return _statusBarText; }
             set {
                 _statusBarText = value;
                 RaiseChange(() => StatusBarText);
+            }
+        }
+        public string Location {
+            get { return _location; }
+            set {
+                _location = value;
+                RaiseChange(() => Location);
             }
         }
         public Folder SelectedFolder {
@@ -50,6 +63,13 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 if (SelectedFolder.Files != null)
                     statusTextParts.Add("{0} file(s)".FormatWith(SelectedFolder.Files.Count));
                 StatusBarText = string.Join(", ", statusTextParts);
+
+                List<Folder> stack = new List<Folder>(SelectedFolderStack);
+                stack.Add(SelectedFolder);
+                Location = IO.Path.Combine(stack.Select(f => f.Name).ToArray());
+
+                if ((Navigation.CurrentEntry == null) || (SelectedFolder != Navigation.CurrentEntry.Item))
+                    Navigation.AddBackEntry(new LocatingItemEventArgs(SelectedFolder, SelectedFolderStack));
             }
         }
         public List<Folder> SelectedFolderStack { get; set; }
@@ -131,8 +151,41 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 return _openPropertiesCommand;
             }
         }
+        public ICommand GoBackCommand {
+            get {
+                if (_goBackCommand == null)
+                    _goBackCommand = new RelayCommand((p) => {
+                        Navigation.GoBack();
+                        OnNavigatingFolder(Navigation.CurrentEntry);
+                    }, (p) => Navigation.CanGoBack);
+                return _goBackCommand;
+            }
+        }
+        public ICommand GoForwardCommand {
+            get {
+                if (_goForwardCommand == null)
+                    _goForwardCommand = new RelayCommand((p) => {
+                        Navigation.GoForward();
+                        OnNavigatingFolder(Navigation.CurrentEntry);
+                    }, (p) => Navigation.CanGoForward);
+                return _goForwardCommand;
+            }
+        }
+        public ICommand GoUpCommand {
+            get {
+                if (_goUpCommand == null)
+                    _goUpCommand = new RelayCommand((p) => {
+                        Folder folder = SelectedFolderStack.Last();
+                        List<Folder> stack = new List<Folder>(SelectedFolderStack);
+                        stack.RemoveAt(SelectedFolderStack.Count - 1);
+                        OnNavigatingFolder(new LocatingItemEventArgs(folder, stack));
+                    }, (p) => (SelectedFolderStack != null) && SelectedFolderStack.Any());
+                return _goUpCommand;
+            }
+        }
 
         public event OpeningPropertiesEventHandler OpeningProperties;
+        public event LocatingItemEventHandler NavigatingFolder;
 
         public MainWindowViewModel() {
             App.Scanner.PrintLine += (s, e) => { StatusBarText = e.String; };
@@ -142,6 +195,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                     d => (Folder)new DriveModel(n, d.Name, d.CreatedDateUtc, d.DriveType)).ToList()
             }).ToList();
             InsertLocalComputer();
+            Navigation = new ExplorerNavigationService();
         }
 
         private void InsertLocalComputer() {
@@ -159,6 +213,11 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         Environment.MachineName, drive.Name, DateTime.UtcNow, drive.DriveType) { Folders = null });
             }
             computer.Folders.Sort();
+        }
+
+        private void OnNavigatingFolder(LocatingItemEventArgs e) {
+            if (NavigatingFolder != null)
+                NavigatingFolder(this, e);
         }
     }
 }
