@@ -83,7 +83,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public ICommand ScanCommand {
             get {
                 if (_scanCommand == null) {
-                    _scanCommand = new RelayCommand(async (p) => {
+                    _scanCommand = new RelayCommand(async p => {
                         Folder pFolder = (Folder)p;
                         List<Folder> folders = new List<Folder>(SelectedFolderStack);
                         folders.Add(SelectedFolder);
@@ -108,7 +108,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
 
                             drive.Load();
                         });
-                    }, (p) => {
+                    }, p => {
                         if (!(p is Folder) || (p is Computer))
                             return false;
                         if ((p is DriveModel) && (SelectedFolder is Computer))
@@ -123,7 +123,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public ICommand CopyCommand {
             get {
                 if (_copyCommand == null)
-                    _copyCommand = new RelayCommand((p) => {
+                    _copyCommand = new RelayCommand(p => {
                         FileSystemItem item = p as FileSystemItem;
                         try {
                             Clipboard.SetText(item.Name);
@@ -138,7 +138,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public ICommand OpenPropertiesCommand {
             get {
                 if (_openPropertiesCommand == null)
-                    _openPropertiesCommand = new RelayCommand((p) => {
+                    _openPropertiesCommand = new RelayCommand(p => {
                         FileSystemItem item = p as FileSystemItem;
                         if (OpeningProperties != null) {
                             List<Folder> stack = new List<Folder>(SelectedFolderStack);
@@ -147,36 +147,36 @@ namespace WhereAreThem.WinViewer.ViewModel {
 
                             OpeningProperties(this, new OpeningPropertiesEventArgs(item, stack));
                         }
-                    }, (p) => SelectedFolderStack.Any());
+                    }, p => SelectedFolderStack.Any());
                 return _openPropertiesCommand;
             }
         }
         public ICommand GoBackCommand {
             get {
                 if (_goBackCommand == null)
-                    _goBackCommand = new RelayCommand((p) => {
+                    _goBackCommand = new RelayCommand(p => {
                         Navigation.GoBack();
                         OnNavigatingFolder(Navigation.CurrentEntry);
-                    }, (p) => Navigation.CanGoBack);
+                    }, p => Navigation.CanGoBack);
                 return _goBackCommand;
             }
         }
         public ICommand GoForwardCommand {
             get {
                 if (_goForwardCommand == null)
-                    _goForwardCommand = new RelayCommand((p) => {
+                    _goForwardCommand = new RelayCommand(p => {
                         Navigation.GoForward();
                         OnNavigatingFolder(Navigation.CurrentEntry);
-                    }, (p) => Navigation.CanGoForward);
+                    }, p => Navigation.CanGoForward);
                 return _goForwardCommand;
             }
         }
         public ICommand GoUpCommand {
             get {
                 if (_goUpCommand == null)
-                    _goUpCommand = new RelayCommand((p) => {
+                    _goUpCommand = new RelayCommand(p => {
                         OnNavigatingFolder(new LocatingItemEventArgs(null, SelectedFolderStack));
-                    }, (p) => (SelectedFolderStack != null) && SelectedFolderStack.Any());
+                    }, p => (SelectedFolderStack != null) && SelectedFolderStack.Any());
                 return _goUpCommand;
             }
         }

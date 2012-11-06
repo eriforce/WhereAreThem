@@ -5,10 +5,13 @@
         Title="{Binding WindowTitle}" Height="500" Width="800" WindowStartupLocation="CenterOwner" Icon="/WhereAreThem.WinViewer;component/Resources/ef.ico">
     <Window.Resources>
         <ContextMenu x:Key="searchMenu">
-            <MenuItem Header="Locate" Command="{Binding DataContext.LocateCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
-            <MenuItem Header="Locate on disk" Command="{Binding DataContext.LocateOnDiskCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+            <MenuItem Header="Locate" Command="{Binding VM.LocateCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+            <MenuItem Header="Locate on disk" Command="{Binding VM.LocateOnDiskCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
         </ContextMenu>
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Key="Escape" Command="{Binding CloseCommand}" />
+    </Window.InputBindings>
 
     <p:BusyIndicator IsBusy="{Binding IsBusy}" BusyContent="{Binding BusyContent}" Grid.ColumnSpan="2">
         <Grid Margin="6">

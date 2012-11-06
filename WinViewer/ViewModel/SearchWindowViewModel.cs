@@ -76,27 +76,27 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public ICommand SearchCommand {
             get {
                 if (_searchCommand == null)
-                    _searchCommand = new RelayCommand((p) => {
+                    _searchCommand = new RelayCommand(p => {
                         BusyWith("Searching {0} ...".FormatWith(_location), () => {
                             List<SearchResult> results = new List<SearchResult>();
                             SearchInFolder(results, Root, RootStack);
                             Results = new ObservableCollection<SearchResult>(results);
                         });
-                    }, (p) => { return !SearchPattern.IsNullOrEmpty() && (IncludeFolders || IncludeFiles); });
+                    }, p => { return !SearchPattern.IsNullOrEmpty() && (IncludeFolders || IncludeFiles); });
                 return _searchCommand;
             }
         }
         public ICommand LocateCommand {
             get {
                 if (_locateCommand == null)
-                    _locateCommand = new RelayCommand((p) => OnLocatingItem());
+                    _locateCommand = new RelayCommand(p => OnLocatingItem());
                 return _locateCommand;
             }
         }
         public ICommand LocateOnDiskCommand {
             get {
                 if (_locateOnDiskCommand == null)
-                    _locateOnDiskCommand = new RelayCommand((p) => {
+                    _locateOnDiskCommand = new RelayCommand(p => {
                         string path = IO.Path.Combine(SelectedSearchResult.ItemPath, SelectedSearchResult.Item.Name);
                         bool itemExists = ((SelectedSearchResult.Item is File) && IO.File.Exists(path))
                             || ((SelectedSearchResult.Item is Folder) && IO.Directory.Exists(path));
@@ -104,7 +104,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             Process.Start("explorer.exe", @"/select,{0}".FormatWith(path));
                         else
                             MessageBox.Show(View, "{0} doesn't exist on your disk.".FormatWith(path));
-                    }, (p) => { return RootStack.First().Name == Environment.MachineName; });
+                    }, p => { return RootStack.First().Name == Environment.MachineName; });
                 return _locateOnDiskCommand;
             }
         }
