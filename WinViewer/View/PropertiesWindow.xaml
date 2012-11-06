@@ -9,10 +9,16 @@
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Left" />
         </Style>
-        <Style x:Key="Content" TargetType="{x:Type FrameworkElement}">
+        <Style x:Key="Content" TargetType="{x:Type TextBox}">
             <Setter Property="Margin" Value="8,4" />
             <Setter Property="Grid.Column" Value="1" />
             <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="ContentReadOnly" TargetType="{x:Type TextBox}" BasedOn="{StaticResource Content}">
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
         </Style>
         <Style x:Key="Separator" TargetType="{x:Type Separator}">
             <Setter Property="Margin" Value="8,4" />
@@ -25,15 +31,15 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -41,27 +47,27 @@
             <ColumnDefinition Width="3*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <Image Source="{Binding Item, Converter={StaticResource IconConverter}, ConverterParameter=Large}" Width="32" Height="32" Margin="8" HorizontalAlignment="Left"></Image>
-        <TextBox Text="{Binding Item.Name}" Grid.Row="0" Height="23" IsReadOnly="True" Style="{StaticResource Content}"></TextBox>
+        <Image Source="{Binding Item, Converter={StaticResource IconConverter}, ConverterParameter=Large}" Width="32" Height="32" Margin="8" HorizontalAlignment="Left"/>
+        <TextBox Text="{Binding Item.Name}" Grid.Row="0" Height="23" IsReadOnly="True" Style="{StaticResource Content}"/>
         
-        <Separator Grid.Row="1" Style="{StaticResource Separator}"></Separator>
+        <Separator Grid.Row="1" Style="{StaticResource Separator}"/>
 
-        <TextBlock Text="Type:" Grid.Row="2" Style="{StaticResource Label}"></TextBlock>
-        <TextBlock Text="{Binding FileSystemType}" Grid.Row="2" Style="{StaticResource Content}"></TextBlock>
-        <TextBlock Text="Location:" Grid.Row="3" Style="{StaticResource Label}"></TextBlock>
-        <TextBlock Text="{Binding Location}" Grid.Row="3" Style="{StaticResource Content}"></TextBlock>
-        <TextBlock Text="Size:" Grid.Row="4" Style="{StaticResource Label}"></TextBlock>
-        <TextBlock Text="{Binding Size}" Grid.Row="4" Style="{StaticResource Content}"></TextBlock>
-        <TextBlock Text="Contains:" Visibility="{Binding IsFolder, Converter={StaticResource BooleanToVisibility}}" Grid.Row="5" Style="{StaticResource Label}"></TextBlock>
-        <TextBlock Text="{Binding Contains}" Visibility="{Binding IsFolder, Converter={StaticResource BooleanToVisibility}}" Grid.Row="5" Style="{StaticResource Content}"></TextBlock>
+        <TextBlock Text="Type:" Grid.Row="2" Style="{StaticResource Label}"/>
+        <TextBox Text="{Binding FileSystemType, Mode=OneTime}" Grid.Row="2" Style="{StaticResource ContentReadOnly}"/>
+        <TextBlock Text="Location:" Grid.Row="3" Style="{StaticResource Label}"/>
+        <TextBox Text="{Binding Location, Mode=OneTime}" Grid.Row="3" Style="{StaticResource ContentReadOnly}"/>
+        <TextBlock Text="Size:" Grid.Row="4" Style="{StaticResource Label}"/>
+        <TextBox Text="{Binding Size, Mode=OneTime}" Grid.Row="4" Style="{StaticResource ContentReadOnly}"/>
+        <TextBlock Text="Contains:" Visibility="{Binding IsFolder, Converter={StaticResource BooleanToVisibility}}" Grid.Row="5" Style="{StaticResource Label}"/>
+        <TextBox Text="{Binding Contains, Mode=OneTime}" Visibility="{Binding IsFolder, Converter={StaticResource BooleanToVisibility}}" Grid.Row="5" Style="{StaticResource ContentReadOnly}"/>
         
-        <Separator Grid.Row="6" Style="{StaticResource Separator}"></Separator>
+        <Separator Grid.Row="6" Style="{StaticResource Separator}"/>
         
-        <TextBlock Text="Created:" Grid.Row="7" Style="{StaticResource Label}"></TextBlock>
-        <TextBlock Text="{Binding Item.CreatedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}" Grid.Row="7" Style="{StaticResource Content}"></TextBlock>
-        <TextBlock Text="Modified:" Grid.Row="8" Style="{StaticResource Label}" Visibility="{Binding IsFile, Converter={StaticResource BooleanToVisibility}}"></TextBlock>
-        <TextBlock Text="{Binding Item.ModifiedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}" Visibility="{Binding IsFile, Converter={StaticResource BooleanToVisibility}}" Grid.Row="8" Style="{StaticResource Content}"></TextBlock>
+        <TextBlock Text="Created:" Grid.Row="7" Style="{StaticResource Label}"/>
+        <TextBox Text="{Binding Item.CreatedDate, Mode=OneTime, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}" Grid.Row="7" Style="{StaticResource ContentReadOnly}"/>
+        <TextBlock Text="Modified:" Grid.Row="8" Style="{StaticResource Label}" Visibility="{Binding IsFile, Converter={StaticResource BooleanToVisibility}}"/>
+        <TextBox Text="{Binding Item.ModifiedDate, Mode=OneTime, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}" Visibility="{Binding IsFile, Converter={StaticResource BooleanToVisibility}}" Grid.Row="8" Style="{StaticResource ContentReadOnly}"/>
 
-        <Button Command="{Binding CloseCommand}" Content="OK" Grid.Row="9" Grid.Column="1" Height="23" Width="75" Margin="8" VerticalAlignment="Bottom" HorizontalAlignment="Right"></Button>
+        <Button Command="{Binding CloseCommand}" Content="OK" Grid.Row="9" Grid.Column="1" Height="23" Width="75" Margin="8" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
     </Grid>
 </Window>
