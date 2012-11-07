@@ -99,7 +99,7 @@ namespace WhereAreThem.Model {
                 folder.Files.Sort();
                 folder.Folders.Sort();
             }
-            catch (Exception) { }
+            catch (UnauthorizedAccessException) { }
             return folder;
         }
     }
