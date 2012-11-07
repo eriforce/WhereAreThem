@@ -22,6 +22,8 @@ namespace WhereAreThem.WinViewer.ViewModel {
         private SearchResult _selectedSearchResult;
         private ObservableCollection<SearchResult> _results;
         private string _searchPattern;
+        private string _regexPattern;
+        private string _statusBarText;
         private bool _includeFolders = true;
         private bool _includeFiles = true;
         private ICommand _searchCommand;
@@ -52,6 +54,17 @@ namespace WhereAreThem.WinViewer.ViewModel {
             set {
                 _searchPattern = value;
                 RaiseChange(() => SearchPattern);
+
+                _regexPattern = SearchPattern.WildcardToRegex();
+                if (SearchPattern.StartsWith("*."))
+                    _regexPattern = "^{0}$".FormatWith(_regexPattern);
+            }
+        }
+        public string StatusBarText {
+            get { return _statusBarText; }
+            set {
+                _statusBarText = value;
+                RaiseChange(() => StatusBarText);
             }
         }
         public bool IncludeFolders {
@@ -81,6 +94,13 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             List<SearchResult> results = new List<SearchResult>();
                             SearchInFolder(results, Root, RootStack);
                             Results = new ObservableCollection<SearchResult>(results);
+
+                            List<string> statusTextParts = new List<string>();
+                            if (Results.Any(r => r.Item is Folder))
+                                statusTextParts.Add("{0} folder(s)".FormatWith(Results.Count(r => r.Item is Folder)));
+                            if (Results.Any(r => r.Item is File))
+                                statusTextParts.Add("{0} file(s)".FormatWith(Results.Count(r => r.Item is File)));
+                            StatusBarText = string.Join(", ", statusTextParts);
                         });
                     }, p => { return !SearchPattern.IsNullOrEmpty() && (IncludeFolders || IncludeFiles); });
                 return _searchCommand;
@@ -126,7 +146,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 List<Folder> stack = new List<Folder>(folderStack);
                 stack.Add(folder);
                 foreach (File f in folder.Files) {
-                    if (Regex.IsMatch(f.Name, SearchPattern.WildcardToRegex(), RegexOptions.IgnoreCase))
+                    if (Regex.IsMatch(f.Name, _regexPattern, RegexOptions.IgnoreCase))
                         results.Add(new SearchResult(f, stack));
                 }
             }
@@ -134,7 +154,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 List<Folder> stack = new List<Folder>(folderStack);
                 stack.Add(folder);
                 foreach (Folder f in folder.Folders) {
-                    if (IncludeFolders && Regex.IsMatch(f.Name, SearchPattern.WildcardToRegex(), RegexOptions.IgnoreCase))
+                    if (IncludeFolders && Regex.IsMatch(f.Name, _regexPattern, RegexOptions.IgnoreCase))
                         results.Add(new SearchResult(f, stack));
                     SearchInFolder(results, f, stack);
                 }

@@ -25,8 +25,8 @@
             <CheckBox IsChecked="{Binding IncludeFiles}" Content="Files" Width="50" Margin="0,0,80,0" VerticalAlignment="Center" HorizontalAlignment="Right" />
             <Button Command="{Binding SearchCommand}" IsDefault="True" Content="Search" Width="75" Height="23" VerticalAlignment="Top" HorizontalAlignment="Right" />
 
-            <DataGrid ItemsSource="{Binding Results}" SelectedItem="{Binding SelectedSearchResult}" Grid.Row="1" MouseDoubleClick="DataGrid_MouseDoubleClick"
-                  AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" GridLinesVisibility="None">
+            <DataGrid ItemsSource="{Binding Results}" SelectedItem="{Binding SelectedSearchResult}" Grid.Row="1" Margin="0,0,0,22" MouseDoubleClick="DataGrid_MouseDoubleClick"
+                      AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" GridLinesVisibility="None">
                 <DataGrid.Resources>
                     <Style TargetType="{x:Type DataGridCell}">
                         <Setter Property="ContextMenu" Value="{StaticResource searchMenu}" />
@@ -56,6 +56,10 @@
                     <DataGridTextColumn Header="Modified" Binding="{Binding Item.ModifiedDateUtc, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}" />
                 </DataGrid.Columns>
             </DataGrid>
+            
+            <StatusBar Grid.Row="1" VerticalAlignment="Bottom">
+                <StatusBarItem Content="{Binding StatusBarText}" />
+            </StatusBar>
         </Grid>
     </p:BusyIndicator>
 </Window>
