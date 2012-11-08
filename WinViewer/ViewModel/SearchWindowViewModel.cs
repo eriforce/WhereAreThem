@@ -29,6 +29,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         private ICommand _searchCommand;
         private ICommand _locateCommand;
         private ICommand _locateOnDiskCommand;
+        private ICommand _openPropertiesCommand;
         private string _location {
             get { return IO.Path.Combine(RootStack.Select(f => f.Name).Union(new string[] { Root.Name }).ToArray()); }
         }
@@ -128,8 +129,19 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 return _locateOnDiskCommand;
             }
         }
+        public ICommand OpenPropertiesCommand {
+            get {
+                if (_openPropertiesCommand == null)
+                    _openPropertiesCommand = new RelayCommand(p => {
+                        if (OpeningProperties != null)
+                            OpeningProperties(this, new OpeningPropertiesEventArgs(SelectedSearchResult.Item, SelectedSearchResult.Stack));
+                    });
+                return _openPropertiesCommand;
+            }
+        }
 
         public event LocatingItemEventHandler LocatingItem;
+        public event OpeningPropertiesEventHandler OpeningProperties;
 
         public void RefreshWindowTitle() {
             RaiseChange(() => WindowTitle);

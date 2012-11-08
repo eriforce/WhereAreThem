@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WhereAreThem.WinViewer.Event;
 using WhereAreThem.WinViewer.ViewModel;
 
 namespace WhereAreThem.WinViewer.View {
@@ -30,11 +31,18 @@ namespace WhereAreThem.WinViewer.View {
 
             VM = new SearchWindowViewModel();
             VM.View = this;
+            VM.OpeningProperties += OnOpeningProperties;
             DataContext = VM;
         }
 
         private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
             VM.OnLocatingItem();
+        }
+
+        private void OnOpeningProperties(object sender, OpeningPropertiesEventArgs e) {
+            PropertiesWindow window = new PropertiesWindow(e.Item, e.FolderStack);
+            window.Owner = this;
+            window.Show();
         }
     }
 }
