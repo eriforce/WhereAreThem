@@ -28,7 +28,7 @@ namespace WhereAreThem.WebViewer.Models {
 
         public static string GetFullPath(this Folder folder, List<Folder> stack) {
             if (stack.Contains(folder))
-                stack = stack.Take(stack.IndexOf(folder)).ToList();
+                stack = stack.Take(stack.LastIndexOf(folder)).ToList();
             List<string> parts = stack.Select(f => f.Name).ToList();
             parts.Add(folder.Name);
             return Path.Combine(parts.ToArray());

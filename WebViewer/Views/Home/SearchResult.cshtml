@@ -1,7 +1,7 @@
 ﻿@using PureLib.Common
 @using WhereAreThem.Model.Models
 @using WhereAreThem.WebViewer.Models
-@model Dictionary<FileSystemItem, string>
+@model List<SearchResult>
 @{
     string machineName = ViewBag.MachineName;
     ViewBag.Title = Extensions.ActionSearchResult;
@@ -39,26 +39,26 @@
             </tr>
         }
         else {
-            foreach (var p in Model) {
+            foreach (SearchResult r in Model) {
                 <tr>
-                    @if (p.Key is Folder) {
-                        Folder f = (Folder)p.Key;
+                    @if (r.Item is Folder) {
+                        Folder f = (Folder)r.Item;
                         <td>
-                            <a href="@Url.Action(Extensions.ActionExplorer, new { machineName = machineName, path = "{0}{1}{2}".FormatWith(p.Value, p.Value.EndsWith("\\") ? string.Empty : "\\", f.Name) })">
+                            <a href="@Url.Action(Extensions.ActionExplorer, new { machineName = machineName, path = Path.Combine(r.ItemPath, f.Name) })">
                                 <span class="icon folder item iconText">@f.Name</span>
                             </a>
                         </td>
                     }
                     else {
-                        WhereAreThem.Model.Models.File f = (WhereAreThem.Model.Models.File)p.Key;
+                        WhereAreThem.Model.Models.File f = (WhereAreThem.Model.Models.File)r.Item;
                         <td>
                             <span class="icon file item iconText">@f.Name</span>
                         </td>
                     }
-                    <td class="size nowrap">@p.Key.Size.ToFriendlyString()</td>
+                    <td class="size nowrap">@r.Item.Size.ToFriendlyString()</td>
                     <td class="location">
-                        <a href="@Url.Action(Extensions.ActionExplorer, new { machineName = machineName, path = p.Value })">
-                            <span class="item">@p.Value</span>
+                        <a href="@Url.Action(Extensions.ActionExplorer, new { machineName = machineName, path = r.ItemPath })">
+                            <span class="item">@r.ItemPath</span>
                         </a>
                     </td>
                 </tr>

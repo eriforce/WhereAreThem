@@ -22,7 +22,6 @@ namespace WhereAreThem.WinViewer.ViewModel {
         private SearchResult _selectedSearchResult;
         private ObservableCollection<SearchResult> _results;
         private string _searchPattern;
-        private string _regexPattern;
         private string _statusBarText;
         private bool _includeFolders = true;
         private bool _includeFiles = true;
@@ -55,10 +54,6 @@ namespace WhereAreThem.WinViewer.ViewModel {
             set {
                 _searchPattern = value;
                 RaiseChange(() => SearchPattern);
-
-                _regexPattern = SearchPattern.WildcardToRegex();
-                if (SearchPattern.StartsWith("*."))
-                    _regexPattern = "^{0}$".FormatWith(_regexPattern);
             }
         }
         public string StatusBarText {
@@ -92,9 +87,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 if (_searchCommand == null)
                     _searchCommand = new RelayCommand(p => {
                         BusyWith("Searching {0} ...".FormatWith(_location), () => {
-                            List<SearchResult> results = new List<SearchResult>();
-                            SearchInFolder(results, Root, RootStack);
-                            Results = new ObservableCollection<SearchResult>(results);
+                            Results = new ObservableCollection<SearchResult>(Root.Search(RootStack, SearchPattern, IncludeFiles, IncludeFolders));
 
                             List<string> statusTextParts = new List<string>();
                             if (Results.Any(r => r.Item is Folder))
@@ -151,26 +144,6 @@ namespace WhereAreThem.WinViewer.ViewModel {
             if (LocatingItem != null)
                 LocatingItem(this, new LocatingItemEventArgs(SelectedSearchResult.Item, SelectedSearchResult.Stack));
             View.Close();
-        }
-
-        private void SearchInFolder(List<SearchResult> results, Folder folder, List<Folder> folderStack) {
-            if (IncludeFiles && (folder.Files != null)) {
-                List<Folder> stack = new List<Folder>(folderStack);
-                stack.Add(folder);
-                foreach (File f in folder.Files) {
-                    if (Regex.IsMatch(f.Name, _regexPattern, RegexOptions.IgnoreCase))
-                        results.Add(new SearchResult(f, stack));
-                }
-            }
-            if (folder.Folders != null) {
-                List<Folder> stack = new List<Folder>(folderStack);
-                stack.Add(folder);
-                foreach (Folder f in folder.Folders) {
-                    if (IncludeFolders && Regex.IsMatch(f.Name, _regexPattern, RegexOptions.IgnoreCase))
-                        results.Add(new SearchResult(f, stack));
-                    SearchInFolder(results, f, stack);
-                }
-            }
         }
     }
 }

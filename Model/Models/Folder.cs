@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.RegularExpressions;
+using PureLib.Common;
 
 namespace WhereAreThem.Model.Models {
     [DataContract]
@@ -31,6 +33,37 @@ namespace WhereAreThem.Model.Models {
                     size += Folders.Sum(f => f.Size);
                 return size;
             }
+        }
+
+        public List<SearchResult> Search(List<Folder> folderStack, string pattern, bool includeFile, bool includeFolder) {
+            if (!includeFile && !includeFolder)
+                return null;
+
+            pattern = pattern.WildcardToRegex();
+            if (pattern.StartsWith("*."))
+                pattern = "^{0}$".FormatWith(pattern);
+
+            List<SearchResult> results = new List<SearchResult>();
+            Search(results, folderStack, pattern, includeFile, includeFolder);
+            return results;
+        }
+
+        private void Search(List<SearchResult> results, List<Folder> folderStack, string regexPattern, bool includeFile, bool includeFolder) {
+            List<Folder> stack = new List<Folder>(folderStack);
+            stack.Add(this);
+
+            if (includeFile && (Files != null))
+                foreach (File f in Files) {
+                    if (Regex.IsMatch(f.Name, regexPattern, RegexOptions.IgnoreCase))
+                        results.Add(new SearchResult(f, stack));
+                }
+
+            if (Folders != null)
+                foreach (Folder f in Folders) {
+                    if (includeFolder && Regex.IsMatch(f.Name, regexPattern, RegexOptions.IgnoreCase))
+                        results.Add(new SearchResult(f, stack));
+                    f.Search(results, stack, regexPattern, includeFile, includeFolder);
+                }
         }
     }
 }

@@ -31,10 +31,8 @@ namespace WhereAreThem.WebViewer.Controllers {
                 return (folder == null) ? null : View(folder);
             }
             else {
-                Dictionary<FileSystemItem, string> result = new Dictionary<FileSystemItem, string>();
-                stack.Remove(stack.Last());
-                SearchInFolder(folder, stack, searchPattern.WildcardToRegex(), result);
-                return View(Extensions.ActionSearchResult, result);
+                stack.RemoveAt(stack.Count - 1);
+                return View(Extensions.ActionSearchResult, folder.Search(stack, searchPattern, true, true));
             }
         }
 
@@ -50,23 +48,6 @@ namespace WhereAreThem.WebViewer.Controllers {
 
             ViewBag.MachineName = machineName;
             return List.GetFolder(machineName, path, out stack);
-        }
-
-        private void SearchInFolder(Folder folder, List<Folder> folderStack, string pattern, Dictionary<FileSystemItem, string> result) {
-            if (folder.Files != null)
-                foreach (File f in folder.Files) {
-                    if (Regex.IsMatch(f.Name, pattern, RegexOptions.IgnoreCase))
-                        result.Add(f, folder.GetFullPath(folderStack));
-                }
-            if (folder.Folders != null) {
-                List<Folder> stack = new List<Folder>(folderStack);
-                stack.Add(folder);
-                foreach (Folder f in folder.Folders) {
-                    if (Regex.IsMatch(f.Name, pattern, RegexOptions.IgnoreCase))
-                        result.Add(f, folder.GetFullPath(folderStack));
-                    SearchInFolder(f, stack, pattern, result);
-                }
-            }
         }
     }
 }

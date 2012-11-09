@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Text;
-using WhereAreThem.Model.Models;
 
-namespace WhereAreThem.WinViewer.Model {
+namespace WhereAreThem.Model.Models {
     public class SearchResult {
         public FileSystemItem Item { get; private set; }
         public List<Folder> Stack { get; private set; }
