@@ -40,7 +40,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\ef.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\WhereIsIt.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PureLib.Client, Version=1.2.0.106, Culture=neutral, processorArchitecture=MSIL">
@@ -123,7 +123,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\ef.ico" />
+    <Resource Include="Resources\WhereIsIt.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
