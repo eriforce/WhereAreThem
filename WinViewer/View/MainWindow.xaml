@@ -16,12 +16,13 @@
         <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{x:Static SystemColors.HighlightColor}" />
         <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{x:Static SystemColors.HighlightTextColor}" />
         <Style x:Key="NavigationButton" TargetType="{x:Type Button}">
-            <Setter Property="Height" Value="20"/>
-            <Setter Property="Width" Value="20"/>
-            <Setter Property="Margin" Value="0,0,2,0"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Margin" Value="0,0,4,0"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="FontFamily" Value="Calibri"/>
+            <Setter Property="FontSize" Value="20"/>
         </Style>
     </Window.Resources>
     <Window.InputBindings>
@@ -75,7 +76,7 @@
                 <TextBox Text="{Binding Location}" Grid.Column="1" Margin="0" IsReadOnly="True" VerticalContentAlignment="Center" />
             </Grid>
 
-            <DataGrid ItemsSource="{Binding SelectedFolder.Items}" SelectedItem="{Binding SelectedItem}" Grid.Column="1" Grid.Row="1" Margin="0,2,0,22"
+            <DataGrid ItemsSource="{Binding SelectedFolder.Items}" SelectedItem="{Binding SelectedItem}" Grid.Column="1" Grid.Row="1" Margin="0,4,0,22"
                   MouseDoubleClick="DataGridMouseDoubleClick" SelectionChanged="DataGridSelectionChanged" IsReadOnly="True"
                   AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" GridLinesVisibility="None">
                 <DataGrid.Resources>
