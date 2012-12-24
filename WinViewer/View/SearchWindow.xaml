@@ -2,7 +2,13 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:p="clr-namespace:PureLib.WPF.BusyControl;assembly=PureLib.Client"
-        Title="{Binding WindowTitle}" Height="500" Width="800" WindowStartupLocation="CenterOwner" Icon="/WhereAreThem.WinViewer;component/Resources/WhereIsIt.ico">
+        Height="500" Width="800" WindowStartupLocation="CenterOwner" Icon="/WhereAreThem.WinViewer;component/Resources/WhereIsIt.ico">
+    <Window.Title>
+        <MultiBinding StringFormat="Search in {0} > {1}">
+            <Binding Path="MachineName" />
+            <Binding Path="Location" />
+        </MultiBinding>
+    </Window.Title>
     <Window.Resources>
         <ContextMenu x:Key="searchMenu">
             <MenuItem Header="Locate" Command="{Binding VM.LocateCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />

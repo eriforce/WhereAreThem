@@ -30,7 +30,7 @@ namespace WhereAreThem.Model {
                 throw new ArgumentNullException("ScanUpdate path is null.");
             if (!Directory.Exists(path))
                 throw new DirectoryNotFoundException("Path '{0}' cannot be found.".FormatWith(path));
-            
+
             string[] parts = path.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
             parts[0] += Path.DirectorySeparatorChar;
             string listPath = GetListPath(Environment.MachineName, Drive.GetDriveLetter(parts[0]), driveType);

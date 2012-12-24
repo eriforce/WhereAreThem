@@ -24,7 +24,6 @@ namespace WhereAreThem.WinViewer.View {
             InitializeComponent();
 
             Activated += (s, e) => {
-                VM.RefreshWindowTitle();
                 txtSearch.SelectAll();
                 Keyboard.Focus(txtSearch);
             };

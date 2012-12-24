@@ -90,24 +90,18 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         if (pFolder != SelectedFolder)
                             folders.Add(pFolder);
 
-                        await BusyWithAsync("Scanning {0} ...".FormatWith(pFolder.Name), () => {
-                            Folder machine = folders[0];
-                            DriveModel drive = (DriveModel)folders[1];
-                            string path = Path.Combine(folders.Select(f => f.Name).ToArray());
-                            if (Directory.Exists(path)) {
-                                if (p is DriveModel)
-                                    App.Scanner.Scan(path);
-                                else
-                                    App.Scanner.ScanUpdate(path, drive.DriveType);
-                            }
-                            else {
+                        string path = Path.Combine(folders.Select(f => f.Name).ToArray());
+                        DriveModel drive = (DriveModel)folders[1];
+                        if (Directory.Exists(path)) {
+                            await ScanAsync(path, p is DriveModel, drive);
+                        }
+                        else {
+                            await BusyWithAsync("Saving {0} ...".FormatWith(drive.Name), () => {
                                 Folder parent = folders[folders.Count - 2];
                                 parent.Folders.Remove(pFolder);
-                                App.Scanner.Save(folders.First().Name, drive);
-                            }
-
-                            drive.Load();
-                        });
+                                App.Scanner.Save(Environment.MachineName, drive);
+                            });
+                        }
                     }, p => {
                         if (!(p is Folder) || (p is Computer))
                             return false;
@@ -195,14 +189,27 @@ namespace WhereAreThem.WinViewer.ViewModel {
             Navigation = new ExplorerNavigationService();
         }
 
+        public async void Scan(string[] folders) {
+            if (folders != null)
+                foreach (string path in folders) {
+                    Computer computer = Computers.Single(c => c.Name == Environment.MachineName);
+                    string root = Directory.GetDirectoryRoot(path);
+                    DriveModel drive = (DriveModel)computer.Folders.Single(f => f.Name.Equals(root, StringComparison.OrdinalIgnoreCase));
+
+                    await ScanAsync(path, root.Equals(path, StringComparison.OrdinalIgnoreCase), drive);
+                }
+        }
+
         private void InsertLocalComputer() {
-            Computer computer = Computers.SingleOrDefault(c => c.Name.Equals(Environment.MachineName, StringComparison.OrdinalIgnoreCase));
+            Computer computer = Computers.SingleOrDefault(
+                c => c.Name.Equals(Environment.MachineName, StringComparison.OrdinalIgnoreCase));
             if (computer == null) {
                 computer = new Computer() { Name = Environment.MachineName, Folders = new List<Folder>() };
                 Computers.Add(computer);
             }
 
-            DriveType[] driveTypes = ConfigurationManager.AppSettings["driveTypes"].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+            DriveType[] driveTypes = ConfigurationManager.AppSettings["driveTypes"]
+                .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(s => (DriveType)Enum.Parse(typeof(DriveType), s)).ToArray();
             foreach (DriveInfo drive in DriveInfo.GetDrives()) {
                 if (driveTypes.Contains(drive.DriveType) && !computer.Folders.Any(f => f.Name == drive.Name))
@@ -210,6 +217,17 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         Environment.MachineName, drive.Name, DateTime.UtcNow, drive.DriveType) { Folders = null });
             }
             computer.Folders.Sort();
+        }
+
+        private async Task ScanAsync(string path, bool scanDrive, DriveModel drive) {
+            await BusyWithAsync("Scanning {0} ...".FormatWith(Path.GetFileName(path)), () => {
+                if (scanDrive)
+                    App.Scanner.Scan(path);
+                else
+                    App.Scanner.ScanUpdate(path, drive.DriveType);
+
+                drive.Load();
+            });
         }
 
         private void OnNavigatingFolder(LocatingItemEventArgs e) {

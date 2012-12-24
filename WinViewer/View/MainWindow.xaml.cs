@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,8 +35,7 @@ namespace WhereAreThem.WinViewer.View {
                     _searchWindow.Owner = this;
                     _searchWindow.VM.LocatingItem += OnLocatingItem;
                     _searchWindow.Closing += (s, e) => {
-                        ((Window)s).Hide();
-                        KeyDown += WindowKeyDown;
+                        _searchWindow.Hide();
                         e.Cancel = true;
                     };
                 }
@@ -46,6 +46,8 @@ namespace WhereAreThem.WinViewer.View {
         public MainWindow() {
             InitializeComponent();
 
+            AllowDrop = true;
+            Drop += WindowDrop;
             KeyDown += WindowKeyDown;
 
             VM = new MainWindowViewModel();
@@ -72,13 +74,19 @@ namespace WhereAreThem.WinViewer.View {
             window.Show();
         }
 
+        private void WindowDrop(object sender, DragEventArgs e) {
+            if (!VM.IsBusy && e.Data.GetDataPresent(DataFormats.FileDrop))
+                VM.Scan(e.Data.GetData(DataFormats.FileDrop, true) as string[]);
+            e.Handled = true;
+        }
+
         private void WindowKeyDown(object sender, KeyEventArgs e) {
             if ((e.Key == Key.F) && (Keyboard.Modifiers == ModifierKeys.Control)) {
                 if ((VM.SelectedFolder != null) && !(VM.SelectedFolder is Computer)) {
                     SearchWindow.VM.RootStack = VM.SelectedFolderStack;
                     SearchWindow.VM.Root = VM.SelectedFolder;
+                    SearchWindow.VM.Location = VM.Location;
                     SearchWindow.Show();
-                    KeyDown -= WindowKeyDown;
                 }
                 e.Handled = true;
             }

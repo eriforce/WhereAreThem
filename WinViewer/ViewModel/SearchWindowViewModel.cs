@@ -19,22 +19,37 @@ using IO = System.IO;
 
 namespace WhereAreThem.WinViewer.ViewModel {
     public class SearchWindowViewModel : BusyViewModelBase {
+        private Folder _root;
+        private List<Folder> _rootStack;
         private SearchResult _selectedSearchResult;
         private ObservableCollection<SearchResult> _results;
         private string _searchPattern;
         private string _statusBarText;
         private bool _includeFolders = true;
         private bool _includeFiles = true;
+        private string _location;
+        private string _machineName;
         private ICommand _searchCommand;
         private ICommand _locateCommand;
         private ICommand _locateOnDiskCommand;
         private ICommand _openPropertiesCommand;
-        private string _location {
-            get { return IO.Path.Combine(RootStack.Select(f => f.Name).Union(new string[] { Root.Name }).ToArray()); }
-        }
 
-        public Folder Root { get; set; }
-        public List<Folder> RootStack { get; set; }
+        public Folder Root {
+            get { return _root; }
+            set {
+                _root = value;
+                RaiseChange(() => Root);
+            }
+        }
+        public List<Folder> RootStack {
+            get { return _rootStack; }
+            set {
+                _rootStack = value;
+                RaiseChange(() => RootStack);
+
+                MachineName = RootStack.First().Name;
+            }
+        }
         public SearchResult SelectedSearchResult {
             get { return _selectedSearchResult; }
             set {
@@ -77,16 +92,25 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 RaiseChange(() => IncludeFiles);
             }
         }
-        public string WindowTitle {
-            get {
-                return "Search in {0} of {1}".FormatWith(_location, RootStack.First().Name);
+        public string Location {
+            get { return _location; }
+            set {
+                _location = value;
+                RaiseChange(() => Location);
+            }
+        }
+        public string MachineName {
+            get { return _machineName; }
+            set {
+                _machineName = value;
+                RaiseChange(() => MachineName);
             }
         }
         public ICommand SearchCommand {
             get {
                 if (_searchCommand == null)
                     _searchCommand = new RelayCommand(p => {
-                        BusyWith("Searching {0} ...".FormatWith(_location), () => {
+                        BusyWith("Searching {0} ...".FormatWith(Location), () => {
                             Results = new ObservableCollection<SearchResult>(Root.Search(RootStack, SearchPattern, IncludeFiles, IncludeFolders));
 
                             List<string> statusTextParts = new List<string>();
@@ -135,10 +159,6 @@ namespace WhereAreThem.WinViewer.ViewModel {
 
         public event LocatingItemEventHandler LocatingItem;
         public event OpeningPropertiesEventHandler OpeningProperties;
-
-        public void RefreshWindowTitle() {
-            RaiseChange(() => WindowTitle);
-        }
 
         public void OnLocatingItem() {
             if (LocatingItem != null)
