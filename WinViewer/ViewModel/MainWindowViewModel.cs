@@ -31,6 +31,9 @@ namespace WhereAreThem.WinViewer.ViewModel {
         private ICommand _goBackCommand;
         private ICommand _goForwardCommand;
         private ICommand _goUpCommand;
+        private Computer _localComputer {
+            get { return Computers.SingleOrDefault(c => c.Name == Environment.MachineName); }
+        }
 
         public List<Computer> Computers { get; private set; }
         public ExplorerNavigationService Navigation { get; private set; }
@@ -96,11 +99,10 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             await ScanAsync(path, p is DriveModel, drive);
                         }
                         else {
-                            await BusyWithAsync("Saving {0} ...".FormatWith(drive.Name), () => {
-                                Folder parent = folders[folders.Count - 2];
-                                parent.Folders.Remove(pFolder);
-                                App.Scanner.Save(Environment.MachineName, drive);
-                            });
+                            Folder parent = folders[folders.Count - 2];
+                            parent.Folders.Remove(pFolder);
+                            drive.Refresh();
+                            drive.IsChanged = true;
                         }
                     }, p => {
                         if (!(p is Folder) || (p is Computer))
@@ -192,17 +194,24 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public async void Scan(string[] folders) {
             if (folders != null)
                 foreach (string path in folders) {
-                    Computer computer = Computers.Single(c => c.Name == Environment.MachineName);
                     string root = Directory.GetDirectoryRoot(path);
-                    DriveModel drive = (DriveModel)computer.Folders.Single(f => f.Name.Equals(root, StringComparison.OrdinalIgnoreCase));
-
+                    DriveModel drive = _localComputer.Drives.Single(f => f.Name.Equals(root, StringComparison.OrdinalIgnoreCase));
+                    drive.Load();
                     await ScanAsync(path, root.Equals(path, StringComparison.OrdinalIgnoreCase), drive);
                 }
         }
 
+        public async void OnClosing() {
+            await BusyWithAsync("Saving ...", () => {
+                foreach (DriveModel drive in _localComputer.Drives) {
+                    if (drive.IsChanged)
+                        App.Scanner.Save(Environment.MachineName, drive);
+                }
+            });
+        }
+
         private void InsertLocalComputer() {
-            Computer computer = Computers.SingleOrDefault(
-                c => c.Name.Equals(Environment.MachineName, StringComparison.OrdinalIgnoreCase));
+            Computer computer = _localComputer;
             if (computer == null) {
                 computer = new Computer() { Name = Environment.MachineName, Folders = new List<Folder>() };
                 Computers.Add(computer);
@@ -220,13 +229,18 @@ namespace WhereAreThem.WinViewer.ViewModel {
         }
 
         private async Task ScanAsync(string path, bool scanDrive, DriveModel drive) {
-            await BusyWithAsync("Scanning {0} ...".FormatWith(Path.GetFileName(path)), () => {
-                if (scanDrive)
-                    App.Scanner.Scan(path);
-                else
-                    App.Scanner.ScanUpdate(path, drive.DriveType);
-
-                drive.Load();
+            string folderName = scanDrive ? path : Path.GetFileName(path);
+            await BusyWithAsync("Scanning {0} ...".FormatWith(folderName), () => {
+                if (scanDrive) {
+                    Drive d = App.Scanner.Scan(path);
+                    drive.Load(d);
+                }
+                else {
+                    App.Scanner.ScanUpdate(path, drive);
+                    drive.Refresh();
+                }
+                drive.IsChanged = true;
+                StatusBarText = "Scanning of {0} has completed.".FormatWith(path);
             });
         }
 

@@ -11,6 +11,8 @@ namespace WhereAreThem.WinViewer.Model {
         private string _machineName;
         private bool _hasLoaded;
 
+        public bool IsChanged { get; set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public DriveModel(string machineName, string driveName, DateTime createdDateUtc, DriveType driveType) {
@@ -24,16 +26,9 @@ namespace WhereAreThem.WinViewer.Model {
 
         public bool Load() {
             try {
-                Folder drive = App.Loader.GetDrive(_machineName, Name);
-                if (!_hasLoaded || (CreatedDateUtc != drive.CreatedDateUtc)) {
-                    _hasLoaded = true;
-                    CreatedDateUtc = drive.CreatedDateUtc;
-                    Files = drive.Files;
-                    Folders = drive.Folders;
-                    if (PropertyChanged != null) {
-                        PropertyChanged(this, new PropertyChangedEventArgs("Folders"));
-                        PropertyChanged(this, new PropertyChangedEventArgs("Items"));
-                    }
+                if (!_hasLoaded) {
+                    Drive drive = App.Loader.GetDrive(_machineName, Name);
+                    Load(drive);
                 }
                 return true;
             }
@@ -42,6 +37,27 @@ namespace WhereAreThem.WinViewer.Model {
             }
             catch (FileNotFoundException) {
                 return false;
+            }
+        }
+
+        public void Load(Drive drive) {
+            _hasLoaded = true;
+            CreatedDateUtc = drive.CreatedDateUtc;
+            Files = drive.Files;
+            Folders = drive.Folders;
+            RaiseChange();
+        }
+
+        public void Refresh() {
+            _hasLoaded = true;
+            Folders = new List<Folder>(Folders);
+            RaiseChange();
+        }
+
+        private void RaiseChange() {
+            if (PropertyChanged != null) {
+                PropertyChanged(this, new PropertyChangedEventArgs("Folders"));
+                PropertyChanged(this, new PropertyChangedEventArgs("Items"));
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -47,8 +48,9 @@ namespace WhereAreThem.WinViewer.View {
             InitializeComponent();
 
             AllowDrop = true;
-            Drop += WindowDrop;
-            KeyDown += WindowKeyDown;
+            Drop += OnWindowDrop;
+            KeyDown += OnWindowKeyDown;
+            Closing += OnWindowClosing;
 
             VM = new MainWindowViewModel();
             VM.View = this;
@@ -74,13 +76,13 @@ namespace WhereAreThem.WinViewer.View {
             window.Show();
         }
 
-        private void WindowDrop(object sender, DragEventArgs e) {
+        private void OnWindowDrop(object sender, DragEventArgs e) {
             if (!VM.IsBusy && e.Data.GetDataPresent(DataFormats.FileDrop))
                 VM.Scan(e.Data.GetData(DataFormats.FileDrop, true) as string[]);
             e.Handled = true;
         }
 
-        private void WindowKeyDown(object sender, KeyEventArgs e) {
+        private void OnWindowKeyDown(object sender, KeyEventArgs e) {
             if ((e.Key == Key.F) && (Keyboard.Modifiers == ModifierKeys.Control)) {
                 if ((VM.SelectedFolder != null) && !(VM.SelectedFolder is Computer)) {
                     SearchWindow.VM.RootStack = VM.SelectedFolderStack;
@@ -90,6 +92,10 @@ namespace WhereAreThem.WinViewer.View {
                 }
                 e.Handled = true;
             }
+        }
+
+        private void OnWindowClosing(object sender, CancelEventArgs e) {
+            VM.OnClosing();
         }
 
         private void FolderTreeMouseRightClick(object sender, MouseButtonEventArgs e) {
