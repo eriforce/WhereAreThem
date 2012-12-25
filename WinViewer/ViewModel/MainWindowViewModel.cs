@@ -201,13 +201,11 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 }
         }
 
-        public async void OnClosing() {
-            await BusyWithAsync("Saving ...", () => {
-                foreach (DriveModel drive in _localComputer.Drives) {
-                    if (drive.IsChanged)
-                        App.Scanner.Save(Environment.MachineName, drive);
-                }
-            });
+        public void OnClosing() {
+            foreach (DriveModel drive in _localComputer.Drives) {
+                if (drive.IsChanged)
+                    App.Scanner.Save(Environment.MachineName, drive);
+            }
         }
 
         private void InsertLocalComputer() {
