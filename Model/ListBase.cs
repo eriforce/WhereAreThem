@@ -12,16 +12,9 @@ namespace WhereAreThem.Model {
         protected string _outputPath;
         protected IPersistence _persistence;
 
-        public event StringEventHandler PrintLine;
-
         public ListBase(string outputPath, IPersistence persistence) {
             _outputPath = outputPath;
             _persistence = persistence;
-        }
-
-        protected void OnPrintLine(string s) {
-            if (PrintLine != null)
-                PrintLine(this, new StringEventArgs() { String = s });
         }
 
         protected string GetListPath(string machineName, string driveLetter, DriveType driveType) {

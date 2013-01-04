@@ -95,7 +95,7 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void OnWindowClosing(object sender, CancelEventArgs e) {
-            VM.OnClosing();
+            VM.Save();
         }
 
         private void FolderTreeMouseRightClick(object sender, MouseButtonEventArgs e) {
@@ -104,20 +104,20 @@ namespace WhereAreThem.WinViewer.View {
             e.Handled = true;
         }
 
-        private async void FolderTreeSelected(object sender, RoutedEventArgs e) {
+        private void FolderTreeSelected(object sender, RoutedEventArgs e) {
             _selectedTreeViewItem = (TreeViewItem)e.OriginalSource;
             TreeView treeView = (TreeView)sender;
 
-            await LoadIfDriveAsync(treeView.SelectedItem);
+            LoadIfDrive(treeView.SelectedItem);
             List<Folder> stack = new List<Folder>();
             GetFolderStack(_selectedTreeViewItem, stack);
             VM.SelectedFolderStack = stack;
             VM.SelectedFolder = (Folder)treeView.SelectedItem;
         }
 
-        private async void FolderTreeExpanded(object sender, RoutedEventArgs e) {
+        private void FolderTreeExpanded(object sender, RoutedEventArgs e) {
             TreeViewItem treeViewItem = (TreeViewItem)e.OriginalSource;
-            await LoadIfDriveAsync(treeViewItem.Header);
+            LoadIfDrive(treeViewItem.Header);
         }
 
         private void DataGridMouseDoubleClick(object sender, MouseButtonEventArgs e) {
@@ -138,10 +138,10 @@ namespace WhereAreThem.WinViewer.View {
                 ((DataGrid)sender).ScrollIntoView(VM.SelectedItem);
         }
 
-        private async Task LoadIfDriveAsync(object item) {
+        private void LoadIfDrive(object item) {
             if (item is DriveModel) {
                 DriveModel drive = (DriveModel)item;
-                bool loaded = await VM.BusyWithAsync<bool>("Loading {0} ...".FormatWith(drive.Name), drive.Load);
+                bool loaded = VM.BusyWith<bool>("Loading {0} ...".FormatWith(drive.Name), drive.Load);
                 if (!loaded)
                     MessageBox.Show(this, "You need to scan this drive first.");
             }

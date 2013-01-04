@@ -13,6 +13,8 @@ namespace WhereAreThem.Model {
         private const FileAttributes filter = FileAttributes.Hidden | FileAttributes.System;
         private readonly string driveSuffix = "{0}{1}".FormatWith(Path.VolumeSeparatorChar, Path.DirectorySeparatorChar);
 
+        public event ScanEventHandler Scaning;
+
         public Scanner(string outputPath, IPersistence persistence)
             : base(outputPath, persistence) {
         }
@@ -73,17 +75,15 @@ namespace WhereAreThem.Model {
         }
 
         private void Save(string listPath, Folder drive) {
-            OnPrintLine("Saving {0} ...".FormatWith(drive.Name));
             string directory = Path.GetDirectoryName(listPath);
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
             _persistence.Save(drive, listPath);
             drive.CreatedDateUtc = new FileInfo(listPath).LastWriteTimeUtc;
-            OnPrintLine("{0} saved.".FormatWith(drive.Name));
         }
 
         private Folder GetFolder(DirectoryInfo directory) {
-            OnPrintLine(directory.FullName);
+            OnScaning(directory.FullName);
             Folder folder = new Folder() {
                 Name = directory.Name,
                 CreatedDateUtc = directory.CreationTimeUtc,
@@ -106,11 +106,20 @@ namespace WhereAreThem.Model {
             catch (UnauthorizedAccessException) { }
             return folder;
         }
+
+        private void OnScaning(string dir) {
+            if (Scaning != null)
+                Scaning(this, new ScanEventArgs(dir));
+        }
     }
 
-    public class StringEventArgs : EventArgs {
-        public string String { get; set; }
+    public class ScanEventArgs : EventArgs {
+        public string CurrentDirectory { get; private set; }
+
+        public ScanEventArgs(string currentDirectory) {
+            CurrentDirectory = currentDirectory;
+        }
     }
 
-    public delegate void StringEventHandler(object sender, StringEventArgs e);
+    public delegate void ScanEventHandler(object sender, ScanEventArgs e);
 }

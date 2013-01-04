@@ -86,7 +86,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public ICommand ScanCommand {
             get {
                 if (_scanCommand == null) {
-                    _scanCommand = new RelayCommand(async p => {
+                    _scanCommand = new RelayCommand(p => {
                         Folder pFolder = (Folder)p;
                         List<Folder> folders = new List<Folder>(SelectedFolderStack);
                         folders.Add(SelectedFolder);
@@ -96,7 +96,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         string path = Path.Combine(folders.Select(f => f.Name).ToArray());
                         DriveModel drive = (DriveModel)folders[1];
                         if (Directory.Exists(path)) {
-                            await ScanAsync(path, p is DriveModel, drive);
+                            Scan(path, p is DriveModel, drive);
                         }
                         else {
                             Folder parent = folders[folders.Count - 2];
@@ -181,7 +181,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public event LocatingItemEventHandler NavigatingFolder;
 
         public MainWindowViewModel() {
-            App.Scanner.PrintLine += (s, e) => { StatusBarText = e.String; };
+            App.Scanner.Scaning += (s, e) => { StatusBarText = e.CurrentDirectory; };
             Computers = App.Loader.MachineNames.Select(n => new Computer() {
                 Name = n,
                 Folders = App.Loader.GetDrives(n).Select(
@@ -191,21 +191,25 @@ namespace WhereAreThem.WinViewer.ViewModel {
             Navigation = new ExplorerNavigationService();
         }
 
-        public async void Scan(string[] folders) {
+        public void Scan(string[] folders) {
             if (folders != null)
                 foreach (string path in folders) {
                     string root = Directory.GetDirectoryRoot(path);
                     DriveModel drive = _localComputer.Drives.Single(f => f.Name.Equals(root, StringComparison.OrdinalIgnoreCase));
                     drive.Load();
-                    await ScanAsync(path, root.Equals(path, StringComparison.OrdinalIgnoreCase), drive);
+                    Scan(path, root.Equals(path, StringComparison.OrdinalIgnoreCase), drive);
                 }
         }
 
-        public void OnClosing() {
-            foreach (DriveModel drive in _localComputer.Drives) {
-                if (drive.IsChanged)
-                    App.Scanner.Save(Environment.MachineName, drive);
-            }
+        public void Save() {
+            BusyWith("Saving ...", () => {
+                foreach (DriveModel drive in _localComputer.Drives) {
+                    if (drive.IsChanged) {
+                        StatusBarText = "Saving {0} of {1} ...".FormatWith(drive.Name, Environment.MachineName);
+                        App.Scanner.Save(Environment.MachineName, drive);
+                    }
+                }
+            });
         }
 
         private void InsertLocalComputer() {
@@ -226,9 +230,9 @@ namespace WhereAreThem.WinViewer.ViewModel {
             computer.Folders.Sort();
         }
 
-        private async Task ScanAsync(string path, bool scanDrive, DriveModel drive) {
+        private void Scan(string path, bool scanDrive, DriveModel drive) {
             string folderName = scanDrive ? path : Path.GetFileName(path);
-            await BusyWithAsync("Scanning {0} ...".FormatWith(folderName), () => {
+            BusyWith("Scanning {0} ...".FormatWith(folderName), () => {
                 if (scanDrive) {
                     Drive d = App.Scanner.Scan(path);
                     drive.Load(d);
