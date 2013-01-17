@@ -10,7 +10,7 @@ using WhereAreThem.Model.Models;
 using WhereAreThem.WebViewer.Models;
 
 namespace WhereAreThem.WebViewer.Controllers {
-    [Authorize, HandleError]
+    [Authorize]
     public class HomeController : Controller {
         public ViewResult Index() {
             return View(List.MachineNames);
