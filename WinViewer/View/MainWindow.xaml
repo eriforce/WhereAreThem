@@ -29,15 +29,15 @@
         <KeyBinding Key="Back" Command="{Binding GoBackCommand}" />
     </Window.InputBindings>
 
-    <p:BusyIndicator IsBusy="{Binding IsBusy}" BusyContent="{Binding BusyContent}" Grid.ColumnSpan="2">
+    <p:BusyIndicator IsBusy="{Binding IsBusy}" BusyContent="{Binding BusyContent}">
         <Grid Margin="6">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"></ColumnDefinition>
-                <ColumnDefinition Width="3*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
             </Grid.ColumnDefinitions>
 
             <TreeView ItemsSource="{Binding Computers}" TreeViewItem.Selected="FolderTreeSelected" TreeViewItem.Expanded="FolderTreeExpanded" Grid.Column="0" Grid.RowSpan="2" Margin="0,0,2,0">
@@ -52,7 +52,7 @@
                 <TreeView.Resources>
                     <HierarchicalDataTemplate DataType="{x:Type m:Folder}" ItemsSource="{Binding Folders}">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="{Binding Converter={StaticResource IconConverter}}"></Image>
+                            <Image Source="{Binding Converter={StaticResource IconConverter}}"/>
                             <TextBlock Text="{Binding Name}" Padding="2,0" />
                         </StackPanel>
                     </HierarchicalDataTemplate>
@@ -63,8 +63,8 @@
 
             <Grid Grid.Column="1" Grid.Row="0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal">
@@ -82,7 +82,7 @@
                 <DataGrid.Resources>
                     <Style TargetType="{x:Type DataGridCell}">
                         <Setter Property="ContextMenu" Value="{StaticResource watMenu}" />
-                        <Setter Property="Margin" Value="2"></Setter>
+                        <Setter Property="Margin" Value="2"/>
                     </Style>
                 </DataGrid.Resources>
                 <DataGrid.Columns>
@@ -90,7 +90,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Source="{Binding Converter={StaticResource IconConverter}}"></Image>
+                                    <Image Source="{Binding Converter={StaticResource IconConverter}}"/>
                                     <TextBlock Text="{Binding Name}" Margin="2,0,0,0" />
                                 </StackPanel>
                             </DataTemplate>
@@ -103,8 +103,8 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Created" Binding="{Binding CreatedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Modified" Binding="{Binding ModifiedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Created" Binding="{Binding CreatedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}"/>
+                    <DataGridTextColumn Header="Modified" Binding="{Binding ModifiedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}"/>
                 </DataGrid.Columns>
             </DataGrid>
 
