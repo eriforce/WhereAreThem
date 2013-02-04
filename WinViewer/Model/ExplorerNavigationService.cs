@@ -9,10 +9,10 @@ using WhereAreThem.WinViewer.Event;
 namespace WhereAreThem.WinViewer.Model {
     public class ExplorerNavigationService {
         private readonly int _navigationHistoryCount = int.Parse(ConfigurationManager.AppSettings["navigationHistoryCount"]);
-        private List<LocatingItemEventArgs> _historyEntries;
+        private List<ItemEventArgs> _historyEntries;
         private int _currentEntryIndex;
 
-        public LocatingItemEventArgs CurrentEntry {
+        public ItemEventArgs CurrentEntry {
             get { return _historyEntries.Any() ? _historyEntries[_currentEntryIndex] : null; }
         }
         public bool CanGoBack {
@@ -23,11 +23,11 @@ namespace WhereAreThem.WinViewer.Model {
         }
 
         public ExplorerNavigationService() {
-            _historyEntries = new List<LocatingItemEventArgs>();
+            _historyEntries = new List<ItemEventArgs>();
             _currentEntryIndex = -1;
         }
 
-        public void AddBackEntry(LocatingItemEventArgs entry) {
+        public void AddBackEntry(ItemEventArgs entry) {
             if (CanGoForward)
                 _historyEntries.RemoveRange(_currentEntryIndex + 1, _historyEntries.Count - 1 - _currentEntryIndex);
 

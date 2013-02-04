@@ -151,18 +151,18 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 if (_openPropertiesCommand == null)
                     _openPropertiesCommand = new RelayCommand(p => {
                         if (OpeningProperties != null)
-                            OpeningProperties(this, new OpeningPropertiesEventArgs(SelectedSearchResult.Item, SelectedSearchResult.Stack));
+                            OpeningProperties(this, new ItemEventArgs(SelectedSearchResult.Item, SelectedSearchResult.Stack));
                     });
                 return _openPropertiesCommand;
             }
         }
 
-        public event LocatingItemEventHandler LocatingItem;
-        public event OpeningPropertiesEventHandler OpeningProperties;
+        public event ItemEventHandler LocatingItem;
+        public event ItemEventHandler OpeningProperties;
 
         public void OnLocatingItem() {
             if (LocatingItem != null)
-                LocatingItem(this, new LocatingItemEventArgs(SelectedSearchResult.Item, SelectedSearchResult.Stack));
+                LocatingItem(this, new ItemEventArgs(SelectedSearchResult.Item, SelectedSearchResult.Stack));
             View.Close();
         }
     }

@@ -70,8 +70,7 @@
     </ApplicationDefinition>
     <Compile Include="Converter\IconConveter.cs" />
     <Compile Include="Converter\SizeConveter.cs" />
-    <Compile Include="Event\LocatingItemEventArgs.cs" />
-    <Compile Include="Event\OpeningPropertiesEventArgs.cs" />
+    <Compile Include="Event\ItemEventArgs.cs" />
     <Compile Include="Model\Computer.cs" />
     <Compile Include="Model\DriveModel.cs" />
     <Compile Include="Model\ExplorerNavigationService.cs" />

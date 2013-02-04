@@ -20,10 +20,10 @@ namespace WhereAreThem.WinViewer.View {
     public partial class PropertiesWindow : Window {
         public PropertiesWindowViewModel VM { get; private set; }
 
-        public PropertiesWindow(FileSystemItem item, List<Folder> itemStack) {
+        public PropertiesWindow(FileSystemItem item, List<Folder> stack) {
             InitializeComponent();
 
-            VM = new PropertiesWindowViewModel(item, itemStack);
+            VM = new PropertiesWindowViewModel(item, stack);
             VM.View = this;
             DataContext = VM;
         }

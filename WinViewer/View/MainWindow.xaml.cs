@@ -59,7 +59,7 @@ namespace WhereAreThem.WinViewer.View {
             DataContext = VM;
         }
 
-        private void OnLocatingItem(object sender, LocatingItemEventArgs e) {
+        private void OnLocatingItem(object sender, ItemEventArgs e) {
             TreeViewItem treeViewItem = GetRootTreeViewItem(_selectedTreeViewItem);
             for (int i = 1; i < e.Stack.Count; i++) {
                 treeViewItem.IsExpanded = true;
@@ -70,8 +70,8 @@ namespace WhereAreThem.WinViewer.View {
             VM.SelectedItem = e.Item;
         }
 
-        private void OnOpeningProperties(object sender, OpeningPropertiesEventArgs e) {
-            PropertiesWindow window = new PropertiesWindow(e.Item, e.FolderStack);
+        private void OnOpeningProperties(object sender, ItemEventArgs e) {
+            PropertiesWindow window = new PropertiesWindow(e.Item, e.Stack);
             window.Owner = this;
             window.Show();
         }

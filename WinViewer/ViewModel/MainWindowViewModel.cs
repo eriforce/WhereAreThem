@@ -72,7 +72,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 Location = IO.Path.Combine(stack.Select(f => f.Name).ToArray());
 
                 if ((Navigation.CurrentEntry == null) || (SelectedFolder != Navigation.CurrentEntry.Stack.Last()))
-                    Navigation.AddBackEntry(new LocatingItemEventArgs(null, stack));
+                    Navigation.AddBackEntry(new ItemEventArgs(null, stack));
             }
         }
         public List<Folder> SelectedFolderStack { get; set; }
@@ -141,7 +141,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             if (p != SelectedFolder)
                                 stack.Add(SelectedFolder);
 
-                            OpeningProperties(this, new OpeningPropertiesEventArgs(item, stack));
+                            OpeningProperties(this, new ItemEventArgs(item, stack));
                         }
                     }, p => SelectedFolderStack.Any());
                 return _openPropertiesCommand;
@@ -171,14 +171,14 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get {
                 if (_goUpCommand == null)
                     _goUpCommand = new RelayCommand(p => {
-                        OnNavigatingFolder(new LocatingItemEventArgs(null, SelectedFolderStack));
+                        OnNavigatingFolder(new ItemEventArgs(null, SelectedFolderStack));
                     }, p => (SelectedFolderStack != null) && SelectedFolderStack.Any());
                 return _goUpCommand;
             }
         }
 
-        public event OpeningPropertiesEventHandler OpeningProperties;
-        public event LocatingItemEventHandler NavigatingFolder;
+        public event ItemEventHandler NavigatingFolder;
+        public event ItemEventHandler OpeningProperties;
 
         public MainWindowViewModel() {
             App.Scanner.Scaning += (s, e) => { StatusBarText = e.CurrentDirectory; };
@@ -246,7 +246,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             });
         }
 
-        private void OnNavigatingFolder(LocatingItemEventArgs e) {
+        private void OnNavigatingFolder(ItemEventArgs e) {
             if (NavigatingFolder != null)
                 NavigatingFolder(this, e);
         }

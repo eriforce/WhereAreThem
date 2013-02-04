@@ -38,8 +38,8 @@ namespace WhereAreThem.WinViewer.View {
             VM.OnLocatingItem();
         }
 
-        private void OnOpeningProperties(object sender, OpeningPropertiesEventArgs e) {
-            PropertiesWindow window = new PropertiesWindow(e.Item, e.FolderStack);
+        private void OnOpeningProperties(object sender, ItemEventArgs e) {
+            PropertiesWindow window = new PropertiesWindow(e.Item, e.Stack);
             window.Owner = this;
             window.Show();
         }

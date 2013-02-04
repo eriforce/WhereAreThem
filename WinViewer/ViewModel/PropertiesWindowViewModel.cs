@@ -41,9 +41,9 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get { return Item is File; }
         }
 
-        public PropertiesWindowViewModel(FileSystemItem item, List<Folder> itemStack) {
+        public PropertiesWindowViewModel(FileSystemItem item, List<Folder> stack) {
             Item = item;
-            _itemStack = itemStack;
+            _itemStack = stack;
             _propertyInfo = new PropertyInfo(_itemStack.Last(), new string[] { Item.Name });
         }
     }
