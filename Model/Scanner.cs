@@ -103,7 +103,8 @@ namespace WhereAreThem.Model {
                 folder.Files.Sort();
                 folder.Folders.Sort();
             }
-            catch (UnauthorizedAccessException) { }
+            catch (UnauthorizedAccessException) { } // no permission
+            catch (DirectoryNotFoundException) { }  // broken junction
             return folder;
         }
 
