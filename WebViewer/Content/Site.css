@@ -90,7 +90,6 @@ table.viewer tbody tr td.size {
 table.viewer tbody tr td a, div.navigationItem a {
     color: #333;
     text-decoration: none;
-    cursor: default;
 }
 
 table.viewer:not(.list) tbody tr:hover, table.viewer:not(.list) tbody tr:not(.selected):hover a, div.navigationItem:hover a {
