@@ -38,10 +38,11 @@
                     <Style TargetType="{x:Type DataGridCell}">
                         <Setter Property="ContextMenu" Value="{StaticResource searchMenu}" />
                         <Setter Property="Margin" Value="2" />
+                        <Setter Property="BorderThickness" Value="0"/>
                     </Style>
                 </DataGrid.Resources>
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="Name">
+                    <DataGridTemplateColumn Header="Name" SortMemberPath="Item.Name">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -51,16 +52,16 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Size">
+                    <DataGridTemplateColumn Header="Size" SortMemberPath="Item.Size">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Item.Size, Converter={StaticResource SizeConverter}}" HorizontalAlignment="Right" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Path" Binding="{Binding ItemPath}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Created" Binding="{Binding Item.CreatedDateUtc, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}" />
-                    <DataGridTextColumn Header="Modified" Binding="{Binding Item.ModifiedDateUtc, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}" />
+                    <DataGridTextColumn Header="Path" Binding="{Binding ItemPath}" SortMemberPath="ItemPath"/>
+                    <DataGridTextColumn Header="Created" Binding="{Binding Item.CreatedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}" SortMemberPath="Item.CreatedDate"/>
+                    <DataGridTextColumn Header="Modified" Binding="{Binding Item.ModifiedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}" SortMemberPath="Item.ModifiedDate"/>
                 </DataGrid.Columns>
             </DataGrid>
             

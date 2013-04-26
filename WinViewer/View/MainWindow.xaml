@@ -83,10 +83,11 @@
                     <Style TargetType="{x:Type DataGridCell}">
                         <Setter Property="ContextMenu" Value="{StaticResource watMenu}" />
                         <Setter Property="Margin" Value="2"/>
+                        <Setter Property="BorderThickness" Value="0"/>
                     </Style>
                 </DataGrid.Resources>
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="Name">
+                    <DataGridTemplateColumn Header="Name" SortMemberPath="Name">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -96,15 +97,15 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Size">
+                    <DataGridTemplateColumn Header="Size" SortMemberPath="Size">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Size, Converter={StaticResource SizeConverter}}" HorizontalAlignment="Right" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Created" Binding="{Binding CreatedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}"/>
-                    <DataGridTextColumn Header="Modified" Binding="{Binding ModifiedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}"/>
+                    <DataGridTextColumn Header="Created" Binding="{Binding CreatedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}" SortMemberPath="CreatedDate"/>
+                    <DataGridTextColumn Header="Modified" Binding="{Binding ModifiedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}" SortMemberPath="ModifiedDate"/>
                 </DataGrid.Columns>
             </DataGrid>
 
