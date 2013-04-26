@@ -89,7 +89,7 @@ namespace WhereAreThem.Model {
                 CreatedDateUtc = directory.CreationTimeUtc,
             };
             try {
-                folder.Files = directory.GetFiles()
+                folder.Files = directory.EnumerateFiles()
                      .Where(f => !f.Attributes.HasFlag(filter))
                      .Select(f => new Models.File() {
                          Name = f.Name,
@@ -97,7 +97,7 @@ namespace WhereAreThem.Model {
                          CreatedDateUtc = f.CreationTimeUtc,
                          ModifiedDateUtc = f.LastWriteTimeUtc
                      }).ToList();
-                folder.Folders = directory.GetDirectories()
+                folder.Folders = directory.EnumerateDirectories()
                         .Where(d => !d.Attributes.HasFlag(filter))
                         .Select(d => GetFolder(d)).ToList();
                 folder.Files.Sort();
