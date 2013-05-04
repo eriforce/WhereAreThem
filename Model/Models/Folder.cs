@@ -39,12 +39,12 @@ namespace WhereAreThem.Model.Models {
             if (!includeFile && !includeFolder)
                 return null;
 
-            pattern = pattern.WildcardToRegex();
-            if (pattern.StartsWith("*."))
-                pattern = "^{0}$".FormatWith(pattern);
+            string regexPattern = pattern.WildcardToRegex();
+            if (pattern.Contains("."))
+                regexPattern = "^{0}$".FormatWith(regexPattern);
 
             List<SearchResult> results = new List<SearchResult>();
-            Search(results, folderStack, pattern, includeFile, includeFolder);
+            Search(results, folderStack, regexPattern, includeFile, includeFolder);
             return results;
         }
 
