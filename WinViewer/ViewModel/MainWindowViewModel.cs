@@ -196,8 +196,10 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 foreach (string path in folders) {
                     string root = Directory.GetDirectoryRoot(path);
                     DriveModel drive = _localComputer.Drives.Single(f => f.Name.Equals(root, StringComparison.OrdinalIgnoreCase));
-                    drive.Load();
-                    Scan(path, root.Equals(path, StringComparison.OrdinalIgnoreCase), drive);
+                    bool isDrive = root.Equals(path, StringComparison.OrdinalIgnoreCase);
+                    if (!isDrive)
+                        drive.Load();
+                    Scan(path, isDrive, drive);
                 }
         }
 

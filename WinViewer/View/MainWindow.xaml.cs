@@ -77,8 +77,10 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void OnWindowDrop(object sender, DragEventArgs e) {
-            if (!VM.IsBusy && e.Data.GetDataPresent(DataFormats.FileDrop))
-                VM.Scan(e.Data.GetData(DataFormats.FileDrop, true) as string[]);
+            Dispatcher.InvokeAsync(() => {
+                if (!VM.IsBusy && e.Data.GetDataPresent(DataFormats.FileDrop))
+                    VM.Scan(e.Data.GetData(DataFormats.FileDrop, true) as string[]);
+            });
             e.Handled = true;
         }
 

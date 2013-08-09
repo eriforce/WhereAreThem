@@ -43,9 +43,8 @@
     <ApplicationIcon>Resources\WhereIsIt.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PureLib.Client, Version=1.2.0.106, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\PureLib\Build\PureLib.Client.dll</HintPath>
+    <Reference Include="PureLib">
+      <HintPath>..\..\PureLib\Build\PureLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

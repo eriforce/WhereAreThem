@@ -49,9 +49,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="PureLib.Client, Version=1.2.0.106, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\PureLib\Build\PureLib.Client.dll</HintPath>
+    <Reference Include="PureLib">
+      <HintPath>..\..\PureLib\Build\PureLib.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity" />
