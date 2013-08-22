@@ -60,7 +60,7 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void OnLocatingItem(object sender, ItemEventArgs e) {
-            TreeViewItem treeViewItem = GetRootTreeViewItem(_selectedTreeViewItem);
+            TreeViewItem treeViewItem = (TreeViewItem)treeView.ItemContainerGenerator.ContainerFromItem(e.Stack[0]);
             for (int i = 1; i < e.Stack.Count; i++) {
                 treeViewItem.IsExpanded = true;
                 treeViewItem.UpdateLayout();
@@ -108,7 +108,6 @@ namespace WhereAreThem.WinViewer.View {
 
         private void FolderTreeSelected(object sender, RoutedEventArgs e) {
             _selectedTreeViewItem = (TreeViewItem)e.OriginalSource;
-            TreeView treeView = (TreeView)sender;
 
             LoadIfDrive(treeView.SelectedItem);
             List<Folder> stack = new List<Folder>();
@@ -155,14 +154,6 @@ namespace WhereAreThem.WinViewer.View {
                 stack.Insert(0, (Folder)parent.Header);
                 GetFolderStack(parent, stack);
             }
-        }
-
-        private TreeViewItem GetRootTreeViewItem(TreeViewItem item) {
-            TreeViewItem parent = GetParentTreeViewItem(item);
-            if (parent != null)
-                return GetRootTreeViewItem(parent);
-            else // parent is TreeView
-                return item;
         }
 
         private TreeViewItem GetParentTreeViewItem(DependencyObject item) {

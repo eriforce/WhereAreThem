@@ -40,7 +40,7 @@
                 <ColumnDefinition Width="3*"/>
             </Grid.ColumnDefinitions>
 
-            <TreeView ItemsSource="{Binding Computers}" TreeViewItem.Selected="FolderTreeSelected" TreeViewItem.Expanded="FolderTreeExpanded" Grid.Column="0" Grid.RowSpan="2" Margin="0,0,2,0">
+            <TreeView Name="treeView" ItemsSource="{Binding Computers}" TreeViewItem.Selected="FolderTreeSelected" TreeViewItem.Expanded="FolderTreeExpanded" Grid.Column="0" Grid.RowSpan="2" Margin="0,0,2,0">
                 <TreeView.ItemContainerStyle>
                     <Style TargetType="{x:Type TreeViewItem}">
                         <EventSetter Event="PreviewMouseRightButtonDown" Handler="FolderTreeMouseRightClick" />
