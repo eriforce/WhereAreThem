@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows.Data;
 using WhereAreThem.Model.Models;
 using WhereAreThem.WinViewer.Model;
-using IO = System.IO;
 
 namespace WhereAreThem.WinViewer.Converter {
     public class IconConverter : IValueConverter {
@@ -20,7 +19,7 @@ namespace WhereAreThem.WinViewer.Converter {
 
             Icon icon;
             if (type == ItemType.File)
-                icon = IconReader.GetFileIcon(IO.Path.GetExtension(((File)value).Name).ToLower(), size, false);
+                icon = IconReader.GetFileIcon(((File)value).Extension.ToLower(), size, false);
             else {
                 if ((type == ItemType.DriveModel) && !Enum.TryParse<ItemType>(((DriveModel)value).DriveType.ToString(), out type))
                     return null;

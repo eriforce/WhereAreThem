@@ -11,6 +11,7 @@ namespace WhereAreThem.Model.Models {
         public string Name { get; set; }
         [DataMember]
         public DateTime CreatedDateUtc { get; set; }
+
         public DateTime CreatedDate {
             get { return CreatedDateUtc.ToLocalTime(); }
         }

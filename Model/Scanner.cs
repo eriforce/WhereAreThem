@@ -6,12 +6,14 @@ using System.Text;
 using PureLib.Common;
 using WhereAreThem.Model.Models;
 using WhereAreThem.Model.Persistences;
+using WhereAreThem.Model.Plugins;
 using IO = System.IO;
 
 namespace WhereAreThem.Model {
     public class Scanner : ListBase {
         private const FileAttributes filter = FileAttributes.Hidden | FileAttributes.System;
         private readonly string driveSuffix = "{0}{1}".FormatWith(Path.VolumeSeparatorChar, Path.DirectorySeparatorChar);
+        private PluginManager _pluginManager = new PluginManager();
 
         public event ScanEventHandler Scaning;
 
@@ -19,8 +21,8 @@ namespace WhereAreThem.Model {
             : base(outputPath, persistence) {
         }
 
-        public Drive Scan(string path) {
-            string driveLetter = path.EndsWith(driveSuffix) ? Drive.GetDriveLetter(path) : path;
+        public Drive Scan(string drivePath) {
+            string driveLetter = Drive.GetDriveLetter(drivePath);
             Folder driveFolder = GetFolder(new DirectoryInfo("{0}{1}".FormatWith(driveLetter, driveSuffix)));
             Drive drive = Drive.FromFolder(driveFolder, new DriveInfo(driveFolder.Name).DriveType);
             drive.CreatedDateUtc = DateTime.UtcNow;
@@ -89,23 +91,32 @@ namespace WhereAreThem.Model {
                 CreatedDateUtc = directory.CreationTimeUtc,
             };
             try {
-                folder.Files = directory.EnumerateFiles()
-                     .Where(f => !f.Attributes.HasFlag(filter))
-                     .Select(f => new Models.File() {
-                         Name = f.Name,
-                         FileSize = f.Length,
-                         CreatedDateUtc = f.CreationTimeUtc,
-                         ModifiedDateUtc = f.LastWriteTimeUtc
-                     }).ToList();
-                folder.Folders = directory.EnumerateDirectories()
-                        .Where(d => !d.Attributes.HasFlag(filter))
-                        .Select(d => GetFolder(d)).ToList();
+                folder.Files = (from fi in directory.EnumerateFiles()
+                                where !fi.Attributes.HasFlag(filter)
+                                join f in folder.Files ?? new List<Models.File>() on fi.Name equals f.Name into files
+                                select new Models.File() {
+                                    Name = fi.Name,
+                                    FileSize = fi.Length,
+                                    CreatedDateUtc = fi.CreationTimeUtc,
+                                    ModifiedDateUtc = fi.LastWriteTimeUtc,
+                                    Description = GetFileDescription(fi, files.SingleOrDefault())
+                                }).ToList();
+                folder.Folders = (from di in directory.EnumerateDirectories()
+                                  where !di.Attributes.HasFlag(filter)
+                                  select GetFolder(di)).ToList();
                 folder.Files.Sort();
                 folder.Folders.Sort();
             }
             catch (UnauthorizedAccessException) { } // no permission
             catch (DirectoryNotFoundException) { }  // broken junction
             return folder;
+        }
+
+        private string GetFileDescription(FileInfo fi, Models.File file) {
+            if ((file == null) || (file.ModifiedDateUtc != fi.LastWriteTimeUtc))
+                return _pluginManager.GetDescription(fi.FullName);
+            else
+                return file.Description;
         }
 
         private void OnScaning(string dir) {

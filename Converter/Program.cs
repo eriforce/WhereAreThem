@@ -12,8 +12,8 @@ using IO = System.IO;
 namespace WhereAreThem.Converter {
     class Program {
         static void Main(string[] args) {
-            IPersistence source = new StringPersistence();
-            IPersistence target = new CompressedPersistence<StringPersistence>();
+            IPersistence source = new TextPersistence();
+            IPersistence target = new CompressedPersistence<TextPersistence>();
 
             string[] lists = IO.Directory.GetFiles(ConfigurationManager.AppSettings["outputPath"], 
                 "*.*.wat", IO.SearchOption.AllDirectories);
