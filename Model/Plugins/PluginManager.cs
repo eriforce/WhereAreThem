@@ -11,10 +11,10 @@ namespace WhereAreThem.Model.Plugins {
         private Dictionary<string, IPlugin> _plugins = new Dictionary<string, IPlugin>(StringComparer.OrdinalIgnoreCase);
 
         public PluginManager() {
-            IPlugin[] plugins = new IPlugin[] {
-
-            };
-            foreach (IPlugin plugin in plugins) {
+            Type pluginType = typeof(IPlugin);
+            foreach (IPlugin plugin in pluginType.Assembly.GetTypes()
+                    .Where(t => pluginType.IsAssignableFrom(t) && t != pluginType)
+                    .Select(t => Activator.CreateInstance(t))) {
                 foreach (string ext in plugin.Extensions) {
                     _plugins.Add(ext, plugin);
                 }

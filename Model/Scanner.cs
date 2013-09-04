@@ -62,10 +62,7 @@ namespace WhereAreThem.Model {
                     else
                         folder = current;
                 }
-                Folder newFolder = GetFolder(new DirectoryInfo(Path.Combine(pathParts)));
-                folder.CreatedDateUtc = newFolder.CreatedDateUtc;
-                folder.Folders = newFolder.Folders;
-                folder.Files = newFolder.Files;
+                GetFolder(new DirectoryInfo(Path.Combine(pathParts)), folder);
             }
             finally {
                 drive.CreatedDateUtc = DateTime.UtcNow;
@@ -84,12 +81,13 @@ namespace WhereAreThem.Model {
             drive.CreatedDateUtc = new FileInfo(listPath).LastWriteTimeUtc;
         }
 
-        private Folder GetFolder(DirectoryInfo directory) {
+        private Folder GetFolder(DirectoryInfo directory, Folder folder = null) {
             OnScaning(directory.FullName);
-            Folder folder = new Folder() {
-                Name = directory.Name,
-                CreatedDateUtc = directory.CreationTimeUtc,
-            };
+            if (folder == null)
+                folder = new Folder() {
+                    Name = directory.Name,
+                };
+            folder.CreatedDateUtc = directory.CreationTimeUtc;
             try {
                 folder.Files = (from fi in directory.EnumerateFiles()
                                 where !fi.Attributes.HasFlag(filter)
@@ -103,7 +101,8 @@ namespace WhereAreThem.Model {
                                 }).ToList();
                 folder.Folders = (from di in directory.EnumerateDirectories()
                                   where !di.Attributes.HasFlag(filter)
-                                  select GetFolder(di)).ToList();
+                                  join f in folder.Folders ?? new List<Folder>() on di.Name equals f.Name into folders
+                                  select GetFolder(di, folders.SingleOrDefault())).ToList();
                 folder.Files.Sort();
                 folder.Folders.Sort();
             }
@@ -113,7 +112,7 @@ namespace WhereAreThem.Model {
         }
 
         private string GetFileDescription(FileInfo fi, Models.File file) {
-            if ((file == null) || (file.ModifiedDateUtc != fi.LastWriteTimeUtc))
+            if ((file == null) || (file.ModifiedDateUtc != fi.LastWriteTimeUtc) || file.Description.IsNullOrEmpty())
                 return _pluginManager.GetDescription(fi.FullName);
             else
                 return file.Description;

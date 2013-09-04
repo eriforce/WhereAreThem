@@ -12,6 +12,8 @@
                       Command="{Binding VM.ScanCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
             <MenuItem Header="Properties" CommandParameter="{Binding}"
                       Command="{Binding VM.OpenPropertiesCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+            <MenuItem Header="Description" CommandParameter="{Binding}"
+                      Command="{Binding VM.OpenDescriptionCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
         </ContextMenu>
         <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{x:Static SystemColors.HighlightColor}" />
         <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{x:Static SystemColors.HighlightTextColor}" />

@@ -17,7 +17,7 @@ using WhereAreThem.Model;
 using WhereAreThem.Model.Models;
 using WhereAreThem.WinViewer.Event;
 using WhereAreThem.WinViewer.Model;
-using IO = System.IO;
+using WatFile = WhereAreThem.Model.Models.File;
 
 namespace WhereAreThem.WinViewer.ViewModel {
     public class MainWindowViewModel : BusyViewModelBase {
@@ -28,6 +28,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         private ICommand _scanCommand;
         private ICommand _copyCommand;
         private ICommand _openPropertiesCommand;
+        private ICommand _openDescriptionCommand;
         private ICommand _goBackCommand;
         private ICommand _goForwardCommand;
         private ICommand _goUpCommand;
@@ -69,7 +70,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
 
                 List<Folder> stack = new List<Folder>(SelectedFolderStack);
                 stack.Add(SelectedFolder);
-                Location = IO.Path.Combine(stack.Select(f => f.Name).ToArray());
+                Location = Path.Combine(stack.Select(f => f.Name).ToArray());
 
                 if ((Navigation.CurrentEntry == null) || (SelectedFolder != Navigation.CurrentEntry.Stack.Last()))
                     Navigation.AddBackEntry(new ItemEventArgs(null, stack));
@@ -147,6 +148,15 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 return _openPropertiesCommand;
             }
         }
+        public ICommand OpenDescriptionCommand {
+            get {
+                if (_openDescriptionCommand == null)
+                    _openDescriptionCommand = new RelayCommand(p => {
+                        OpeningDescription(this, new EventArgs<string>(((WatFile)p).Description));
+                    }, p => (p is WatFile) && !((WatFile)p).Description.IsNullOrEmpty());
+                return _openDescriptionCommand;
+            }
+        }
         public ICommand GoBackCommand {
             get {
                 if (_goBackCommand == null)
@@ -179,6 +189,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
 
         public event ItemEventHandler NavigatingFolder;
         public event ItemEventHandler OpeningProperties;
+        public event EventHandler<EventArgs<string>> OpeningDescription;
 
         public MainWindowViewModel() {
             App.Scanner.Scaning += (s, e) => { StatusBarText = e.CurrentDirectory; };

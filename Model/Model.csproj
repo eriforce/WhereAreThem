@@ -23,7 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -68,6 +68,8 @@
     <Compile Include="Persistences\XmlPersistence.cs" />
     <Compile Include="PersistenceType.cs" />
     <Compile Include="Plugins\IPlugin.cs" />
+    <Compile Include="Plugins\MediaInfoDll.cs" />
+    <Compile Include="Plugins\MediaInfoPlugin.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scanner.cs" />

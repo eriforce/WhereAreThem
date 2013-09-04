@@ -41,7 +41,7 @@ namespace WhereAreThem.Model.Persistences {
         private string GetFileString(File file) {
             return string.Format(fileFormat, columnSeparator,
                 file.Name, file.Size, file.CreatedDateUtc.Ticks, file.ModifiedDateUtc.Ticks,
-                Convert.ToBase64String(Encoding.UTF8.GetBytes(file.Description)));
+                file.Description == null ? null : Convert.ToBase64String(Encoding.UTF8.GetBytes(file.Description)));
         }
 
         public override Folder Load(IO.Stream stream) {

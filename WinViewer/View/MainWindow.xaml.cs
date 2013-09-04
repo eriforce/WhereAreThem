@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,8 +53,9 @@ namespace WhereAreThem.WinViewer.View {
 
             VM = new MainWindowViewModel();
             VM.View = this;
-            VM.OpeningProperties += OnOpeningProperties;
             VM.NavigatingFolder += OnLocatingItem;
+            VM.OpeningProperties += OnOpeningProperties;
+            VM.OpeningDescription += OnOpeningDescription;
             DataContext = VM;
         }
 
@@ -72,6 +72,12 @@ namespace WhereAreThem.WinViewer.View {
 
         private void OnOpeningProperties(object sender, ItemEventArgs e) {
             PropertiesWindow window = new PropertiesWindow(e.Item, e.Stack);
+            window.Owner = this;
+            window.Show();
+        }
+
+        private void OnOpeningDescription(object sender, EventArgs<string> e) {
+            DescriptionWindow window = new DescriptionWindow(e.Data);
             window.Owner = this;
             window.Show();
         }
