@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MediaInfoLib;
+using PureLib.Common;
 
 namespace WhereAreThem.Model.Plugins {
     public class MediaInfoPlugin : IPlugin {
@@ -13,7 +14,8 @@ namespace WhereAreThem.Model.Plugins {
         public string[] Extensions { get; private set; }
 
         public MediaInfoPlugin() {
-            Extensions = ConfigurationManager.AppSettings[this.GetType().Name].Split('|');
+            string exts = ConfigurationManager.AppSettings[this.GetType().Name];
+            Extensions = exts.IsNullOrEmpty() ? null : exts.Split('|');
         }
 
         public string GetDescription(string path) {

@@ -13,11 +13,12 @@ namespace WhereAreThem.Model.Plugins {
         public PluginManager() {
             Type pluginType = typeof(IPlugin);
             foreach (IPlugin plugin in pluginType.Assembly.GetTypes()
-                    .Where(t => pluginType.IsAssignableFrom(t) && t != pluginType)
+                    .Where(t => pluginType.IsAssignableFrom(t) && t.IsClass)
                     .Select(t => Activator.CreateInstance(t))) {
-                foreach (string ext in plugin.Extensions) {
-                    _plugins.Add(ext, plugin);
-                }
+                if (plugin.Extensions != null)
+                    foreach (string ext in plugin.Extensions) {
+                        _plugins.Add(ext, plugin);
+                    }
             }
         }
 
