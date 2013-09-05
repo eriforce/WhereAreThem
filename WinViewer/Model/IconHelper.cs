@@ -15,8 +15,6 @@ namespace WhereAreThem.WinViewer.Model {
     /// Provides static methods to read system icons for both folders and files.
     /// </summary>
     public static class IconReader {
-        [DllImport("gdi32.dll", SetLastError = true)]
-        private static extern bool DeleteObject(IntPtr hObject);
 
         public static ImageSource ToImageSource(this Icon icon) {
             Bitmap bitmap = icon.ToBitmap();
@@ -28,7 +26,7 @@ namespace WhereAreThem.WinViewer.Model {
                 Int32Rect.Empty,
                 BitmapSizeOptions.FromEmptyOptions());
 
-            if (!DeleteObject(hBitmap))
+            if (!NativeMethods.DeleteObject(hBitmap))
                 throw new Win32Exception();
 
             return wpfBitmap;
@@ -63,7 +61,7 @@ namespace WhereAreThem.WinViewer.Model {
                     break;
             }
             IntPtr hIconLarge = IntPtr.Zero, hIconSmall = IntPtr.Zero;
-            Shell32.ExtractIconEx("imageres.dll", index, ref hIconLarge, ref hIconSmall, 1);
+            NativeMethods.ExtractIconEx("imageres.dll", index, ref hIconLarge, ref hIconSmall, 1);
             return GetIcon(size == IconSize.Small ? hIconSmall : hIconLarge);
         }
 
@@ -86,7 +84,7 @@ namespace WhereAreThem.WinViewer.Model {
             else
                 flags |= Shell32.SHGFI_LARGEICON;
 
-            Shell32.SHGetFileInfo(name,
+            NativeMethods.SHGetFileInfo(name,
                 Shell32.FILE_ATTRIBUTE_NORMAL,
                 ref shfi,
                 (uint)Marshal.SizeOf(shfi),
@@ -98,7 +96,7 @@ namespace WhereAreThem.WinViewer.Model {
         private static Icon GetIcon(IntPtr hIcon) {
             // Copy (clone) the returned icon to a new object, thus allowing us to clean-up properly
             Icon icon = (Icon)Icon.FromHandle(hIcon).Clone();
-            User32.DestroyIcon(hIcon); // Cleanup
+            NativeMethods.DestroyIcon(hIcon); // Cleanup
             return icon;
         }
     }
@@ -114,7 +112,7 @@ namespace WhereAreThem.WinViewer.Model {
     /// Wraps necessary Shell32.dll structures and functions required to retrieve Icon Handles using SHGetFileInfo. Code
     /// courtesy of MSDN Cold Rooster Consulting case study.
     /// </summary>
-    public class Shell32 {
+    internal class Shell32 {
         public const int MAX_PATH = 256;
 
         [StructLayout(LayoutKind.Sequential)]
@@ -191,28 +189,6 @@ namespace WhereAreThem.WinViewer.Model {
         public const uint FILE_ATTRIBUTE_DIRECTORY = 0x00000010;
         public const uint FILE_ATTRIBUTE_NORMAL = 0x00000080;
 
-        [DllImport("shell32.dll")]
-        public static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes, ref SHFILEINFO psfi, uint cbFileInfo, uint uFlags);
-
-        [DllImport("shell32.dll")]
-        public static extern IntPtr ExtractIcon(IntPtr hInst, string lpszExeFileName, int nIconIndex);
-    
-        [DllImport("shell32.dll")]
-        public static extern int ExtractIconEx(string stExeFileName, int nIconIndex, ref IntPtr phiconLarge, ref IntPtr phiconSmall, int nIcons); 
-    }
-
-    /// <summary>
-    /// Wraps necessary functions imported from User32.dll. Code courtesy of MSDN Cold Rooster Consulting example.
-    /// </summary>
-    public class User32 {
-        /// <summary>
-        /// Provides access to function required to delete handle. This method is used internally
-        /// and is not required to be called separately.
-        /// </summary>
-        /// <param name="hIcon">Pointer to icon handle.</param>
-        /// <returns>N/A</returns>
-        [DllImport("user32.dll")]
-        public static extern int DestroyIcon(IntPtr hIcon);
     }
 }
 

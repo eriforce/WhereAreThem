@@ -4,11 +4,10 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MediaInfoLib;
 using PureLib.Common;
 
 namespace WhereAreThem.Model.Plugins {
-    public class MediaInfoPlugin : IPlugin {
+    public sealed class MediaInfoPlugin : IPlugin, IDisposable {
         private MediaInfo _mi = new MediaInfo();
 
         public string[] Extensions { get; private set; }
@@ -22,6 +21,10 @@ namespace WhereAreThem.Model.Plugins {
             _mi.Open(path);
             _mi.Option("Complete");
             return _mi.Inform();
+        }
+
+        public void Dispose() {
+            _mi.Dispose();
         }
     }
 }
