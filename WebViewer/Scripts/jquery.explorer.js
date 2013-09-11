@@ -61,7 +61,7 @@ $(document).ready(function () {
     var isShiftDown = false;
     var lastClickTimestamp;
     var lastClicked;
-    var checkIfUnselectedAll = function () {
+    var checkIfNothingSelected = function () {
         if ($('table.explorer tbody tr.selected').length == 0) {
             allRows.enableContextMenu();
             lastClicked = undefined;
@@ -119,7 +119,7 @@ $(document).ready(function () {
         else if (isCtrlDown) {
             if (tr.hasClass(selectedClassName)) {
                 tr.removeClass(selectedClassName).disableContextMenu();
-                checkIfUnselectedAll();
+                checkIfNothingSelected();
             }
             else {
                 tr.addClass(selectedClassName).enableContextMenu();
@@ -207,7 +207,7 @@ $(document).ready(function () {
         if (downEvent.button == 0) {
             $('ul#explorerContextMenu').fadeOut(75);
             allRows.removeClass(selectedClassName);
-            checkIfUnselectedAll();
+            checkIfNothingSelected();
 
             var container = this;
             if (!isSelecting && (downEvent.pageX <= (container.offsetLeft + container.scrollWidth))
@@ -233,7 +233,7 @@ $(document).ready(function () {
                 }).mouseup(function (e) {
                     $('div.selection').remove();
                     isSelecting = false;
-                    checkIfUnselectedAll();
+                    checkIfNothingSelected();
                     $(document).unbind('mousemove');
                     $(document).unbind('mouseup');
                 });

@@ -48,7 +48,7 @@
         </Grid.ColumnDefinitions>
 
         <Image Source="{Binding Item, Converter={StaticResource IconConverter}, ConverterParameter=Large}" Width="32" Height="32" Margin="8" HorizontalAlignment="Left"/>
-        <TextBox Text="{Binding Item.Name}" Grid.Row="0" Height="23" IsReadOnly="True" Style="{StaticResource Content}"/>
+        <TextBox Text="{Binding Item.Name}" Grid.Row="0" Height="23" IsReadOnly="True" VerticalContentAlignment="Center" Style="{StaticResource Content}"/>
         
         <Separator Grid.Row="1" Style="{StaticResource Separator}"/>
 
