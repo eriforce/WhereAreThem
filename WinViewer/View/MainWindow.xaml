@@ -79,8 +79,8 @@
             </Grid>
 
             <DataGrid ItemsSource="{Binding SelectedFolder.Items}" SelectedItem="{Binding SelectedItem}" Grid.Column="1" Grid.Row="1" Margin="0,4,0,22"
-                  MouseDoubleClick="DataGridMouseDoubleClick" SelectionChanged="DataGridSelectionChanged" IsReadOnly="True"
-                  AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" GridLinesVisibility="None">
+                  MouseDoubleClick="DataGridMouseDoubleClick" SelectionChanged="DataGridSelectionChanged" CopyingRowClipboardContent="DataGridCopyingRowClipboardContent"
+                  IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" GridLinesVisibility="None">
                 <DataGrid.Resources>
                     <Style TargetType="{x:Type DataGridCell}">
                         <Setter Property="ContextMenu" Value="{StaticResource watMenu}" />

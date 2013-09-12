@@ -145,6 +145,13 @@ namespace WhereAreThem.WinViewer.View {
                 ((DataGrid)sender).ScrollIntoView(VM.SelectedItem);
         }
 
+        private void DataGridCopyingRowClipboardContent(object sender, DataGridRowClipboardEventArgs e) {
+            DataGridClipboardCellContent content = new DataGridClipboardCellContent(
+                e.Item, e.ClipboardRowContent[0].Column, ((FileSystemItem)e.Item).Name);
+            e.ClipboardRowContent.Clear();
+            e.ClipboardRowContent.Add(content);
+        }
+
         private void LoadIfDrive(object item) {
             if (item is DriveModel) {
                 DriveModel drive = (DriveModel)item;
