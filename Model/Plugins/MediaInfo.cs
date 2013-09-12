@@ -5,8 +5,15 @@ namespace WhereAreThem.Model.Plugins {
     public sealed class MediaInfo : IDisposable {
         private IntPtr _handle;
 
+        public bool Loaded {
+            get { return _handle != IntPtr.Zero; }
+        }
+
         public MediaInfo() {
-            _handle = NativeMethods.MediaInfo_New();
+            try {
+                _handle = NativeMethods.MediaInfo_New();
+            }
+            catch { }
         }
 
         ~MediaInfo() {
@@ -17,7 +24,7 @@ namespace WhereAreThem.Model.Plugins {
             return NativeMethods.MediaInfo_Open(_handle, fileName).ToInt32();
         }
 
-        public int OpenBufferInit(Int64 fileSize, Int64 fileOffset) {
+        public int OpenBufferInit(long fileSize, long fileOffset) {
             return NativeMethods.MediaInfo_Open_Buffer_Init(_handle, fileSize, fileOffset).ToInt32();
         }
 
@@ -62,7 +69,8 @@ namespace WhereAreThem.Model.Plugins {
         }
 
         public void Dispose() {
-            NativeMethods.MediaInfo_Delete(_handle);
+            if (Loaded)
+                NativeMethods.MediaInfo_Delete(_handle);
         }
     }
 

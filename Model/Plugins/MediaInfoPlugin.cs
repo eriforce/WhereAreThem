@@ -8,13 +8,19 @@ using PureLib.Common;
 
 namespace WhereAreThem.Model.Plugins {
     public sealed class MediaInfoPlugin : IPlugin, IDisposable {
-        private MediaInfo _mi = new MediaInfo();
+        private MediaInfo _mi;
 
         public string[] Extensions { get; private set; }
 
+        public bool Loaded {
+            get { return _mi.Loaded; }
+        }
+
         public MediaInfoPlugin() {
+            _mi = new MediaInfo();
             string exts = ConfigurationManager.AppSettings[this.GetType().Name];
-            Extensions = exts.IsNullOrEmpty() ? null : exts.Split('|');
+            if (!exts.IsNullOrEmpty())
+                Extensions = exts.Split('|');
         }
 
         public string GetDescription(string path) {

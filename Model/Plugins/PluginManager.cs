@@ -15,7 +15,7 @@ namespace WhereAreThem.Model.Plugins {
             foreach (IPlugin plugin in pluginType.Assembly.GetTypes()
                     .Where(t => pluginType.IsAssignableFrom(t) && t.IsClass)
                     .Select(t => Activator.CreateInstance(t))) {
-                if (plugin.Extensions != null)
+                if (plugin.Loaded && (plugin.Extensions != null))
                     foreach (string ext in plugin.Extensions) {
                         _plugins.Add(ext, plugin);
                     }
