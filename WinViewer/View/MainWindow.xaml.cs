@@ -107,7 +107,7 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void FolderTreeMouseRightClick(object sender, MouseButtonEventArgs e) {
-            TreeViewItem item = GetParentTreeViewItem(e.OriginalSource as DependencyObject);
+            TreeViewItem item = GetParent<TreeViewItem>((DependencyObject)e.OriginalSource);
             item.Focus();
             e.Handled = true;
         }
@@ -128,15 +128,18 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void DataGridMouseDoubleClick(object sender, MouseButtonEventArgs e) {
-            DataGrid dataGrid = (DataGrid)sender;
-            FileSystemItem item = (FileSystemItem)dataGrid.SelectedItem;
+            DataGridRow row = MainWindow.GetParent<DataGridRow>((DependencyObject)e.OriginalSource);
+            if (row != null) {
+                DataGrid dataGrid = (DataGrid)sender;
+                FileSystemItem item = (FileSystemItem)dataGrid.SelectedItem;
 
-            if (item is Folder) {
-                _selectedTreeViewItem.IsExpanded = true;
-                _selectedTreeViewItem.UpdateLayout();
-                _selectedTreeViewItem = (TreeViewItem)_selectedTreeViewItem.ItemContainerGenerator.ContainerFromItem(item);
-                _selectedTreeViewItem.IsSelected = true;
-                _selectedTreeViewItem.BringIntoView();
+                if (item is Folder) {
+                    _selectedTreeViewItem.IsExpanded = true;
+                    _selectedTreeViewItem.UpdateLayout();
+                    _selectedTreeViewItem = (TreeViewItem)_selectedTreeViewItem.ItemContainerGenerator.ContainerFromItem(item);
+                    _selectedTreeViewItem.IsSelected = true;
+                    _selectedTreeViewItem.BringIntoView();
+                }
             }
         }
 
@@ -162,20 +165,20 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void GetFolderStack(TreeViewItem item, List<Folder> stack) {
-            TreeViewItem parent = GetParentTreeViewItem(item);
+            TreeViewItem parent = GetParent<TreeViewItem>(item);
             if (parent != null) {
                 stack.Insert(0, (Folder)parent.Header);
                 GetFolderStack(parent, stack);
             }
         }
 
-        private TreeViewItem GetParentTreeViewItem(DependencyObject item) {
+        public static T GetParent<T>(DependencyObject item) where T : DependencyObject {
             DependencyObject parent = item;
             do {
                 parent = VisualTreeHelper.GetParent(parent);
             }
-            while (!(parent is TreeViewItem || parent is TreeView));
-            return parent as TreeViewItem;
+            while ((parent != null) && !(parent is T));
+            return parent as T;
         }
     }
 }

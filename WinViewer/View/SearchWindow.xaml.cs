@@ -35,8 +35,8 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
-            DataGrid dataGrid = (DataGrid)sender;
-            if (dataGrid.SelectedItem != null)
+            DataGridRow row = MainWindow.GetParent<DataGridRow>((DependencyObject)e.OriginalSource);
+            if (row != null)
                 VM.OnLocatingItem();
         }
 
