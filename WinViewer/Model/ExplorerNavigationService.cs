@@ -31,12 +31,12 @@ namespace WhereAreThem.WinViewer.Model {
             if (CanGoForward)
                 _historyEntries.RemoveRange(_currentEntryIndex + 1, _historyEntries.Count - 1 - _currentEntryIndex);
 
-            if (_historyEntries.Count >= _navigationHistoryCount)
+            _historyEntries.Add(entry);
+
+            if (_historyEntries.Count > _navigationHistoryCount)
                 _historyEntries.RemoveAt(0);
             else
                 _currentEntryIndex++;
-
-            _historyEntries.Add(entry);
         }
 
         public void GoBack() {

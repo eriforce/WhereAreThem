@@ -161,8 +161,11 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get {
                 if (_goBackCommand == null)
                     _goBackCommand = new RelayCommand(p => {
+                        List<Folder> next = Navigation.CurrentEntry.Stack;
                         Navigation.GoBack();
-                        OnNavigatingFolder(Navigation.CurrentEntry);
+                        List<Folder> prev = Navigation.CurrentEntry.Stack;
+                        OnNavigatingFolder(new ItemEventArgs(
+                            prev.SequenceEqual(next.Take(next.Count - 1)) ? next.Last() : null, prev));
                     }, p => Navigation.CanGoBack);
                 return _goBackCommand;
             }
