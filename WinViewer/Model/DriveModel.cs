@@ -10,13 +10,16 @@ namespace WhereAreThem.WinViewer.Model {
     public class DriveModel : Drive, INotifyPropertyChanged {
         private string _machineName;
         private bool _hasLoaded;
+        private bool _isLocalDrive;
 
         public bool IsChanged { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
+        public event EventHandler LocalDriveLoaded;
 
         public DriveModel(string machineName, string driveName, DateTime createdDateUtc, DriveType driveType) {
             _machineName = machineName;
+            _isLocalDrive = (_machineName == Environment.MachineName);
             Name = driveName;
             CreatedDateUtc = createdDateUtc;
             DriveType = driveType;
@@ -29,6 +32,8 @@ namespace WhereAreThem.WinViewer.Model {
                 if (!_hasLoaded) {
                     Drive drive = App.Loader.GetDrive(_machineName, Name);
                     Load(drive);
+                    if (_isLocalDrive && (LocalDriveLoaded != null))
+                        LocalDriveLoaded(this, EventArgs.Empty);
                 }
                 return true;
             }

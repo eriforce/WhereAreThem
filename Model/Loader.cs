@@ -51,7 +51,7 @@ namespace WhereAreThem.Model {
             Folder driveFolder;
             lock (_listLock) {
                 DateTime listTimestamp = new FileInfo(listPath).LastWriteTimeUtc;
-                driveFolder = machine.Folders.SingleOrDefault(d => d.Name == Drive.GetDrivePath(driveLetter));
+                driveFolder = machine.Folders.SingleOrDefault(d => d.NameEquals(Drive.GetDrivePath(driveLetter)));
                 if ((driveFolder == null) || (driveFolder.CreatedDateUtc != listTimestamp)) {
                     if (driveFolder != null)
                         machine.Folders.Remove(driveFolder);

@@ -142,7 +142,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             Process.Start("explorer.exe", @"/select,{0}".FormatWith(path));
                         else
                             MessageBox.Show(View, "{0} doesn't exist on your disk.".FormatWith(path));
-                    }, p => { return RootStack.First().Name == Environment.MachineName; });
+                    }, p => { return RootStack.First().NameEquals(Environment.MachineName); });
                 return _locateOnDiskCommand;
             }
         }

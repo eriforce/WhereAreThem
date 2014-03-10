@@ -35,7 +35,7 @@ namespace WhereAreThem.WebViewer.Models {
                 stack = new List<Folder>();
                 stack.Add(drive);
                 for (int i = 1; i < parts.Length; i++) {
-                    stack.Add(stack.Last().Folders.Single(f => f.Name == parts[i]));
+                    stack.Add(stack.Last().Folders.Single(f => f.NameEquals(parts[i])));
                 }
                 return stack.Last();
             }

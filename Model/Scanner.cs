@@ -11,7 +11,7 @@ using IO = System.IO;
 
 namespace WhereAreThem.Model {
     public class Scanner : ListBase {
-        private const FileAttributes filter = FileAttributes.Hidden | FileAttributes.System;
+        public const FileAttributes Filter = FileAttributes.Hidden | FileAttributes.System;
         private readonly string driveSuffix = "{0}{1}".FormatWith(Path.VolumeSeparatorChar, Path.DirectorySeparatorChar);
         private PluginManager _pluginManager = new PluginManager();
 
@@ -19,6 +19,16 @@ namespace WhereAreThem.Model {
 
         public Scanner(string outputPath, IPersistence persistence)
             : base(outputPath, persistence) {
+        }
+
+        public Models.File GetFile(FileInfo fi, Models.File file) {
+            return new Models.File() {
+                Name = fi.Name,
+                FileSize = fi.Length,
+                CreatedDateUtc = fi.CreationTimeUtc,
+                ModifiedDateUtc = fi.LastWriteTimeUtc,
+                Description = GetFileDescription(fi, file)
+            };
         }
 
         public Drive Scan(string drivePath) {
@@ -52,7 +62,7 @@ namespace WhereAreThem.Model {
                 for (int i = 1; i < pathParts.Length; i++) {
                     if (folder.Folders == null)
                         folder.Folders = new List<Folder>();
-                    Folder current = folder.Folders.SingleOrDefault(f => f.Name.Equals(pathParts[i], StringComparison.OrdinalIgnoreCase));
+                    Folder current = folder.Folders.SingleOrDefault(f => f.NameEquals(pathParts[i]));
                     if (current == null) {
                         current = GetFolder(new DirectoryInfo(Path.Combine(pathParts.Take(i + 1).ToArray())));
                         folder.Folders.Add(current);
@@ -90,17 +100,11 @@ namespace WhereAreThem.Model {
             folder.CreatedDateUtc = directory.CreationTimeUtc;
             try {
                 folder.Files = (from fi in directory.EnumerateFiles()
-                                where !fi.Attributes.HasFlag(filter)
+                                where !fi.Attributes.HasFlag(Filter)
                                 join f in folder.Files ?? new List<Models.File>() on fi.Name equals f.Name into files
-                                select new Models.File() {
-                                    Name = fi.Name,
-                                    FileSize = fi.Length,
-                                    CreatedDateUtc = fi.CreationTimeUtc,
-                                    ModifiedDateUtc = fi.LastWriteTimeUtc,
-                                    Description = GetFileDescription(fi, files.SingleOrDefault())
-                                }).ToList();
+                                select GetFile(fi, files.SingleOrDefault())).ToList();
                 folder.Folders = (from di in directory.EnumerateDirectories()
-                                  where !di.Attributes.HasFlag(filter)
+                                  where !di.Attributes.HasFlag(Filter)
                                   join f in folder.Folders ?? new List<Folder>() on di.Name equals f.Name into folders
                                   select GetFolder(di, folders.SingleOrDefault())).ToList();
                 folder.Files.Sort();

@@ -17,6 +17,10 @@ namespace WhereAreThem.Model.Models {
         }
         public abstract long Size { get; }
 
+        public bool NameEquals(string name) {
+            return Name.Equals(name, StringComparison.OrdinalIgnoreCase);
+        }
+
         public int CompareTo(FileSystemItem other) {
             double xValue;
             double yValue;

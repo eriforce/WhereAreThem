@@ -33,11 +33,12 @@ namespace WhereAreThem.WinViewer.ViewModel {
         private ICommand _goForwardCommand;
         private ICommand _goUpCommand;
         private Computer _localComputer {
-            get { return Computers.SingleOrDefault(c => c.Name == Environment.MachineName); }
+            get { return Computers.SingleOrDefault(c => c.NameEquals(Environment.MachineName)); }
         }
 
         public List<Computer> Computers { get; private set; }
         public ExplorerNavigationService Navigation { get; private set; }
+        public RealtimeWatcher Watcher { get; private set; }
 
         public string StatusBarText {
             get { return _statusBarText; }
@@ -109,9 +110,9 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         if (!(p is Folder) || (p is Computer))
                             return false;
                         if ((p is DriveModel) && (SelectedFolder is Computer))
-                            return SelectedFolder.Name == Environment.MachineName;
+                            return SelectedFolder.NameEquals(Environment.MachineName);
                         return SelectedFolderStack.Any()
-                            && (SelectedFolderStack.First().Name == Environment.MachineName);
+                            && (SelectedFolderStack.First().NameEquals(Environment.MachineName));
                     });
                 }
                 return _scanCommand;
@@ -195,6 +196,9 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public event EventHandler<EventArgs<string>> OpeningDescription;
 
         public MainWindowViewModel() {
+            Navigation = new ExplorerNavigationService();
+            Watcher = new RealtimeWatcher();
+
             App.Scanner.Scaning += (s, e) => { StatusBarText = e.CurrentDirectory; };
             Computers = App.Loader.MachineNames.Select(n => new Computer() {
                 Name = n,
@@ -202,14 +206,13 @@ namespace WhereAreThem.WinViewer.ViewModel {
                     d => (Folder)new DriveModel(n, d.Name, d.CreatedDateUtc, d.DriveType)).ToList()
             }).ToList();
             InsertLocalComputer();
-            Navigation = new ExplorerNavigationService();
         }
 
         public void Scan(string[] folders) {
             if (folders != null)
                 foreach (string path in folders) {
                     string root = Directory.GetDirectoryRoot(path);
-                    DriveModel drive = _localComputer.Drives.Single(f => f.Name.Equals(root, StringComparison.OrdinalIgnoreCase));
+                    DriveModel drive = _localComputer.Drives.Single(f => f.NameEquals(root));
                     bool isDrive = root.Equals(path, StringComparison.OrdinalIgnoreCase);
                     if (!isDrive)
                         drive.Load();
@@ -229,21 +232,26 @@ namespace WhereAreThem.WinViewer.ViewModel {
         }
 
         private void InsertLocalComputer() {
-            Computer computer = _localComputer;
-            if (computer == null) {
-                computer = new Computer() { Name = Environment.MachineName, Folders = new List<Folder>() };
-                Computers.Add(computer);
+            Computer localComputer = _localComputer;
+            if (localComputer == null) {
+                localComputer = new Computer() { Name = Environment.MachineName, Folders = new List<Folder>() };
+                Computers.Add(localComputer);
             }
 
             DriveType[] driveTypes = ConfigurationManager.AppSettings["driveTypes"]
                 .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(s => (DriveType)Enum.Parse(typeof(DriveType), s)).ToArray();
             foreach (DriveInfo drive in DriveInfo.GetDrives()) {
-                if (driveTypes.Contains(drive.DriveType) && !computer.Folders.Any(f => f.Name == drive.Name))
-                    computer.Folders.Add(new DriveModel(
+                if (driveTypes.Contains(drive.DriveType) && !localComputer.Folders.Any(f => f.NameEquals(drive.Name)))
+                    localComputer.Folders.Add(new DriveModel(
                         Environment.MachineName, drive.Name, DateTime.UtcNow, drive.DriveType) { Folders = null });
             }
-            computer.Folders.Sort();
+            localComputer.Folders.Sort();
+            foreach (DriveModel dm in localComputer.Drives) {
+                dm.LocalDriveLoaded += (s, e) => {
+                    Watcher.WatchDrive((DriveModel)s);
+                };
+            }
         }
 
         private void Scan(string path, bool scanDrive, DriveModel drive) {
