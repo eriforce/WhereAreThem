@@ -7,11 +7,12 @@ using System.Windows.Input;
 using PureLib.Common;
 using PureLib.WPF;
 using WhereAreThem.Model.Models;
+using WhereAreThem.WinViewer.Model;
 using IO = System.IO;
 
 namespace WhereAreThem.WinViewer.ViewModel {
     public class PropertiesWindowViewModel : ViewModelBase {
-        private List<Folder> _itemStack;
+        private List<Folder> _parentStack;
         private PropertyInfo _propertyInfo;
 
         public FileSystemItem Item { get; private set; }
@@ -19,7 +20,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get { return Item.GetType().Name; }
         }
         public string Location {
-            get { return IO.Path.Combine(_itemStack.Select(f => f.Name).ToArray()); }
+            get { return IO.Path.Combine(_parentStack.Select(f => f.Name).ToArray()); }
         }
         public string Size {
             get { return string.Format("{0} ({1} bytes)", _propertyInfo.TotalSizeFriendlyString, _propertyInfo.TotalSizeString); }
@@ -41,10 +42,10 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get { return Item is File; }
         }
 
-        public PropertiesWindowViewModel(FileSystemItem item, List<Folder> stack) {
+        public PropertiesWindowViewModel(FileSystemItem item, List<Folder> parentStack) {
             Item = item;
-            _itemStack = stack;
-            _propertyInfo = new PropertyInfo(_itemStack.Last(), new string[] { Item.Name });
+            _parentStack = parentStack;
+            _propertyInfo = new PropertyInfo(parentStack.Last(), new string[] { Item.Name });
         }
     }
 }

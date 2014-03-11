@@ -74,6 +74,7 @@
     <Compile Include="Model\Computer.cs" />
     <Compile Include="Model\DriveModel.cs" />
     <Compile Include="Model\ExplorerNavigationService.cs" />
+    <Compile Include="Model\Helper.cs" />
     <Compile Include="Model\IconHelper.cs" />
     <Compile Include="Model\ItemType.cs" />
     <Compile Include="Model\RealtimeWatcher.cs" />

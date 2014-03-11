@@ -93,6 +93,8 @@ namespace WhereAreThem.WinViewer.View {
         private void OnWindowKeyDown(object sender, KeyEventArgs e) {
             if ((e.Key == Key.F) && (Keyboard.Modifiers == ModifierKeys.Control)) {
                 if ((VM.SelectedFolder != null) && !(VM.SelectedFolder is Computer)) {
+                    if ((SearchWindow.VM.RootStack != null) && !SearchWindow.VM.RootStack.SequenceEqual(VM.SelectedFolderStack))
+                        SearchWindow.VM.Results = null;
                     SearchWindow.VM.RootStack = VM.SelectedFolderStack;
                     SearchWindow.VM.Root = VM.SelectedFolder;
                     SearchWindow.VM.Location = VM.Location;
@@ -115,11 +117,13 @@ namespace WhereAreThem.WinViewer.View {
         private void FolderTreeSelected(object sender, RoutedEventArgs e) {
             _selectedTreeViewItem = (TreeViewItem)e.OriginalSource;
 
-            LoadIfDrive(treeView.SelectedItem);
+            Folder selectedFolder = (Folder)treeView.SelectedItem;
+            LoadIfDrive(selectedFolder);
             List<Folder> stack = new List<Folder>();
             GetFolderStack(_selectedTreeViewItem, stack);
+            stack.Add(selectedFolder);
             VM.SelectedFolderStack = stack;
-            VM.SelectedFolder = (Folder)treeView.SelectedItem;
+            VM.SelectedFolder = selectedFolder;
         }
 
         private void FolderTreeExpanded(object sender, RoutedEventArgs e) {

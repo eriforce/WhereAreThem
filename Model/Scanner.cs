@@ -15,7 +15,7 @@ namespace WhereAreThem.Model {
         private readonly string driveSuffix = "{0}{1}".FormatWith(Path.VolumeSeparatorChar, Path.DirectorySeparatorChar);
         private PluginManager _pluginManager = new PluginManager();
 
-        public event ScanEventHandler Scaning;
+        public event ScanEventHandler Scanning;
 
         public Scanner(string outputPath, IPersistence persistence)
             : base(outputPath, persistence) {
@@ -123,8 +123,8 @@ namespace WhereAreThem.Model {
         }
 
         private void OnScaning(string dir) {
-            if (Scaning != null)
-                Scaning(this, new ScanEventArgs(dir));
+            if (Scanning != null)
+                Scanning(this, new ScanEventArgs(dir));
         }
     }
 

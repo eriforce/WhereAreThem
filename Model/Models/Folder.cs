@@ -35,7 +35,7 @@ namespace WhereAreThem.Model.Models {
             }
         }
 
-        public List<SearchResult> Search(List<Folder> folderStack, string pattern, bool includeFile, bool includeFolder) {
+        public List<SearchResult> Search(List<Folder> parentStack, string pattern, bool includeFile, bool includeFolder) {
             if (!includeFile && !includeFolder)
                 return null;
 
@@ -44,12 +44,12 @@ namespace WhereAreThem.Model.Models {
                 regexPattern = "^{0}$".FormatWith(regexPattern);
 
             List<SearchResult> results = new List<SearchResult>();
-            Search(results, folderStack, regexPattern, includeFile, includeFolder);
+            Search(results, parentStack, regexPattern, includeFile, includeFolder);
             return results;
         }
 
-        private void Search(List<SearchResult> results, List<Folder> folderStack, string regexPattern, bool includeFile, bool includeFolder) {
-            List<Folder> stack = new List<Folder>(folderStack);
+        private void Search(List<SearchResult> results, List<Folder> parentStack, string regexPattern, bool includeFile, bool includeFolder) {
+            List<Folder> stack = new List<Folder>(parentStack);
             stack.Add(this);
 
             if (includeFile && (Files != null))

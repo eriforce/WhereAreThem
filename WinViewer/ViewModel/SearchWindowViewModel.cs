@@ -111,7 +111,8 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 if (_searchCommand == null)
                     _searchCommand = new RelayCommand(p => {
                         BusyWith("Searching {0} ...".FormatWith(Location), () => {
-                            Results = new ObservableCollection<SearchResult>(Root.Search(RootStack, SearchPattern, IncludeFiles, IncludeFolders));
+                            Results = new ObservableCollection<SearchResult>(
+                                Root.Search(RootStack.GetParentStack().ToList(), SearchPattern, IncludeFiles, IncludeFolders));
 
                             List<string> statusTextParts = new List<string>();
                             if (Results.Any(r => r.Item is Folder))
@@ -142,17 +143,14 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             Process.Start("explorer.exe", @"/select,{0}".FormatWith(path));
                         else
                             MessageBox.Show(View, "{0} doesn't exist on your disk.".FormatWith(path));
-                    }, p => { return RootStack.First().NameEquals(Environment.MachineName); });
+                    }, p => { return RootStack.GetComputer().NameEquals(Environment.MachineName); });
                 return _locateOnDiskCommand;
             }
         }
         public ICommand OpenPropertiesCommand {
             get {
                 if (_openPropertiesCommand == null)
-                    _openPropertiesCommand = new RelayCommand(p => {
-                        if (OpeningProperties != null)
-                            OpeningProperties(this, new ItemEventArgs(SelectedSearchResult.Item, SelectedSearchResult.Stack));
-                    });
+                    _openPropertiesCommand = new RelayCommand(p => OnOpeningProperties());
                 return _openPropertiesCommand;
             }
         }
@@ -164,6 +162,11 @@ namespace WhereAreThem.WinViewer.ViewModel {
             if (LocatingItem != null)
                 LocatingItem(this, new ItemEventArgs(SelectedSearchResult.Item, SelectedSearchResult.Stack));
             View.Close();
+        }
+
+        public void OnOpeningProperties() {
+            if (OpeningProperties != null)
+                OpeningProperties(this, new ItemEventArgs(SelectedSearchResult.Item, SelectedSearchResult.Stack));
         }
     }
 }

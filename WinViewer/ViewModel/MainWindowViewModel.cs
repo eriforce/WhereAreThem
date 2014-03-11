@@ -39,6 +39,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public List<Computer> Computers { get; private set; }
         public ExplorerNavigationService Navigation { get; private set; }
         public RealtimeWatcher Watcher { get; private set; }
+        public List<Folder> SelectedFolderStack { get; set; }
 
         public string StatusBarText {
             get { return _statusBarText; }
@@ -60,24 +61,13 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 _selectedFolder = value;
                 RaiseChange(() => SelectedFolder);
 
-                List<string> statusTextParts = new List<string>() {
-                    SelectedFolder.Size.ToFriendlyString()
-                };
-                if (SelectedFolder.Folders != null)
-                    statusTextParts.Add("{0} folder(s)".FormatWith(SelectedFolder.Folders.Count));
-                if (SelectedFolder.Files != null)
-                    statusTextParts.Add("{0} file(s)".FormatWith(SelectedFolder.Files.Count));
-                StatusBarText = string.Join(", ", statusTextParts);
-
-                List<Folder> stack = new List<Folder>(SelectedFolderStack);
-                stack.Add(SelectedFolder);
-                Location = Path.Combine(stack.Select(f => f.Name).ToArray());
+                SetStatusBar();
+                Location = Path.Combine(SelectedFolderStack.Select(f => f.Name).ToArray());
 
                 if ((Navigation.CurrentEntry == null) || (SelectedFolder != Navigation.CurrentEntry.Stack.Last()))
-                    Navigation.AddBackEntry(new ItemEventArgs(null, stack));
+                    Navigation.AddBackEntry(new ItemEventArgs(null, SelectedFolderStack));
             }
         }
-        public List<Folder> SelectedFolderStack { get; set; }
         public FileSystemItem SelectedItem {
             get { return _selectedItem; }
             set {
@@ -90,29 +80,29 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 if (_scanCommand == null) {
                     _scanCommand = new RelayCommand(p => {
                         Folder pFolder = (Folder)p;
-                        List<Folder> folders = new List<Folder>(SelectedFolderStack);
-                        folders.Add(SelectedFolder);
-                        if (pFolder != SelectedFolder)
+                        List<Folder> folders = SelectedFolderStack;
+                        if (pFolder != SelectedFolder) {
+                            folders = new List<Folder>(SelectedFolderStack);
                             folders.Add(pFolder);
+                        }
 
                         string path = Path.Combine(folders.Select(f => f.Name).ToArray());
-                        DriveModel drive = (DriveModel)folders[1];
+                        DriveModel drive = folders.GetDrive();
                         if (Directory.Exists(path)) {
                             Scan(path, p is DriveModel, drive);
                         }
                         else {
-                            Folder parent = folders[folders.Count - 2];
+                            Folder parent = folders.GetParent();
                             parent.Folders.Remove(pFolder);
                             drive.Refresh();
                             drive.IsChanged = true;
                         }
                     }, p => {
-                        if (!(p is Folder) || (p is Computer))
+                        // p is ensured under the selected folder stack
+                        if (p is Computer)
                             return false;
-                        if ((p is DriveModel) && (SelectedFolder is Computer))
-                            return SelectedFolder.NameEquals(Environment.MachineName);
-                        return SelectedFolderStack.Any()
-                            && (SelectedFolderStack.First().NameEquals(Environment.MachineName));
+                        else
+                            return SelectedFolderStack.GetComputer().NameEquals(Environment.MachineName);
                     });
                 }
                 return _scanCommand;
@@ -137,15 +127,13 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get {
                 if (_openPropertiesCommand == null)
                     _openPropertiesCommand = new RelayCommand(p => {
-                        FileSystemItem item = p as FileSystemItem;
                         if (OpeningProperties != null) {
-                            List<Folder> stack = new List<Folder>(SelectedFolderStack);
-                            if (p != SelectedFolder)
-                                stack.Add(SelectedFolder);
-
-                            OpeningProperties(this, new ItemEventArgs(item, stack));
+                            List<Folder> parentStack = SelectedFolderStack;
+                            if (p == SelectedFolder)
+                                parentStack = SelectedFolderStack.GetParentStack().ToList();
+                            OpeningProperties(this, new ItemEventArgs((FileSystemItem)p, parentStack));
                         }
-                    }, p => SelectedFolderStack.Any());
+                    }, p => !(p is Computer));
                 return _openPropertiesCommand;
             }
         }
@@ -166,7 +154,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         Navigation.GoBack();
                         List<Folder> prev = Navigation.CurrentEntry.Stack;
                         OnNavigatingFolder(new ItemEventArgs(
-                            prev.SequenceEqual(next.Take(next.Count - 1)) ? next.Last() : null, prev));
+                            prev.SequenceEqual(next.GetParentStack()) ? next.Last() : null, prev));
                     }, p => Navigation.CanGoBack);
                 return _goBackCommand;
             }
@@ -185,8 +173,9 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get {
                 if (_goUpCommand == null)
                     _goUpCommand = new RelayCommand(p => {
-                        OnNavigatingFolder(new ItemEventArgs(null, SelectedFolderStack));
-                    }, p => (SelectedFolderStack != null) && SelectedFolderStack.Any());
+                        OnNavigatingFolder(new ItemEventArgs(SelectedFolder,
+                            SelectedFolderStack.GetParentStack().ToList()));
+                    }, p => (SelectedFolderStack != null) && !(SelectedFolder is Computer));
                 return _goUpCommand;
             }
         }
@@ -199,12 +188,12 @@ namespace WhereAreThem.WinViewer.ViewModel {
             Navigation = new ExplorerNavigationService();
             Watcher = new RealtimeWatcher();
 
-            App.Scanner.Scaning += (s, e) => { StatusBarText = e.CurrentDirectory; };
-            Computers = App.Loader.MachineNames.Select(n => new Computer() {
-                Name = n,
-                Folders = App.Loader.GetDrives(n).Select(
-                    d => (Folder)new DriveModel(n, d.Name, d.CreatedDateUtc, d.DriveType)).ToList()
-            }).ToList();
+            App.Scanner.Scanning += (s, e) => { StatusBarText = e.CurrentDirectory; };
+            Computers = App.Loader.MachineNames.Select(n => new Computer() { Name = n }).ToList();
+            foreach (Computer c in Computers) {
+                c.Folders = App.Loader.GetDrives(c.Name).Select(
+                    d => (Folder)new DriveModel(c, d.Name, d.CreatedDateUtc, d.DriveType)).ToList();
+            }
             InsertLocalComputer();
         }
 
@@ -244,7 +233,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             foreach (DriveInfo drive in DriveInfo.GetDrives()) {
                 if (driveTypes.Contains(drive.DriveType) && !localComputer.Folders.Any(f => f.NameEquals(drive.Name)))
                     localComputer.Folders.Add(new DriveModel(
-                        Environment.MachineName, drive.Name, DateTime.UtcNow, drive.DriveType) { Folders = null });
+                        localComputer, drive.Name, DateTime.UtcNow, drive.DriveType) { Folders = null });
             }
             localComputer.Folders.Sort();
             foreach (DriveModel dm in localComputer.Drives) {
@@ -268,6 +257,17 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 drive.IsChanged = true;
                 StatusBarText = "Scanning of {0} has completed.".FormatWith(path);
             });
+        }
+
+        private void SetStatusBar() {
+            List<string> statusTextParts = new List<string>() {
+                    SelectedFolder.Size.ToFriendlyString()
+                };
+            if (SelectedFolder.Folders != null)
+                statusTextParts.Add("{0} folder(s)".FormatWith(SelectedFolder.Folders.Count));
+            if (SelectedFolder.Files != null)
+                statusTextParts.Add("{0} file(s)".FormatWith(SelectedFolder.Files.Count));
+            StatusBarText = string.Join(", ", statusTextParts);
         }
 
         private void OnNavigatingFolder(ItemEventArgs e) {
