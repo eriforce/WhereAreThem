@@ -58,7 +58,7 @@ namespace WhereAreThem.WinViewer.Model {
                             Models.File file = folder.Files.SingleOrDefault(f => f.NameEquals(fi.Name));
                             if (file != null)
                                 folder.Files.Remove(file);
-                            if (!fi.Attributes.HasFlag(Scanner.Filter))
+                            if (fi.ShouldScan())
                                 folder.Files.Add(App.Scanner.GetFile(fi, file));
                             RaiseChange(drive);
                         }
@@ -78,7 +78,7 @@ namespace WhereAreThem.WinViewer.Model {
                         FileInfo fi = new FileInfo(e.FullPath);
                         if (oldFile != null)
                             folder.Files.Remove(oldFile);
-                        if (!fi.Attributes.HasFlag(Scanner.Filter))
+                        if (fi.ShouldScan())
                             folder.Files.Add(App.Scanner.GetFile(fi, oldFile));
                         RaiseChange(drive);
                     });
@@ -94,7 +94,7 @@ namespace WhereAreThem.WinViewer.Model {
             DriveModel drive = Drives[parent.Root.Name];
             switch (e.ChangeType) {
                 case WatcherChangeTypes.Created:
-                    if (!new DirectoryInfo(e.FullPath).Attributes.HasFlag(Scanner.Filter)) {
+                    if (new DirectoryInfo(e.FullPath).ShouldScan()) {
                         App.Scanner.ScanUpdate(e.FullPath, drive);
                         RaiseChange(drive);
                     }
@@ -110,9 +110,7 @@ namespace WhereAreThem.WinViewer.Model {
                     IfParentFolderExists(parent, drive, parentFolder => {
                         RenamedEventArgs rea = (RenamedEventArgs)e;
                         Folder oldFolder = parentFolder.Folders.SingleOrDefault(f => f.NameEquals(Path.GetFileName(rea.OldName)));
-                        DirectoryInfo di = new DirectoryInfo(e.FullPath);
-                        bool isFiltered = di.Attributes.HasFlag(Scanner.Filter);
-                        if (!isFiltered) {
+                        if (new DirectoryInfo(e.FullPath).ShouldScan()) {
                             if (oldFolder == null)
                                 App.Scanner.ScanUpdate(e.FullPath, drive);
                             else
@@ -130,7 +128,7 @@ namespace WhereAreThem.WinViewer.Model {
 
         private bool IsItemInFilteredFolder(DirectoryInfo di) {
             while (di.Parent != null) {
-                if (di.Attributes.HasFlag(Scanner.Filter))
+                if (!di.ShouldScan())
                     return true;
                 di = di.Parent;
             }

@@ -117,7 +117,7 @@ namespace WhereAreThem.WinViewer.View {
         private void FolderTreeSelected(object sender, RoutedEventArgs e) {
             _selectedTreeViewItem = (TreeViewItem)e.OriginalSource;
 
-            Folder selectedFolder = (Folder)treeView.SelectedItem;
+            Folder selectedFolder = (Folder)_selectedTreeViewItem.Header;
             LoadIfDrive(selectedFolder);
             List<Folder> stack = new List<Folder>();
             GetFolderStack(_selectedTreeViewItem, stack);

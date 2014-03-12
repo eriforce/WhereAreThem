@@ -11,7 +11,7 @@ using IO = System.IO;
 
 namespace WhereAreThem.Model {
     public class Scanner : ListBase {
-        public const FileAttributes Filter = FileAttributes.Hidden | FileAttributes.System;
+        internal const FileAttributes Filter = FileAttributes.Hidden | FileAttributes.System;
         private readonly string driveSuffix = "{0}{1}".FormatWith(Path.VolumeSeparatorChar, Path.DirectorySeparatorChar);
         private PluginManager _pluginManager = new PluginManager();
 
@@ -92,7 +92,7 @@ namespace WhereAreThem.Model {
         }
 
         private Folder GetFolder(DirectoryInfo directory, Folder folder = null) {
-            OnScaning(directory.FullName);
+            OnScanning(directory.FullName);
             if (folder == null)
                 folder = new Folder() {
                     Name = directory.Name,
@@ -100,11 +100,11 @@ namespace WhereAreThem.Model {
             folder.CreatedDateUtc = directory.CreationTimeUtc;
             try {
                 folder.Files = (from fi in directory.EnumerateFiles()
-                                where !fi.Attributes.HasFlag(Filter)
+                                where fi.ShouldScan()
                                 join f in folder.Files ?? new List<Models.File>() on fi.Name equals f.Name into files
                                 select GetFile(fi, files.SingleOrDefault())).ToList();
                 folder.Folders = (from di in directory.EnumerateDirectories()
-                                  where !di.Attributes.HasFlag(Filter)
+                                  where di.ShouldScan()
                                   join f in folder.Folders ?? new List<Folder>() on di.Name equals f.Name into folders
                                   select GetFolder(di, folders.SingleOrDefault())).ToList();
                 folder.Files.Sort();
@@ -122,9 +122,15 @@ namespace WhereAreThem.Model {
                 return file.Description;
         }
 
-        private void OnScaning(string dir) {
+        private void OnScanning(string dir) {
             if (Scanning != null)
                 Scanning(this, new ScanEventArgs(dir));
+        }
+    }
+
+    public static class ScannerExtensions {
+        public static bool ShouldScan(this FileSystemInfo fsi) {
+            return (fsi.Attributes & Scanner.Filter) != Scanner.Filter;
         }
     }
 
