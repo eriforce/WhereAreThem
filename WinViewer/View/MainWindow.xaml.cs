@@ -53,7 +53,7 @@ namespace WhereAreThem.WinViewer.View {
 
             VM = new MainWindowViewModel();
             VM.View = this;
-            VM.NavigatingFolder += OnLocatingItem;
+            VM.LocatingItem += OnLocatingItem;
             VM.OpeningProperties += OnOpeningProperties;
             VM.OpeningDescription += OnOpeningDescription;
             DataContext = VM;
@@ -105,6 +105,7 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void OnWindowClosing(object sender, CancelEventArgs e) {
+            VM.Watcher.Close();
             VM.Save();
         }
 

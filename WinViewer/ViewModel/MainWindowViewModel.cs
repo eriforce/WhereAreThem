@@ -153,7 +153,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         List<Folder> next = Navigation.CurrentEntry.Stack;
                         Navigation.GoBack();
                         List<Folder> prev = Navigation.CurrentEntry.Stack;
-                        OnNavigatingFolder(new ItemEventArgs(
+                        OnLocatingItem(new ItemEventArgs(
                             prev.SequenceEqual(next.GetParentStack()) ? next.Last() : null, prev));
                     }, p => Navigation.CanGoBack);
                 return _goBackCommand;
@@ -164,7 +164,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 if (_goForwardCommand == null)
                     _goForwardCommand = new RelayCommand(p => {
                         Navigation.GoForward();
-                        OnNavigatingFolder(Navigation.CurrentEntry);
+                        OnLocatingItem(Navigation.CurrentEntry);
                     }, p => Navigation.CanGoForward);
                 return _goForwardCommand;
             }
@@ -173,14 +173,14 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get {
                 if (_goUpCommand == null)
                     _goUpCommand = new RelayCommand(p => {
-                        OnNavigatingFolder(new ItemEventArgs(SelectedFolder,
+                        OnLocatingItem(new ItemEventArgs(SelectedFolder,
                             SelectedFolderStack.GetParentStack().ToList()));
                     }, p => (SelectedFolderStack != null) && !(SelectedFolder is Computer));
                 return _goUpCommand;
             }
         }
 
-        public event ItemEventHandler NavigatingFolder;
+        public event ItemEventHandler LocatingItem;
         public event ItemEventHandler OpeningProperties;
         public event EventHandler<EventArgs<string>> OpeningDescription;
 
@@ -260,9 +260,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         }
 
         private void SetStatusBar() {
-            List<string> statusTextParts = new List<string>() {
-                    SelectedFolder.Size.ToFriendlyString()
-                };
+            List<string> statusTextParts = new List<string> { SelectedFolder.Size.ToFriendlyString() };
             if (SelectedFolder.Folders != null)
                 statusTextParts.Add("{0} folder(s)".FormatWith(SelectedFolder.Folders.Count));
             if (SelectedFolder.Files != null)
@@ -270,9 +268,9 @@ namespace WhereAreThem.WinViewer.ViewModel {
             StatusBarText = string.Join(", ", statusTextParts);
         }
 
-        private void OnNavigatingFolder(ItemEventArgs e) {
-            if (NavigatingFolder != null)
-                NavigatingFolder(this, e);
+        private void OnLocatingItem(ItemEventArgs e) {
+            if (LocatingItem != null)
+                LocatingItem(this, e);
         }
     }
 }

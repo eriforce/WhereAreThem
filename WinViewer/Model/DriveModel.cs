@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows;
 using WhereAreThem.Model.Models;
 using WhereAreThem.WinViewer.Event;
 

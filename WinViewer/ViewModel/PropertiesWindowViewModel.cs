@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -8,7 +9,7 @@ using PureLib.Common;
 using PureLib.WPF;
 using WhereAreThem.Model.Models;
 using WhereAreThem.WinViewer.Model;
-using IO = System.IO;
+using WatFile = WhereAreThem.Model.Models.File;
 
 namespace WhereAreThem.WinViewer.ViewModel {
     public class PropertiesWindowViewModel : ViewModelBase {
@@ -20,7 +21,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get { return Item.GetType().Name; }
         }
         public string Location {
-            get { return IO.Path.Combine(_parentStack.Select(f => f.Name).ToArray()); }
+            get { return Path.Combine(_parentStack.Select(f => f.Name).ToArray()); }
         }
         public string Size {
             get { return string.Format("{0} ({1} bytes)", _propertyInfo.TotalSizeFriendlyString, _propertyInfo.TotalSizeString); }
@@ -39,7 +40,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get { return !IsFile; }
         }
         public bool IsFile {
-            get { return Item is File; }
+            get { return Item is WatFile; }
         }
 
         public PropertiesWindowViewModel(FileSystemItem item, List<Folder> parentStack) {

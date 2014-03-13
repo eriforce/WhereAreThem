@@ -6,13 +6,16 @@ using System.Text;
 using System.Threading.Tasks;
 using WhereAreThem.Model;
 using WhereAreThem.Model.Models;
-using Models = WhereAreThem.Model.Models;
+using WatFile = WhereAreThem.Model.Models.File;
 
 namespace WhereAreThem.WinViewer.Model {
     public class RealtimeWatcher {
+        private List<FileSystemWatcher> _watchers;
+
         public Dictionary<string, DriveModel> Drives { get; private set; }
 
         public RealtimeWatcher() {
+            _watchers = new List<FileSystemWatcher>();
             Drives = new Dictionary<string, DriveModel>(StringComparer.OrdinalIgnoreCase);
         }
 
@@ -23,12 +26,13 @@ namespace WhereAreThem.WinViewer.Model {
             Drives.Add(dm.Name, dm);
             FileSystemWatcher fileWatcher = new FileSystemWatcher(dm.Name);
             fileWatcher.IncludeSubdirectories = true;
-            fileWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size | NotifyFilters.LastWrite;
+            fileWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
             fileWatcher.Created += FileWatcherChanged;
             fileWatcher.Changed += FileWatcherChanged;
             fileWatcher.Deleted += FileWatcherChanged;
             fileWatcher.Renamed += FileWatcherChanged;
             fileWatcher.EnableRaisingEvents = true;
+            _watchers.Add(fileWatcher);
 
             FileSystemWatcher folderWatcher = new FileSystemWatcher(dm.Name);
             folderWatcher.IncludeSubdirectories = true;
@@ -38,8 +42,15 @@ namespace WhereAreThem.WinViewer.Model {
             folderWatcher.Deleted += FolderWatcherChanged;
             folderWatcher.Renamed += FolderWatcherChanged;
             folderWatcher.EnableRaisingEvents = true;
+            _watchers.Add(folderWatcher);
 
             // NOTE: The changes of hidden attributes are not handled. 
+        }
+
+        public void Close() {
+            foreach (FileSystemWatcher watcher in _watchers) {
+                watcher.Dispose();
+            }
         }
 
         private void FileWatcherChanged(object sender, FileSystemEventArgs e) {
@@ -55,7 +66,7 @@ namespace WhereAreThem.WinViewer.Model {
                     IfParentFolderExists(parent, drive, folder => {
                         FileInfo fi = new FileInfo(e.FullPath);
                         if (fi.Exists) {
-                            Models.File file = folder.Files.SingleOrDefault(f => f.NameEquals(fi.Name));
+                            WatFile file = folder.Files.SingleOrDefault(f => f.NameEquals(fi.Name));
                             if (file != null)
                                 folder.Files.Remove(file);
                             if (fi.ShouldScan())
@@ -74,7 +85,7 @@ namespace WhereAreThem.WinViewer.Model {
                 case WatcherChangeTypes.Renamed:
                     IfParentFolderExists(parent, drive, folder => {
                         RenamedEventArgs rea = (RenamedEventArgs)e;
-                        Models.File oldFile = folder.Files.SingleOrDefault(f => f.NameEquals(Path.GetFileName(rea.OldName)));
+                        WatFile oldFile = folder.Files.SingleOrDefault(f => f.NameEquals(Path.GetFileName(rea.OldName)));
                         FileInfo fi = new FileInfo(e.FullPath);
                         if (oldFile != null)
                             folder.Files.Remove(oldFile);
@@ -94,10 +105,20 @@ namespace WhereAreThem.WinViewer.Model {
             DriveModel drive = Drives[parent.Root.Name];
             switch (e.ChangeType) {
                 case WatcherChangeTypes.Created:
-                    if (new DirectoryInfo(e.FullPath).ShouldScan()) {
-                        App.Scanner.ScanUpdate(e.FullPath, drive);
+                    IfParentFolderExists(parent, drive, parentFolder => {
+                        DirectoryInfo di = new DirectoryInfo(e.FullPath);
+                        Folder folder = parentFolder.Folders.SingleOrDefault(f => f.NameEquals(di.Name));
+                        if (folder == null) {
+                            folder = new Folder() { Name = di.Name };
+                            parentFolder.Folders.Add(folder);
+                            parentFolder.Folders.Sort();
+                        }
+                        folder.Name = di.Name;
+                        folder.CreatedDateUtc = di.CreationTimeUtc;
+                        folder.Folders = new List<Folder>();
+                        folder.Files = new List<WatFile>();
                         RaiseChange(drive);
-                    }
+                    });
                     break;
                 case WatcherChangeTypes.Deleted:
                     IfParentFolderExists(parent, drive, parentFolder => {
