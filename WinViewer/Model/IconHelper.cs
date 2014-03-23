@@ -15,7 +15,6 @@ namespace WhereAreThem.WinViewer.Model {
     /// Provides static methods to read system icons for both folders and files.
     /// </summary>
     public static class IconReader {
-
         public static ImageSource ToImageSource(this Icon icon) {
             Bitmap bitmap = icon.ToBitmap();
             IntPtr hBitmap = bitmap.GetHbitmap();

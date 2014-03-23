@@ -27,20 +27,20 @@ namespace WhereAreThem.WinViewer.Model {
             FileSystemWatcher fileWatcher = new FileSystemWatcher(dm.Name);
             fileWatcher.IncludeSubdirectories = true;
             fileWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
-            fileWatcher.Created += FileWatcherChanged;
-            fileWatcher.Changed += FileWatcherChanged;
-            fileWatcher.Deleted += FileWatcherChanged;
-            fileWatcher.Renamed += FileWatcherChanged;
+            fileWatcher.Created += FileChanged;
+            fileWatcher.Changed += FileChanged;
+            fileWatcher.Deleted += FileChanged;
+            fileWatcher.Renamed += FileChanged;
             fileWatcher.EnableRaisingEvents = true;
             _watchers.Add(fileWatcher);
 
             FileSystemWatcher folderWatcher = new FileSystemWatcher(dm.Name);
             folderWatcher.IncludeSubdirectories = true;
             folderWatcher.NotifyFilter = NotifyFilters.DirectoryName;
-            folderWatcher.Created += FolderWatcherChanged;
-            folderWatcher.Changed += FolderWatcherChanged;
-            folderWatcher.Deleted += FolderWatcherChanged;
-            folderWatcher.Renamed += FolderWatcherChanged;
+            folderWatcher.Created += FolderChanged;
+            folderWatcher.Changed += FolderChanged;
+            folderWatcher.Deleted += FolderChanged;
+            folderWatcher.Renamed += FolderChanged;
             folderWatcher.EnableRaisingEvents = true;
             _watchers.Add(folderWatcher);
 
@@ -53,97 +53,97 @@ namespace WhereAreThem.WinViewer.Model {
             }
         }
 
-        private void FileWatcherChanged(object sender, FileSystemEventArgs e) {
+        private void FileChanged(object sender, FileSystemEventArgs e) {
             DirectoryInfo parent = new DirectoryInfo(Path.GetDirectoryName(e.FullPath));
             if (IsItemInFilteredFolder(parent))
                 return;
 
             DriveModel drive = Drives[parent.Root.Name];
-            switch (e.ChangeType) {
-                case WatcherChangeTypes.Created:
-                case WatcherChangeTypes.Changed:
-                    // There may be folder changed events coming in with LastWrite filter
-                    IfParentFolderExists(parent, drive, folder => {
-                        FileInfo fi = new FileInfo(e.FullPath);
-                        if (fi.Exists) {
-                            WatFile file = folder.Files.SingleOrDefault(f => f.NameEquals(fi.Name));
-                            if (file != null)
-                                folder.Files.Remove(file);
-                            if (fi.ShouldScan())
-                                folder.Files.Add(App.Scanner.GetFile(fi, file));
+            lock (drive) {
+                switch (e.ChangeType) {
+                    case WatcherChangeTypes.Created:
+                    case WatcherChangeTypes.Changed:
+                        // There may be folder changed events coming in with LastWrite filter
+                        IfParentFolderExists(parent, drive, folder => {
+                            FileInfo fi = new FileInfo(e.FullPath);
+                            if (fi.Exists) {
+                                WatFile file = folder.Files.SingleOrDefault(f => f.NameEquals(fi.Name));
+                                if (file != null)
+                                    folder.Files.Remove(file);
+                                if (fi.ShouldScan()) {
+                                    folder.Files.Add(App.Scanner.GetFile(fi, file));
+                                    folder.Files.Sort();
+                                }
+                                RaiseChange(drive);
+                            }
+                        });
+                        break;
+                    case WatcherChangeTypes.Deleted:
+                        IfParentFolderExists(parent, drive, folder => {
+                            int removed = folder.Files.RemoveAll(f => f.NameEquals(Path.GetFileName(e.Name)));
+                            if (removed > 0)
+                                RaiseChange(drive);
+                        });
+                        break;
+                    case WatcherChangeTypes.Renamed:
+                        IfParentFolderExists(parent, drive, folder => {
+                            RenamedEventArgs rea = (RenamedEventArgs)e;
+                            WatFile oldFile = folder.Files.SingleOrDefault(f => f.NameEquals(Path.GetFileName(rea.OldName)));
+                            FileInfo fi = new FileInfo(e.FullPath);
+                            if (oldFile != null)
+                                folder.Files.Remove(oldFile);
+                            if (fi.ShouldScan()) {
+                                folder.Files.Add(App.Scanner.GetFile(fi, oldFile));
+                                folder.Files.Sort();
+                            }
                             RaiseChange(drive);
-                        }
-                    });
-                    break;
-                case WatcherChangeTypes.Deleted:
-                    IfParentFolderExists(parent, drive, folder => {
-                        int removed = folder.Files.RemoveAll(f => f.NameEquals(Path.GetFileName(e.Name)));
-                        if (removed > 0)
-                            RaiseChange(drive);
-                    });
-                    break;
-                case WatcherChangeTypes.Renamed:
-                    IfParentFolderExists(parent, drive, folder => {
-                        RenamedEventArgs rea = (RenamedEventArgs)e;
-                        WatFile oldFile = folder.Files.SingleOrDefault(f => f.NameEquals(Path.GetFileName(rea.OldName)));
-                        FileInfo fi = new FileInfo(e.FullPath);
-                        if (oldFile != null)
-                            folder.Files.Remove(oldFile);
-                        if (fi.ShouldScan())
-                            folder.Files.Add(App.Scanner.GetFile(fi, oldFile));
-                        RaiseChange(drive);
-                    });
-                    break;
+                        });
+                        break;
+                }
             }
         }
 
-        private void FolderWatcherChanged(object sender, FileSystemEventArgs e) {
+        private void FolderChanged(object sender, FileSystemEventArgs e) {
             DirectoryInfo parent = new DirectoryInfo(Path.GetDirectoryName(e.FullPath));
             if (IsItemInFilteredFolder(parent))
                 return;
 
             DriveModel drive = Drives[parent.Root.Name];
-            switch (e.ChangeType) {
-                case WatcherChangeTypes.Created:
-                    IfParentFolderExists(parent, drive, parentFolder => {
-                        DirectoryInfo di = new DirectoryInfo(e.FullPath);
-                        Folder folder = parentFolder.Folders.SingleOrDefault(f => f.NameEquals(di.Name));
-                        if (folder == null) {
-                            folder = new Folder() { Name = di.Name };
-                            parentFolder.Folders.Add(folder);
-                            parentFolder.Folders.Sort();
-                        }
-                        folder.Name = di.Name;
-                        folder.CreatedDateUtc = di.CreationTimeUtc;
-                        folder.Folders = new List<Folder>();
-                        folder.Files = new List<WatFile>();
-                        RaiseChange(drive);
-                    });
-                    break;
-                case WatcherChangeTypes.Deleted:
-                    IfParentFolderExists(parent, drive, parentFolder => {
-                        int removed = parentFolder.Folders.RemoveAll(f => f.NameEquals(Path.GetFileName(e.Name)));
-                        if (removed > 0)
-                            RaiseChange(drive);
-                    });
-                    break;
-                case WatcherChangeTypes.Renamed:
-                    IfParentFolderExists(parent, drive, parentFolder => {
-                        RenamedEventArgs rea = (RenamedEventArgs)e;
-                        Folder oldFolder = parentFolder.Folders.SingleOrDefault(f => f.NameEquals(Path.GetFileName(rea.OldName)));
-                        if (new DirectoryInfo(e.FullPath).ShouldScan()) {
-                            if (oldFolder == null)
+            lock (drive) {
+                switch (e.ChangeType) {
+                    case WatcherChangeTypes.Created:
+                        IfParentFolderExists(parent, drive, parentFolder => {
+                            if (new DirectoryInfo(e.FullPath).ShouldScan()) {
                                 App.Scanner.ScanUpdate(e.FullPath, drive);
-                            else
-                                oldFolder.Name = Path.GetFileName(e.Name);
-                            RaiseChange(drive);
-                        }
-                        else if (oldFolder != null) {
-                            parentFolder.Folders.Remove(oldFolder);
-                            RaiseChange(drive);
-                        }
-                    });
-                    break;
+                                RaiseChange(drive);
+                            }
+                        });
+                        break;
+                    case WatcherChangeTypes.Deleted:
+                        IfParentFolderExists(parent, drive, parentFolder => {
+                            int removed = parentFolder.Folders.RemoveAll(f => f.NameEquals(Path.GetFileName(e.Name)));
+                            if (removed > 0)
+                                RaiseChange(drive);
+                        });
+                        break;
+                    case WatcherChangeTypes.Renamed:
+                        IfParentFolderExists(parent, drive, parentFolder => {
+                            RenamedEventArgs rea = (RenamedEventArgs)e;
+                            Folder oldFolder = parentFolder.Folders.SingleOrDefault(f => f.NameEquals(Path.GetFileName(rea.OldName)));
+                            if (new DirectoryInfo(e.FullPath).ShouldScan()) {
+                                if (oldFolder == null)
+                                    App.Scanner.ScanUpdate(e.FullPath, drive);
+                                else
+                                    oldFolder.Name = Path.GetFileName(e.Name);
+                                RaiseChange(drive);
+                            }
+                            else if (oldFolder != null) {
+                                parentFolder.Folders.Remove(oldFolder);
+                                RaiseChange(drive);
+                            }
+                        });
+                        break;
+                }
             }
         }
 

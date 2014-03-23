@@ -98,20 +98,33 @@ namespace WhereAreThem.Model {
                     Name = directory.Name,
                 };
             folder.CreatedDateUtc = directory.CreationTimeUtc;
+
             try {
                 folder.Files = (from fi in directory.EnumerateFiles()
                                 where fi.ShouldScan()
                                 join f in folder.Files ?? new List<Models.File>() on fi.Name equals f.Name into files
                                 select GetFile(fi, files.SingleOrDefault())).ToList();
+                folder.Files.Sort();
+            }
+            catch (UnauthorizedAccessException) { }
+            catch (PathTooLongException) { }
+            catch (IOException) { }
+            if (folder.Files == null)
+                folder.Files = new List<Models.File>();
+
+            try {
                 folder.Folders = (from di in directory.EnumerateDirectories()
                                   where di.ShouldScan()
                                   join f in folder.Folders ?? new List<Folder>() on di.Name equals f.Name into folders
                                   select GetFolder(di, folders.SingleOrDefault())).ToList();
-                folder.Files.Sort();
                 folder.Folders.Sort();
             }
-            catch (UnauthorizedAccessException) { } // no permission
-            catch (DirectoryNotFoundException) { }  // broken junction
+            catch (UnauthorizedAccessException) { }
+            catch (PathTooLongException) { }
+            catch (DirectoryNotFoundException) { } // broken junction
+            if (folder.Folders == null)
+                folder.Folders = new List<Folder>();
+
             return folder;
         }
 
