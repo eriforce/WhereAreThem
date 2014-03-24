@@ -27,14 +27,16 @@ namespace WhereAreThem.Model.Models {
         public override long Size {
             get {
                 long size = 0;
-                try {
-                    size += Files.Sum(f => f.Size);
-                }
-                catch { }
-                try {
-                    size += Folders.Sum(f => f.Size);
-                }
-                catch { }
+                if (Files != null)
+                    try {
+                        size += Files.Sum(f => f.Size);
+                    }
+                    catch (InvalidOperationException) { }
+                if (Folders != null)
+                    try {
+                        size += Folders.Sum(f => f.Size);
+                    }
+                    catch (InvalidOperationException) { }
                 return size;
             }
         }
