@@ -188,7 +188,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             Navigation = new ExplorerNavigationService();
             Watcher = new RealtimeWatcher();
 
-            App.Scanner.Scanning += (s, e) => { StatusBarText = e.CurrentDirectory; };
+            App.Scanner.Scanning += (s, e) => { StatusBarText = "[Scanning] {0}".FormatWith(e.CurrentDirectory); };
             Computers = App.Loader.MachineNames.Select(n => new Computer() { Name = n }).ToList();
             foreach (Computer c in Computers) {
                 c.Folders = App.Loader.GetDrives(c.Name).Select(
