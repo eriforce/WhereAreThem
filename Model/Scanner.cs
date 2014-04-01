@@ -16,6 +16,7 @@ namespace WhereAreThem.Model {
         private PluginManager _pluginManager = new PluginManager();
 
         public event ScanEventHandler Scanning;
+        public event ScanEventHandler Scanned;
 
         public Scanner(string outputPath, IPersistence persistence)
             : base(outputPath, persistence) {
@@ -33,7 +34,9 @@ namespace WhereAreThem.Model {
 
         public Drive Scan(string drivePath) {
             string driveLetter = Drive.GetDriveLetter(drivePath);
-            Folder driveFolder = GetFolder(new DirectoryInfo("{0}{1}".FormatWith(driveLetter, driveSuffix)));
+            drivePath = "{0}{1}".FormatWith(driveLetter, driveSuffix);
+            Folder driveFolder = GetFolder(new DirectoryInfo(drivePath));
+            OnScanned(drivePath);
             Drive drive = Drive.FromFolder(driveFolder, new DriveInfo(driveFolder.Name).DriveType);
             drive.CreatedDateUtc = DateTime.UtcNow;
             return drive;
@@ -72,9 +75,10 @@ namespace WhereAreThem.Model {
                     else
                         folder = current;
                 }
-                GetFolder(new DirectoryInfo(Path.Combine(pathParts)), folder);
+                GetFolder(new DirectoryInfo(pathToUpdate), folder);
             }
             finally {
+                OnScanned(pathToUpdate);
                 drive.CreatedDateUtc = DateTime.UtcNow;
             }
         }
@@ -138,6 +142,11 @@ namespace WhereAreThem.Model {
         private void OnScanning(string dir) {
             if (Scanning != null)
                 Scanning(this, new ScanEventArgs(dir));
+        }
+
+        private void OnScanned(string dir) {
+            if (Scanned != null)
+                Scanned(this, new ScanEventArgs(dir));
         }
     }
 

@@ -61,7 +61,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 _selectedFolder = value;
                 RaiseChange(() => SelectedFolder);
 
-                SetStatusBar();
+                SetStatusBarOnSelectedFolderChanged();
                 Location = Path.Combine(SelectedFolderStack.Select(f => f.Name).ToArray());
 
                 if ((Navigation.CurrentEntry == null) || (SelectedFolder != Navigation.CurrentEntry.Stack.Last()))
@@ -188,7 +188,12 @@ namespace WhereAreThem.WinViewer.ViewModel {
             Navigation = new ExplorerNavigationService();
             Watcher = new RealtimeWatcher();
 
-            App.Scanner.Scanning += (s, e) => { StatusBarText = "[Scanning] {0}".FormatWith(e.CurrentDirectory); };
+            App.Scanner.Scanning += (s, e) => {
+                StatusBarText = "[Scanning] {0}".FormatWith(e.CurrentDirectory); 
+            };
+            App.Scanner.Scanned += (s, e) => { 
+                StatusBarText = "[Scanned] {0}".FormatWith(e.CurrentDirectory);
+            };
             Computers = App.Loader.MachineNames.Select(n => new Computer() { Name = n }).ToList();
             foreach (Computer c in Computers) {
                 c.Folders = App.Loader.GetDrives(c.Name).Select(
@@ -255,11 +260,10 @@ namespace WhereAreThem.WinViewer.ViewModel {
                     drive.Refresh();
                 }
                 drive.IsChanged = true;
-                StatusBarText = "Scanning of {0} has completed.".FormatWith(path);
             });
         }
 
-        private void SetStatusBar() {
+        private void SetStatusBarOnSelectedFolderChanged() {
             List<string> statusTextParts = new List<string> { SelectedFolder.Size.ToFriendlyString() };
             if (SelectedFolder.Folders != null)
                 statusTextParts.Add("{0} folder(s)".FormatWith(SelectedFolder.Folders.Count));
