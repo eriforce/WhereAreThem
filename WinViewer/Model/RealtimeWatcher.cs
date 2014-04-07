@@ -133,8 +133,10 @@ namespace WhereAreThem.WinViewer.Model {
                             if (new DirectoryInfo(e.FullPath).ShouldScan()) {
                                 if (oldFolder == null)
                                     App.Scanner.ScanUpdate(e.FullPath, drive);
-                                else
+                                else {
                                     oldFolder.Name = Path.GetFileName(e.Name);
+                                    parentFolder.Folders.Sort();
+                                }
                                 RaiseChange(drive);
                             }
                             else if (oldFolder != null) {

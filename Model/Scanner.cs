@@ -125,7 +125,7 @@ namespace WhereAreThem.Model {
             }
             catch (UnauthorizedAccessException) { }
             catch (PathTooLongException) { }
-            catch (DirectoryNotFoundException) { } // broken junction
+            catch (IOException) { }
             if (folder.Folders == null)
                 folder.Folders = new List<Folder>();
 
