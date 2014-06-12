@@ -1,11 +1,12 @@
-﻿@using WhereAreThem.WebViewer.Models;
+﻿@using System.Configuration;
+@using WhereAreThem.WebViewer.Models;
 
 <!DOCTYPE html>
 <html>
 <head>
     <title>@ViewBag.Title</title>
     <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
-    <script src="@Url.Content(string.Format("{0}://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js", Request.IsSecureConnection ? "https" : "http"))" type="text/javascript"></script>
+    <script src="@Url.Content(ConfigurationManager.AppSettings["jquery"])" type="text/javascript"></script>
     <script src="@Url.Content("~/Scripts/jquery.explorer.js")" type="text/javascript"></script>
 </head>
 <body>
