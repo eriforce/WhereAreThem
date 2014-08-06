@@ -97,6 +97,10 @@ table.viewer:not(.list) tbody tr:hover, table.viewer:not(.list) tbody tr:not(.se
     color: #fff;
 }
 
+table.viewer tbody tr td span.item {
+    word-break: break-all;
+}
+
 td.nowrap {
     white-space: nowrap;
 }

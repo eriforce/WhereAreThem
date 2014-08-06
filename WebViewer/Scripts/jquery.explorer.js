@@ -1,11 +1,4 @@
 $(document).ready(function () {
-    var zwsp = '&#8203;';
-
-    // add zero width space to break line
-    $('table.viewer span.item').each(function () {
-        $(this).attr('title', $(this).text()).html($(this).text().split('').join(zwsp));
-    });
-
     // enable menu on changing view
     var changeViewButton = $('a.changeView');
     changeViewButton.click(function () {
