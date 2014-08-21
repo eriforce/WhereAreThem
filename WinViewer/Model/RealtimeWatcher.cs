@@ -20,7 +20,7 @@ namespace WhereAreThem.WinViewer.Model {
         }
 
         public void WatchDrive(DriveModel dm) {
-            if (Drives.ContainsKey(dm.Name))
+            if (!Directory.Exists(dm.Name) || Drives.ContainsKey(dm.Name))
                 return;
 
             Drives.Add(dm.Name, dm);
