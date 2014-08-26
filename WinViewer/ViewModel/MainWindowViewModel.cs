@@ -186,7 +186,8 @@ namespace WhereAreThem.WinViewer.ViewModel {
 
         public MainWindowViewModel() {
             Navigation = new ExplorerNavigationService();
-            Watcher = new RealtimeWatcher();
+            if (bool.Parse(ConfigurationManager.AppSettings["enableWatcher"]))
+                Watcher = new RealtimeWatcher();
 
             App.Scanner.Scanning += (s, e) => {
                 StatusBarText = "[Scanning] {0}".FormatWith(e.CurrentDirectory); 
