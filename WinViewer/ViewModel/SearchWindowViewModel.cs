@@ -117,8 +117,10 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             List<string> statusTextParts = new List<string>();
                             if (Results.Any(r => r.Item is Folder))
                                 statusTextParts.Add("{0} folder(s)".FormatWith(Results.Count(r => r.Item is Folder)));
-                            if (Results.Any(r => r.Item is File))
+                            if (Results.Any(r => r.Item is File)) {
                                 statusTextParts.Add("{0} file(s)".FormatWith(Results.Count(r => r.Item is File)));
+                                statusTextParts.Add(Results.Sum(r => r.Item.Size).ToFriendlyString());
+                            }
                             StatusBarText = string.Join(", ", statusTextParts);
                         });
                     }, p => { return !SearchPattern.IsNullOrEmpty() && (IncludeFolders || IncludeFiles); });
