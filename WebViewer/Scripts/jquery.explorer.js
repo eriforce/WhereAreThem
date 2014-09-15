@@ -141,10 +141,10 @@ $(document).ready(function () {
                 var selectedRows = $('table.explorer tbody tr.selected');
                 if (selectedRows.length > 0)
                     selectedRows.each(function () {
-                        selectedItems[i++] = $(this).find('span.iconText').attr('title');
+                        selectedItems[i++] = $(this).find('span.iconText').text();
                     });
                 else
-                    selectedItems[i] = el.find('span.iconText').attr('title');
+                    selectedItems[i] = el.find('span.iconText').text();
 
                 $.ajax({
                     type: "POST",
