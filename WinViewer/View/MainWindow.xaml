@@ -106,8 +106,8 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Created" Binding="{Binding CreatedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}" SortMemberPath="CreatedDate"/>
-                    <DataGridTextColumn Header="Modified" Binding="{Binding ModifiedDate, StringFormat={}{0:yyyy/MM/dd hh:mm:ss}}" SortMemberPath="ModifiedDate"/>
+                    <DataGridTextColumn Header="Created" Binding="{Binding CreatedDate, StringFormat={}{0:yyyy/MM/dd HH:mm:ss}}" SortMemberPath="CreatedDate"/>
+                    <DataGridTextColumn Header="Modified" Binding="{Binding ModifiedDate, StringFormat={}{0:yyyy/MM/dd HH:mm:ss}}" SortMemberPath="ModifiedDate"/>
                 </DataGrid.Columns>
             </DataGrid>
 
