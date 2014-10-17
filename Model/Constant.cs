@@ -9,6 +9,7 @@ using WhereAreThem.Model.Persistences;
 namespace WhereAreThem.Model {
     public static class Constant {
         private static readonly Dictionary<string, Type> persistenceTypes = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase) {
+            { PersistenceType.Bin.ToString(), typeof(BinaryPersistence) },
             { PersistenceType.Txt.ToString(), typeof(TextPersistence) },
             { PersistenceType.Json.ToString(), typeof(JsonPersistence) },
             { PersistenceType.Xml.ToString(), typeof(XmlPersistence) },

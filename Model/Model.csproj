@@ -61,6 +61,7 @@
     <Compile Include="Models\SearchResult.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Persistences\CompressedPersistence.cs" />
+    <Compile Include="Persistences\BinaryPersistence.cs" />
     <Compile Include="Persistences\IPersistence.cs" />
     <Compile Include="Persistences\IStreamPersistence.cs" />
     <Compile Include="Persistences\JsonPersistence.cs" />

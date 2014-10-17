@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace WhereAreThem.Model {
     public enum PersistenceType {
+        Bin,
         Txt,
         Json,
         Xml,
