@@ -105,8 +105,9 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void OnWindowClosing(object sender, CancelEventArgs e) {
-            VM.Watcher.Close();
             VM.Save();
+            if (VM.Watcher != null)
+                VM.Watcher.Close();
         }
 
         private void FolderTreeMouseRightClick(object sender, MouseButtonEventArgs e) {
