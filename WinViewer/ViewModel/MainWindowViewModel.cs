@@ -190,9 +190,9 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 Watcher = new RealtimeWatcher();
 
             App.Scanner.Scanning += (s, e) => {
-                StatusBarText = "[Scanning] {0}".FormatWith(e.CurrentDirectory); 
+                StatusBarText = "[Scanning] {0}".FormatWith(e.CurrentDirectory);
             };
-            App.Scanner.Scanned += (s, e) => { 
+            App.Scanner.Scanned += (s, e) => {
                 StatusBarText = "[Scanned] {0}".FormatWith(e.CurrentDirectory);
             };
             Computers = App.Loader.MachineNames.Select(n => new Computer() { Name = n }).ToList();
@@ -242,11 +242,12 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         localComputer, drive.Name, DateTime.UtcNow, drive.DriveType) { Folders = null });
             }
             localComputer.Folders.Sort();
-            foreach (DriveModel dm in localComputer.Drives) {
-                dm.LocalDriveLoaded += (s, e) => {
-                    Watcher.WatchDrive((DriveModel)s);
-                };
-            }
+            if (Watcher != null)
+                foreach (DriveModel dm in localComputer.Drives) {
+                    dm.LocalDriveLoaded += (s, e) => {
+                        Watcher.WatchDrive((DriveModel)s);
+                    };
+                }
         }
 
         private void Scan(string path, bool scanDrive, DriveModel drive) {
