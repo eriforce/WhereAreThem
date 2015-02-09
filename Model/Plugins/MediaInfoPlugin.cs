@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MediaInfoWrapper;
 using PureLib.Common;
 
 namespace WhereAreThem.Model.Plugins {
