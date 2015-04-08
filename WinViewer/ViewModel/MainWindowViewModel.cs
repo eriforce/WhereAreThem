@@ -233,9 +233,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 Computers.Add(localComputer);
             }
 
-            DriveType[] driveTypes = ConfigurationManager.AppSettings["driveTypes"]
-                .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(s => (DriveType)Enum.Parse(typeof(DriveType), s)).ToArray();
+            DriveType[] driveTypes = ConfigurationManager.AppSettings["driveTypes"].ToEnum<DriveType>();
             foreach (DriveInfo drive in DriveInfo.GetDrives()) {
                 if (driveTypes.Contains(drive.DriveType) && !localComputer.Folders.Any(f => f.NameEquals(drive.Name)))
                     localComputer.Folders.Add(new DriveModel(

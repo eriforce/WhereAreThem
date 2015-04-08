@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,6 @@ using IO = System.IO;
 
 namespace WhereAreThem.Model {
     public class Scanner : ListBase {
-        internal const FileAttributes Filters = FileAttributes.Hidden | FileAttributes.System | FileAttributes.ReparsePoint;
         private readonly string driveSuffix = "{0}{1}".FormatWith(Path.VolumeSeparatorChar, Path.DirectorySeparatorChar);
         private PluginManager _pluginManager = new PluginManager();
 
@@ -151,8 +151,19 @@ namespace WhereAreThem.Model {
     }
 
     public static class ScannerExtensions {
+        private static readonly FileAttributes _filters;
+
+        static ScannerExtensions() {
+            try {
+                _filters = ConfigurationManager.AppSettings["scannerFilters"].ToEnum<FileAttributes>().Aggregate((r, a) => r | a);
+            }
+            catch {
+                _filters = (FileAttributes)0;
+            }
+        }
+
         public static bool ShouldScan(this FileSystemInfo fsi) {
-            return (fsi.Attributes & Scanner.Filters) == 0;
+            return (fsi.Attributes & _filters) == 0;
         }
     }
 
