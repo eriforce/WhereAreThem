@@ -12,7 +12,6 @@ using IO = System.IO;
 
 namespace WhereAreThem.Model {
     public class Scanner : ListBase {
-        private readonly string driveSuffix = "{0}{1}".FormatWith(Path.VolumeSeparatorChar, Path.DirectorySeparatorChar);
         private PluginManager _pluginManager = new PluginManager();
 
         public event ScanEventHandler Scanning;
@@ -33,27 +32,20 @@ namespace WhereAreThem.Model {
         }
 
         public Drive Scan(string drivePath) {
-            string driveLetter = Drive.GetDriveLetter(drivePath);
-            drivePath = "{0}{1}".FormatWith(driveLetter, driveSuffix);
+            drivePath = Drive.GetDrivePath(Drive.GetDriveLetter(drivePath));
             Folder driveFolder = GetFolder(new DirectoryInfo(drivePath));
             OnScanned(drivePath);
-            Drive drive = Drive.FromFolder(driveFolder, new DriveInfo(driveFolder.Name).DriveType);
+            Drive drive = Drive.FromFolder(driveFolder, new DriveInfo(driveFolder.Name).DriveType, Environment.MachineName);
             drive.CreatedDateUtc = DateTime.UtcNow;
             return drive;
         }
 
-        public Drive ScanUpdate(string pathToUpdate, DriveType driveType) {
-            if (pathToUpdate.IsNullOrEmpty())
-                throw new ArgumentNullException("Parameter pathToUpdate is null.");
-            if (!Directory.Exists(pathToUpdate))
-                throw new DirectoryNotFoundException("Path '{0}' cannot be found.".FormatWith(pathToUpdate));
-
-            string listPath = GetListPath(Environment.MachineName, Drive.GetDriveLetter(pathToUpdate), driveType);
-            if (!IO.File.Exists(listPath))
-                throw new FileNotFoundException("List '{0}' cannot be found.".FormatWith(listPath));
-
-            Drive drive = Drive.FromFolder(_persistence.Load(listPath), driveType);
-            ScanUpdate(pathToUpdate, drive);
+        public Drive ScanShare(string sharePath) {
+            string machineName = Drive.GetMachineName(sharePath);
+            Folder driveFolder = GetFolder(new DirectoryInfo(sharePath).Root);
+            OnScanned(sharePath);
+            Drive drive = Drive.FromFolder(driveFolder, Drive.NETWORK_SHARE, machineName);
+            drive.CreatedDateUtc = DateTime.UtcNow;
             return drive;
         }
 
@@ -83,8 +75,8 @@ namespace WhereAreThem.Model {
             }
         }
 
-        public void Save(string machineName, Drive drive) {
-            Save(GetListPath(machineName, drive.DriveLetter, drive.DriveType), drive.ToFolder());
+        public void Save(Drive drive) {
+            Save(GetListPath(drive.MachineName, drive.DriveLetter, drive.DriveType), drive.ToFolder());
         }
 
         private void Save(string listPath, Folder drive) {

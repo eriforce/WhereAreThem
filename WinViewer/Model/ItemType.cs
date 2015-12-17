@@ -9,6 +9,8 @@ namespace WhereAreThem.WinViewer.Model {
         Folder,
         Computer,
         DriveModel,
+        LocalNetworkComputer,
+        LocalNetworkShare = 100,
 
         Removable,
         Fixed,

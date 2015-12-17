@@ -29,8 +29,8 @@ namespace WhereAreThem.Model {
                     let nameParts = Path.GetFileNameWithoutExtension(file).Split('.')
                     let driveLetter = nameParts.First()
                     let driveType = (DriveType)Enum.Parse(typeof(DriveType), nameParts.Last())
-                    select new Drive() {
-                        Name = Drive.GetDrivePath(driveLetter),
+                    select new Drive(machineName) {
+                        Name = Drive.GetDriveName(driveLetter, driveType),
                         DriveType = driveType,
                         CreatedDateUtc = new FileInfo(file).LastWriteTimeUtc
                     }).ToList();
@@ -51,12 +51,13 @@ namespace WhereAreThem.Model {
             Folder driveFolder;
             lock (_listLock) {
                 DateTime listTimestamp = new FileInfo(listPath).LastWriteTimeUtc;
-                driveFolder = machine.Folders.SingleOrDefault(d => d.NameEquals(Drive.GetDrivePath(driveLetter)));
+                string drivePath = Drive.GetDrivePath(driveLetter, driveType, machineName);
+                driveFolder = machine.Folders.SingleOrDefault(d => d.NameEquals(drivePath));
                 if ((driveFolder == null) || (driveFolder.CreatedDateUtc != listTimestamp)) {
                     if (driveFolder != null)
                         machine.Folders.Remove(driveFolder);
-                    driveFolder = Drive.FromFolder(_persistence.Load(listPath), driveType);
-                    driveFolder.Name = Drive.GetDrivePath(driveLetter);
+                    driveFolder = Drive.FromFolder(_persistence.Load(listPath), driveType, machineName);
+                    driveFolder.Name = Drive.GetDriveName(driveLetter, driveType);
                     driveFolder.CreatedDateUtc = listTimestamp;
                     machine.Folders.Add(driveFolder);
                 }

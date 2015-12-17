@@ -21,7 +21,6 @@ namespace WhereAreThem.WinViewer.Converter {
             if (!Enum.TryParse<IconSize>((string)parameter, out size))
                 size = IconSize.Small;
 
-            ;
             if (type == ItemType.File) {
                 Icon icon = IconReader.GetFileIcon(((File)value).Extension.ToLower(), size, false);
                 return icon.ToImageSource();

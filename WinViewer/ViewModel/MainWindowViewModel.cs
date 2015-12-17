@@ -36,7 +36,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get { return Computers.SingleOrDefault(c => c.NameEquals(Environment.MachineName)); }
         }
 
-        public List<Computer> Computers { get; private set; }
+        public ObservableCollection<Computer> Computers { get; private set; }
         public ExplorerNavigationService Navigation { get; private set; }
         public RealtimeWatcher Watcher { get; private set; }
         public List<Folder> SelectedFolderStack { get; set; }
@@ -195,7 +195,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             App.Scanner.Scanned += (s, e) => {
                 StatusBarText = "[Scanned] {0}".FormatWith(e.CurrentDirectory);
             };
-            Computers = App.Loader.MachineNames.Select(n => new Computer() { Name = n }).ToList();
+            Computers = new ObservableCollection<Computer>(App.Loader.MachineNames.Select(n => new Computer() { Name = n }));
             foreach (Computer c in Computers) {
                 c.Folders = App.Loader.GetDrives(c.Name).Select(
                     d => (Folder)new DriveModel(c, d.Name, d.CreatedDateUtc, d.DriveType)).ToList();
@@ -206,9 +206,21 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public void Scan(string[] folders) {
             if (folders != null)
                 foreach (string path in folders) {
-                    string root = Directory.GetDirectoryRoot(path);
-                    DriveModel drive = _localComputer.Drives.Single(f => f.NameEquals(root));
-                    bool isDrive = root.Equals(path, StringComparison.OrdinalIgnoreCase);
+                    DirectoryInfo root = new DirectoryInfo(path);
+                    Computer computer = _localComputer;
+                    if (root.FullName.StartsWith(Drive.NETWORK_COMPUTER_PREFIX)) {
+                        string machineName = Drive.GetMachineName(path);
+                        computer = Computers.SingleOrDefault(c => c.NameEquals(machineName));
+                        if (computer == null) {
+                            computer = new Computer() { Name = machineName };
+                            computer.Folders = new List<Folder>() {
+                                new DriveModel(computer, Drive.GetDriveLetter(path), DateTime.UtcNow, Drive.NETWORK_SHARE)
+                            };
+                            Computers.Add(computer);
+                        }
+                    }
+                    DriveModel drive = computer.Drives.Single(f => f.NameEquals(root.Name));
+                    bool isDrive = root.FullName.Equals(path, StringComparison.OrdinalIgnoreCase);
                     if (!isDrive)
                         drive.Load();
                     Scan(path, isDrive, drive);
@@ -217,10 +229,12 @@ namespace WhereAreThem.WinViewer.ViewModel {
 
         public void Save() {
             BusyWith("Saving ...", () => {
-                foreach (DriveModel drive in _localComputer.Drives) {
-                    if (drive.IsChanged) {
-                        StatusBarText = "Saving {0} of {1} ...".FormatWith(drive.Name, Environment.MachineName);
-                        App.Scanner.Save(Environment.MachineName, drive);
+                foreach (Computer computer in Computers) {
+                    foreach (DriveModel drive in computer.Drives) {
+                        if (drive.IsChanged) {
+                            StatusBarText = "Saving {0} of {1} ...".FormatWith(drive.Name, computer.Name);
+                            App.Scanner.Save(drive);
+                        }
                     }
                 }
             });
@@ -252,7 +266,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             string folderName = scanDrive ? path : Path.GetFileName(path);
             BusyWith("Scanning {0} ...".FormatWith(folderName), () => {
                 if (scanDrive) {
-                    Drive d = App.Scanner.Scan(path);
+                    Drive d = path.StartsWith(Drive.NETWORK_COMPUTER_PREFIX) ? App.Scanner.ScanShare(path) : App.Scanner.Scan(path);
                     drive.Load(d);
                 }
                 else {

@@ -18,7 +18,7 @@ namespace WhereAreThem.WinViewer.Model {
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler LocalDriveLoaded;
 
-        public DriveModel(Computer computer, string driveName, DateTime createdDateUtc, DriveType driveType) {
+        public DriveModel(Computer computer, string driveName, DateTime createdDateUtc, DriveType driveType) : base(computer.Name) {
             _isLocalDrive = computer.NameEquals(Environment.MachineName);
             Computer = computer;
             Name = driveName;

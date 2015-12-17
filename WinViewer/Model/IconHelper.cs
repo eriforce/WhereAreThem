@@ -58,6 +58,12 @@ namespace WhereAreThem.WinViewer.Model {
                 case ItemType.Removable:
                     index = 30;
                     break;
+                case ItemType.LocalNetworkComputer:
+                    index = 146;
+                    break;
+                case ItemType.LocalNetworkShare:
+                    index = 137;
+                    break;
             }
             IntPtr hIconLarge = IntPtr.Zero, hIconSmall = IntPtr.Zero;
             NativeMethods.ExtractIconEx("imageres.dll", index, ref hIconLarge, ref hIconSmall, 1);
@@ -75,7 +81,7 @@ namespace WhereAreThem.WinViewer.Model {
             Shell32.SHFILEINFO shfi = new Shell32.SHFILEINFO();
             uint flags = Shell32.SHGFI_ICON | Shell32.SHGFI_USEFILEATTRIBUTES;
 
-            if (linkOverlay) 
+            if (linkOverlay)
                 flags |= Shell32.SHGFI_LINKOVERLAY;
 
             if (IconSize.Small == size)
