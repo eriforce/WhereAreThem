@@ -213,13 +213,15 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         computer = Computers.SingleOrDefault(c => c.NameEquals(machineName));
                         if (computer == null) {
                             computer = new Computer() { Name = machineName };
-                            computer.Folders = new List<Folder>() {
-                                new DriveModel(computer, Drive.GetDriveLetter(path), DateTime.UtcNow, Drive.NETWORK_SHARE)
-                            };
+                            computer.Folders = new List<Folder>();
                             Computers.Add(computer);
                         }
                     }
-                    DriveModel drive = computer.Drives.Single(f => f.NameEquals(root.Name));
+                    DriveModel drive = computer.Drives.SingleOrDefault(f => f.NameEquals(root.Name));
+                    if (drive == null) {
+                        drive = new DriveModel(computer, Drive.GetDriveLetter(path), DateTime.UtcNow, Drive.NETWORK_SHARE);
+                        computer.Folders.Add(drive);
+                    }
                     bool isDrive = root.FullName.Equals(path, StringComparison.OrdinalIgnoreCase);
                     if (!isDrive)
                         drive.Load();
