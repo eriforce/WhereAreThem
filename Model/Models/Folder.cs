@@ -9,19 +9,24 @@ using PureLib.Common;
 namespace WhereAreThem.Model.Models {
     [DataContract]
     public class Folder : FileSystemItem {
+        private IEnumerable<FileSystemItem> _items;
+
         [DataMember]
         public List<Folder> Folders { get; set; }
         [DataMember]
         public List<File> Files { get; set; }
 
-        public List<FileSystemItem> Items {
+        public IEnumerable<FileSystemItem> Items {
             get {
-                List<FileSystemItem> items = new List<FileSystemItem>();
-                if (Folders != null)
-                    items.AddRange(Folders);
-                if (Files != null)
-                    items.AddRange(Files);
-                return items;
+                if (_items == null) {
+                    if ((Folders != null) && (Files != null))
+                        _items = Folders.Concat<FileSystemItem>(Files);
+                    else if (Folders != null)
+                        _items = Folders;
+                    else if (Files != null)
+                        _items = Files;
+                }
+                return _items;
             }
         }
         public override long Size {
