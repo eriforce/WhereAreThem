@@ -8,8 +8,8 @@ using PureLib.Common;
 
 namespace WhereAreThem.Model.Models {
     public class Drive : Folder {
-        public const string NETWORK_COMPUTER_PREFIX = @"\\";
         public const DriveType NETWORK_SHARE = (DriveType)100;
+        public const string NETWORK_COMPUTER_PREFIX = @"\\";
 
         public DriveType DriveType { get; set; }
         public string MachineName { get; private set; }
@@ -31,8 +31,12 @@ namespace WhereAreThem.Model.Models {
             };
         }
 
+        public static bool IsNetworkPath(string path) {
+            return path.StartsWith(NETWORK_COMPUTER_PREFIX);
+        }
+
         public static string GetDriveLetter(string path) {
-            if (path.StartsWith(NETWORK_COMPUTER_PREFIX)) {
+            if (IsNetworkPath(path)) {
                 string[] parts = path.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
                 return parts[1];
             }

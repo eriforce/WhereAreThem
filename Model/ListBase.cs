@@ -18,6 +18,8 @@ namespace WhereAreThem.Model {
         }
 
         protected string GetListPath(string machineName, string driveLetter, DriveType driveType) {
+            if (driveType == DriveType.Network)
+                return Path.Combine(_outputPath, "{0}.{1}.{2}".FormatWith(driveLetter, driveType, Constant.ListExt));
             return Path.Combine(_outputPath, machineName, "{0}.{1}.{2}".FormatWith(driveLetter, driveType, Constant.ListExt));
         }
     }

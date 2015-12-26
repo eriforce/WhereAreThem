@@ -31,20 +31,25 @@ namespace WhereAreThem.Model {
             };
         }
 
-        public Drive Scan(string drivePath) {
-            drivePath = Drive.GetDrivePath(Drive.GetDriveLetter(drivePath));
-            Folder driveFolder = GetFolder(new DirectoryInfo(drivePath));
-            OnScanned(drivePath);
-            Drive drive = Drive.FromFolder(driveFolder, new DriveInfo(driveFolder.Name).DriveType, Environment.MachineName);
-            drive.CreatedDateUtc = DateTime.UtcNow;
-            return drive;
-        }
+        public Drive Scan(string path) {
+            Folder driveFolder;
+            DriveType driveType;
+            string machineName;
 
-        public Drive ScanShare(string sharePath) {
-            string machineName = Drive.GetMachineName(sharePath);
-            Folder driveFolder = GetFolder(new DirectoryInfo(sharePath).Root);
-            OnScanned(sharePath);
-            Drive drive = Drive.FromFolder(driveFolder, Drive.NETWORK_SHARE, machineName);
+            if (Drive.IsNetworkPath(path)) {
+                driveFolder = GetFolder(new DirectoryInfo(path).Root);
+                driveType = Drive.NETWORK_SHARE;
+                machineName = Drive.GetMachineName(path);
+            }
+            else {
+                string drivePath = Drive.GetDrivePath(Drive.GetDriveLetter(path));
+                driveFolder = GetFolder(new DirectoryInfo(drivePath));
+                driveType = new DriveInfo(driveFolder.Name).DriveType;
+                machineName = Environment.MachineName;
+            }
+
+            OnScanned(path);
+            Drive drive = Drive.FromFolder(driveFolder, driveType, machineName);
             drive.CreatedDateUtc = DateTime.UtcNow;
             return drive;
         }
@@ -52,14 +57,24 @@ namespace WhereAreThem.Model {
         public void ScanUpdate(string pathToUpdate, Drive drive) {
             try {
                 string[] pathParts = pathToUpdate.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
-                pathParts[0] += Path.DirectorySeparatorChar;
+                bool isNetworkShare = drive.DriveType == Drive.NETWORK_SHARE;
+                int firstFolderIndex;
+                if (isNetworkShare)
+                    firstFolderIndex = 2;
+                else {
+                    firstFolderIndex = 1;
+                    pathParts[0] += Path.DirectorySeparatorChar;
+                }
                 Folder folder = drive;
-                for (int i = 1; i < pathParts.Length; i++) {
+                for (int i = firstFolderIndex; i < pathParts.Length; i++) {
                     if (folder.Folders == null)
                         folder.Folders = new List<Folder>();
                     Folder current = folder.Folders.SingleOrDefault(f => f.NameEquals(pathParts[i]));
                     if (current == null) {
-                        current = GetFolder(new DirectoryInfo(Path.Combine(pathParts.Take(i + 1).ToArray())));
+                        string path = Path.Combine(pathParts.Take(i + 1).ToArray());
+                        if (isNetworkShare)
+                            path = Drive.NETWORK_COMPUTER_PREFIX + path;
+                        current = GetFolder(new DirectoryInfo(path));
                         folder.Folders.Add(current);
                         folder.Folders.Sort();
                         return;

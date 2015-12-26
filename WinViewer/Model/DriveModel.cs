@@ -15,6 +15,10 @@ namespace WhereAreThem.WinViewer.Model {
         public Computer Computer { get; private set; }
         public bool IsChanged { get; set; }
 
+        public bool IsNetworkDrive {
+            get { return DriveType == DriveType.Network || DriveType == Drive.NETWORK_SHARE; }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler LocalDriveLoaded;
 

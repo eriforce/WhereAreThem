@@ -12,7 +12,7 @@ namespace WhereAreThem.WinViewer.Model {
         }
 
         public static DriveModel GetDrive(this List<Folder> stack) {
-            return (DriveModel)stack[1];
+            return (stack.Count > 1) ? (DriveModel)stack[1] : null;
         }
 
         public static Folder GetParent(this List<Folder> stack) {

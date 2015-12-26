@@ -89,7 +89,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         string path = Path.Combine(folders.Select(f => f.Name).ToArray());
                         DriveModel drive = folders.GetDrive();
                         if (Directory.Exists(path)) {
-                            Scan(path, p is DriveModel, drive);
+                            Scan(path, p is DriveModel, drive, folders.GetComputer());
                         }
                         else {
                             Folder parent = folders.GetParent();
@@ -98,11 +98,15 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             drive.IsChanged = true;
                         }
                     }, p => {
-                        // p is ensured under the selected folder stack
-                        if (p is Computer)
+                        if (!(p is Folder))
                             return false;
+                        else if (p is Computer)
+                            return false;
+                        else if (p is DriveModel && ((DriveModel)p).IsNetworkDrive)
+                            return true;
                         else
-                            return SelectedFolderStack.GetComputer().NameEquals(Environment.MachineName);
+                            return SelectedFolderStack.GetComputer().NameEquals(Environment.MachineName)
+                                || (SelectedFolderStack.GetDrive() != null && SelectedFolderStack.GetDrive().IsNetworkDrive);
                     });
                 }
                 return _scanCommand;
@@ -206,9 +210,10 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public void Scan(string[] folders) {
             if (folders != null)
                 foreach (string path in folders) {
-                    DirectoryInfo root = new DirectoryInfo(path);
+                    DirectoryInfo root = new DirectoryInfo(path).Root;
                     Computer computer = _localComputer;
-                    if (root.FullName.StartsWith(Drive.NETWORK_COMPUTER_PREFIX)) {
+                    bool isNetworkShare = Drive.IsNetworkPath(path);
+                    if (isNetworkShare) {
                         string machineName = Drive.GetMachineName(path);
                         computer = Computers.SingleOrDefault(c => c.NameEquals(machineName));
                         if (computer == null) {
@@ -217,15 +222,28 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             Computers.Add(computer);
                         }
                     }
-                    DriveModel drive = computer.Drives.SingleOrDefault(f => f.NameEquals(root.Name));
-                    if (drive == null) {
-                        drive = new DriveModel(computer, Drive.GetDriveLetter(path), DateTime.UtcNow, Drive.NETWORK_SHARE);
-                        computer.Folders.Add(drive);
-                    }
                     bool isDrive = root.FullName.Equals(path, StringComparison.OrdinalIgnoreCase);
+                    DriveModel drive = computer.Drives.SingleOrDefault(f => f.NameEquals(root.Name));
+                    bool isNew = drive == null;
+                    if (isNew) {
+                        string name;
+                        DriveType driveType;
+                        if (isNetworkShare) {
+                            name = Drive.GetDriveLetter(path);
+                            driveType = Drive.NETWORK_SHARE;
+                        }
+                        else {
+                            name = root.Name;
+                            driveType = DriveType.Network;
+                        }
+                        drive = new DriveModel(computer, name, DateTime.UtcNow, driveType);
+                        drive.Folders.Clear();
+                        computer.Folders.Add(drive);
+                        computer.RaiseFolderChanges();
+                    }
                     if (!isDrive)
                         drive.Load();
-                    Scan(path, isDrive, drive);
+                    Scan(path, isDrive, drive, computer);
                 }
         }
 
@@ -264,11 +282,11 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 }
         }
 
-        private void Scan(string path, bool scanDrive, DriveModel drive) {
+        private void Scan(string path, bool scanDrive, DriveModel drive, Computer computer) {
             string folderName = scanDrive ? path : Path.GetFileName(path);
             BusyWith("Scanning {0} ...".FormatWith(folderName), () => {
                 if (scanDrive) {
-                    Drive d = path.StartsWith(Drive.NETWORK_COMPUTER_PREFIX) ? App.Scanner.ScanShare(path) : App.Scanner.Scan(path);
+                    Drive d = App.Scanner.Scan(path);
                     drive.Load(d);
                 }
                 else {
