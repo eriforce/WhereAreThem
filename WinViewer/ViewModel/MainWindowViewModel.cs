@@ -211,7 +211,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             if (folders != null)
                 foreach (string path in folders) {
                     DirectoryInfo root = new DirectoryInfo(path).Root;
-                    Computer computer = _localComputer;
+                    Computer computer;
                     bool isNetworkShare = Drive.IsNetworkPath(path);
                     if (isNetworkShare) {
                         string machineName = Drive.GetMachineName(path);
@@ -222,6 +222,9 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             Computers.Add(computer);
                         }
                     }
+                    else
+                        computer = _localComputer;
+
                     bool isDrive = root.FullName.Equals(path, StringComparison.OrdinalIgnoreCase);
                     DriveModel drive = computer.Drives.SingleOrDefault(f => f.NameEquals(root.Name));
                     bool isNew = drive == null;
@@ -263,11 +266,6 @@ namespace WhereAreThem.WinViewer.ViewModel {
 
         private void InsertLocalComputer() {
             Computer localComputer = _localComputer;
-            if (localComputer == null) {
-                localComputer = new Computer() { Name = Environment.MachineName, Folders = new List<Folder>() };
-                Computers.Add(localComputer);
-            }
-
             DriveType[] driveTypes = ConfigurationManager.AppSettings["driveTypes"].ToEnum<DriveType>();
             foreach (DriveInfo drive in DriveInfo.GetDrives()) {
                 if (driveTypes.Contains(drive.DriveType) && !localComputer.Folders.Any(f => f.NameEquals(drive.Name)))

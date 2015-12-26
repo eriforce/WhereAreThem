@@ -18,16 +18,25 @@ namespace WhereAreThem.Model {
             : base(outputPath, persistence) {
         }
 
-        public string[] MachineNames {
+        public List<string> MachineNames {
             get {
-                return !Directory.Exists(_outputPath) ? new string[] { } :
-                    Directory.GetDirectories(_outputPath).Select(p => Path.GetFileName(p)).ToArray();
+                List<string> machines = new List<string>();
+                if (Directory.Exists(_outputPath))
+                    machines.AddRange(Directory.GetDirectories(_outputPath).Select(p => Path.GetFileName(p)));
+                if (!machines.Contains(Environment.MachineName, StringComparer.OrdinalIgnoreCase))
+                    machines.Add(Environment.MachineName);
+                machines.Sort();
+                return machines;
             }
         }
 
         public List<Drive> GetDrives(string machineName) {
-            IEnumerable<string> lists = Directory.GetFiles(Path.Combine(_outputPath, machineName), "*.*.{0}".FormatWith(Constant.ListExt))
-                .Concat(Directory.GetFiles(_outputPath, "*.*.{0}".FormatWith(Constant.ListExt)));
+            IEnumerable<string> lists = Directory.GetFiles(_outputPath, "*.*.{0}".FormatWith(Constant.ListExt));
+
+            string machinePath = Path.Combine(_outputPath, machineName);
+            if (Directory.Exists(machinePath))
+                lists = lists.Concat(Directory.GetFiles(machinePath, "*.*.{0}".FormatWith(Constant.ListExt)));
+
             return (from file in lists
                     let nameParts = Path.GetFileNameWithoutExtension(file).Split('.')
                     let driveLetter = nameParts.First()
