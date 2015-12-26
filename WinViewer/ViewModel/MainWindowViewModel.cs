@@ -94,7 +94,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         else {
                             Folder parent = folders.GetParent();
                             parent.Folders.Remove(pFolder);
-                            drive.Refresh();
+                            parent.RaiseItemChanges();
                             drive.IsChanged = true;
                         }
                     }, p => {
@@ -239,7 +239,8 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         drive = new DriveModel(computer, name, DateTime.UtcNow, driveType);
                         drive.Folders.Clear();
                         computer.Folders.Add(drive);
-                        computer.RaiseFolderChanges();
+                        computer.Folders = new List<Folder>(computer.Folders);
+                        computer.RaiseItemChanges();
                     }
                     if (!isDrive)
                         drive.Load();
@@ -290,8 +291,10 @@ namespace WhereAreThem.WinViewer.ViewModel {
                     drive.Load(d);
                 }
                 else {
+                    Folder parent = drive.GetDrive(path);
                     App.Scanner.ScanUpdate(path, drive);
-                    drive.Refresh();
+                    drive.HasLoaded = true;
+                    parent.RaiseItemChanges();
                 }
                 drive.IsChanged = true;
             });

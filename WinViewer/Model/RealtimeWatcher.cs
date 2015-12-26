@@ -181,7 +181,7 @@ namespace WhereAreThem.WinViewer.Model {
         }
 
         private void RaiseChange(DriveModel drive) {
-            drive.Refresh();
+            drive.RaiseItemChanges();
             drive.IsChanged = true;
         }
     }

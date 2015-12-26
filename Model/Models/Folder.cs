@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -8,7 +9,7 @@ using PureLib.Common;
 
 namespace WhereAreThem.Model.Models {
     [DataContract]
-    public class Folder : FileSystemItem {
+    public class Folder : FileSystemItem, INotifyPropertyChanged {
         private IEnumerable<FileSystemItem> _items;
 
         [DataMember]
@@ -43,6 +44,22 @@ namespace WhereAreThem.Model.Models {
                     }
                     catch (InvalidOperationException) { }
                 return size;
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void RaiseItemChanges() {
+            if (Folders != null)
+                Folders = new List<Folder>(Folders);
+            if (Files != null)
+                Files = new List<File>(Files);
+            _items = null;
+
+            if (PropertyChanged != null) {
+                PropertyChanged(this, new PropertyChangedEventArgs("Folders"));
+                PropertyChanged(this, new PropertyChangedEventArgs("Files"));
+                PropertyChanged(this, new PropertyChangedEventArgs("Items"));
             }
         }
 
