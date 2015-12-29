@@ -37,15 +37,17 @@ namespace WhereAreThem.Model {
             if (Directory.Exists(machinePath))
                 lists = lists.Concat(Directory.GetFiles(machinePath, "*.*.{0}".FormatWith(Constant.ListExt)));
 
-            return (from file in lists
-                    let nameParts = Path.GetFileNameWithoutExtension(file).Split('.')
-                    let driveLetter = nameParts.First()
-                    let driveType = (DriveType)Enum.Parse(typeof(DriveType), nameParts.Last())
-                    select new Drive(machineName) {
-                        Name = Drive.GetDriveName(driveLetter, driveType),
-                        DriveType = driveType,
-                        CreatedDateUtc = new FileInfo(file).LastWriteTimeUtc
-                    }).ToList();
+            List<Drive> drives = (from file in lists
+                                  let nameParts = Path.GetFileNameWithoutExtension(file).Split('.')
+                                  let driveLetter = nameParts.First()
+                                  let driveType = (DriveType)Enum.Parse(typeof(DriveType), nameParts.Last())
+                                  select new Drive(machineName) {
+                                      Name = Drive.GetDriveName(driveLetter, driveType),
+                                      DriveType = driveType,
+                                      CreatedDateUtc = new FileInfo(file).LastWriteTimeUtc
+                                  }).ToList();
+            drives.Sort();
+            return drives;
         }
 
         public Drive GetDrive(string machineName, string path) {

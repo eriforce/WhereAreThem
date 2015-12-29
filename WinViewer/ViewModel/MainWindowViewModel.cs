@@ -204,7 +204,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 c.Folders = App.Loader.GetDrives(c.Name).Select(
                     d => (Folder)new DriveModel(c, d.Name, d.CreatedDateUtc, d.DriveType)).ToList();
             }
-            InsertLocalComputer();
+            InsertLocalDrives();
         }
 
         public void Scan(string[] folders) {
@@ -264,7 +264,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             });
         }
 
-        private void InsertLocalComputer() {
+        private void InsertLocalDrives() {
             Computer localComputer = _localComputer;
             DriveType[] driveTypes = ConfigurationManager.AppSettings["driveTypes"].ToEnum<DriveType>();
             foreach (DriveInfo drive in DriveInfo.GetDrives()) {
