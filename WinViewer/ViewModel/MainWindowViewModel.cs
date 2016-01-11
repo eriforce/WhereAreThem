@@ -258,6 +258,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         if (drive.IsChanged) {
                             StatusBarText = "Saving {0} of {1} ...".FormatWith(drive.Name, computer.Name);
                             App.Scanner.Save(drive);
+                            drive.IsChanged = false;
                         }
                     }
                 }
