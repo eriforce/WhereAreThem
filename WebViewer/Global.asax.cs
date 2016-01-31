@@ -13,6 +13,7 @@ namespace WhereAreThem.WebViewer {
     public class MvcApplication : System.Web.HttpApplication {
         public static void RegisterBundles(BundleCollection bundles) {
             bundles.Add(new ScriptBundle("~/js/site").Include(
+                "~/Scripts/jquery-1.8.3.min.js",
                 "~/Scripts/jquery.explorer.js"));
 
             bundles.Add(new StyleBundle("~/css/site").Include(
