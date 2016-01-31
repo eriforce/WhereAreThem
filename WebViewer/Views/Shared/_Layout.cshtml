@@ -1,9 +1,9 @@
-﻿@using System.Configuration;
-@using WhereAreThem.WebViewer.Models;
+﻿@using WhereAreThem.WebViewer.Models;
 
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
     @Styles.Render("~/css/site")
 </head>
@@ -38,5 +38,6 @@
     </div>
 
     @Scripts.Render("~/js/site")
+    @RenderSection("scripts", required: false)
 </body>
 </html>
