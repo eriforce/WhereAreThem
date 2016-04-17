@@ -20,7 +20,7 @@ namespace WhereAreThem.Model {
 
         public static IPersistence Persistence { get; private set; }
         public static string Path {
-            get { return ConfigurationManager.AppSettings["path"].WrapPath(); }
+            get { return ConfigurationManager.AppSettings["path"].MakeFullPath(); }
         }
 
         static Constant() {

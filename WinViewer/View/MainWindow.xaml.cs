@@ -83,9 +83,9 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void OnWindowDrop(object sender, DragEventArgs e) {
-            Dispatcher.InvokeAsync(() => {
+            Dispatcher.InvokeAsync(async () => {
                 if (!VM.IsBusy && e.Data.GetDataPresent(DataFormats.FileDrop))
-                    VM.Scan(e.Data.GetData(DataFormats.FileDrop, true) as string[]);
+                    await VM.ScanAsync(e.Data.GetData(DataFormats.FileDrop, true) as string[]);
             });
             e.Handled = true;
         }
@@ -104,8 +104,8 @@ namespace WhereAreThem.WinViewer.View {
             }
         }
 
-        private void OnWindowClosing(object sender, CancelEventArgs e) {
-            VM.Save();
+        private async void OnWindowClosing(object sender, CancelEventArgs e) {
+            await VM.SaveAsync();
             if (VM.Watcher != null)
                 VM.Watcher.Close();
         }

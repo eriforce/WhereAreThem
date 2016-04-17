@@ -78,7 +78,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public ICommand ScanCommand {
             get {
                 if (_scanCommand == null) {
-                    _scanCommand = new RelayCommand(p => {
+                    _scanCommand = new RelayCommand(async p => {
                         Folder pFolder = (Folder)p;
                         List<Folder> folders = SelectedFolderStack;
                         if (pFolder != SelectedFolder) {
@@ -89,7 +89,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         string path = Path.Combine(folders.Select(f => f.Name).ToArray());
                         DriveModel drive = folders.GetDrive();
                         if (Directory.Exists(path)) {
-                            Scan(path, p is DriveModel, drive, folders.GetComputer());
+                            await ScanAsync(path, p is DriveModel, drive, folders.GetComputer());
                         }
                         else {
                             Folder parent = folders.GetParent();
@@ -207,7 +207,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             InsertLocalDrives();
         }
 
-        public void Scan(string[] folders) {
+        public async Task ScanAsync(string[] folders) {
             if (folders != null)
                 foreach (string path in folders) {
                     DirectoryInfo root = new DirectoryInfo(path).Root;
@@ -247,12 +247,12 @@ namespace WhereAreThem.WinViewer.ViewModel {
                     }
                     if (!isDrive)
                         drive.Load();
-                    Scan(path, isDrive, drive, computer);
+                    await ScanAsync(path, isDrive, drive, computer);
                 }
         }
 
-        public void Save() {
-            BusyWith("Saving ...", () => {
+        public async Task SaveAsync() {
+            await BusyWithAsync("Saving ...", () => {
                 foreach (Computer computer in Computers) {
                     foreach (DriveModel drive in computer.Drives) {
                         if (drive.IsChanged) {
@@ -282,9 +282,9 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 }
         }
 
-        private void Scan(string path, bool scanDrive, DriveModel drive, Computer computer) {
+        private async Task ScanAsync(string path, bool scanDrive, DriveModel drive, Computer computer) {
             string folderName = scanDrive ? path : Path.GetFileName(path);
-            BusyWith("Scanning {0} ...".FormatWith(folderName), () => {
+            await BusyWithAsync("Scanning {0} ...".FormatWith(folderName), () => {
                 if (scanDrive) {
                     Drive d = App.Scanner.Scan(path);
                     drive.Load(d);
