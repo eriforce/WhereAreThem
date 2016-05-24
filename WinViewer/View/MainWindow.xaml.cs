@@ -105,7 +105,7 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void OnWindowClosing(object sender, CancelEventArgs e) {
-            VM.SaveAsync().Wait();
+            VM.Save();
             if (VM.Watcher != null)
                 VM.Watcher.Close();
         }
@@ -164,7 +164,7 @@ namespace WhereAreThem.WinViewer.View {
         private void LoadIfDrive(object item) {
             if (item is DriveModel) {
                 DriveModel drive = (DriveModel)item;
-                bool loaded = VM.BusyWith<bool>("Loading {0} ...".FormatWith(drive.Name), drive.Load);
+                bool loaded = VM.BusyWith("Loading {0} ...".FormatWith(drive.Name), Task.Run(() => drive.Load()));
                 if (!loaded)
                     MessageBox.Show(this, "You need to scan this drive first.");
             }

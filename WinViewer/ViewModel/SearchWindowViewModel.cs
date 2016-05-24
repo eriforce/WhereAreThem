@@ -110,7 +110,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get {
                 if (_searchCommand == null)
                     _searchCommand = new RelayCommand(p => {
-                        BusyWith("Searching {0} ...".FormatWith(Location), () => {
+                        BusyWith("Searching {0} ...".FormatWith(Location), Task.Run(() => {
                             Results = new ObservableCollection<SearchResult>(
                                 Root.Search(RootStack.GetParentStack().ToList(), SearchPattern, IncludeFiles, IncludeFolders));
 
@@ -122,7 +122,8 @@ namespace WhereAreThem.WinViewer.ViewModel {
                                 statusTextParts.Add(Results.Sum(r => r.Item.Size).ToFriendlyString());
                             }
                             StatusBarText = string.Join(", ", statusTextParts);
-                        });
+                            return true;
+                        }));
                     }, p => { return !SearchPattern.IsNullOrEmpty() && (IncludeFolders || IncludeFiles); });
                 return _searchCommand;
             }

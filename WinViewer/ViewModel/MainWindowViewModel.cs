@@ -251,8 +251,8 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 }
         }
 
-        public async Task SaveAsync() {
-            await BusyWithAsync("Saving ...", () => {
+        public void Save() {
+            BusyWith("Saving ...", Task.Run(() => {
                 foreach (Computer computer in Computers) {
                     foreach (DriveModel drive in computer.Drives) {
                         if (drive.IsChanged) {
@@ -262,7 +262,8 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         }
                     }
                 }
-            });
+                return true;
+            }));
         }
 
         private void InsertLocalDrives() {
@@ -284,7 +285,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
 
         private async Task ScanAsync(string path, bool scanDrive, DriveModel drive, Computer computer) {
             string folderName = scanDrive ? path : Path.GetFileName(path);
-            await BusyWithAsync("Scanning {0} ...".FormatWith(folderName), () => {
+            await BusyWithAsync("Scanning {0} ...".FormatWith(folderName), Task.Run(() => {
                 if (scanDrive) {
                     Drive d = App.Scanner.Scan(path);
                     drive.Load(d);
@@ -296,7 +297,8 @@ namespace WhereAreThem.WinViewer.ViewModel {
                     parent.RaiseItemChanges();
                 }
                 drive.IsChanged = true;
-            });
+                return true;
+            }));
         }
 
         private void SetStatusBarOnSelectedFolderChanged() {
