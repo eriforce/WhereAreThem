@@ -8,6 +8,7 @@ namespace WhereAreThem.Model {
     public enum PersistenceType {
         Bin,
         Txt,
+        JsonNet,
         Json,
         Xml,
     }

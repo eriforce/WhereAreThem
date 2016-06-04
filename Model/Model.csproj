@@ -36,6 +36,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="PureLib, Version=2.0.5957.4631, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\PureLib.2.0.5957.4631\lib\net45\PureLib.dll</HintPath>
       <Private>True</Private>
@@ -64,6 +68,7 @@
     <Compile Include="Persistences\BinaryPersistence.cs" />
     <Compile Include="Persistences\IPersistence.cs" />
     <Compile Include="Persistences\IStreamPersistence.cs" />
+    <Compile Include="Persistences\JsonNetPersistence.cs" />
     <Compile Include="Persistences\JsonPersistence.cs" />
     <Compile Include="Persistences\PersistenceBase.cs" />
     <Compile Include="Persistences\TextPersistence.cs" />
