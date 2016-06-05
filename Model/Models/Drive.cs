@@ -14,9 +14,8 @@ namespace WhereAreThem.Model.Models {
         public DriveType DriveType { get; set; }
         public string MachineName { get; private set; }
 
-        public string DriveLetter {
-            get { return Name.Contains(Path.DirectorySeparatorChar) ? GetDriveLetter(Name) : Name; }
-        }
+        public string DriveLetter
+            => Name.Contains(Path.DirectorySeparatorChar) ? GetDriveLetter(Name) : Name;
 
         public Drive(string machineName) {
             MachineName = machineName;

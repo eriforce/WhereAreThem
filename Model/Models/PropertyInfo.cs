@@ -11,26 +11,14 @@ namespace WhereAreThem.Model.Models {
         public int FileCount { get; private set; }
         public long TotalSize { get; private set; }
 
-        public string FolderCountString {
-            get {
-                return ToNumber(FolderCount);
-            }
-        }
-        public string FileCountString {
-            get {
-                return ToNumber(FileCount);
-            }
-        }
-        public string TotalSizeString {
-            get {
-                return ToNumber(TotalSize);
-            }
-        }
-        public string TotalSizeFriendlyString {
-            get {
-                return TotalSize.ToFriendlyString();
-            }
-        }
+        public string FolderCountString
+            => ToNumber(FolderCount);
+        public string FileCountString
+            => ToNumber(FileCount);
+        public string TotalSizeString
+            => ToNumber(TotalSize);
+        public string TotalSizeFriendlyString
+            => TotalSize.ToFriendlyString();
 
         public PropertyInfo(Folder parent, string[] selectedItems) {
             IEnumerable<File> files = (parent.Files == null) ? new File[0] :
