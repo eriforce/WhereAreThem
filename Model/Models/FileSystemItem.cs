@@ -12,9 +12,8 @@ namespace WhereAreThem.Model.Models {
         [DataMember]
         public DateTime CreatedDateUtc { get; set; }
 
-        public DateTime CreatedDate {
-            get { return CreatedDateUtc.ToLocalTime(); }
-        }
+        public DateTime CreatedDate
+            => CreatedDateUtc.ToLocalTime();
         public abstract long Size { get; }
 
         public bool NameEquals(string name) {

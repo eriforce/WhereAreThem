@@ -44,8 +44,8 @@
     <ApplicationIcon>Resources\WhereIsIt.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PureLib, Version=2.0.5951.29097, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PureLib.2.0.5951.29097\lib\net45\PureLib.dll</HintPath>
+    <Reference Include="PureLib, Version=2.0.5957.4631, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PureLib.2.0.5957.4631\lib\net45\PureLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
