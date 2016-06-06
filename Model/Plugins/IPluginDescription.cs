@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WhereAreThem.Model.Plugins
-{
-    public interface IPluginDescription
-    {
+namespace WhereAreThem.Model.Plugins {
+    public interface IPluginDescription {
         string[] Extensions { get; }
     }
 }
