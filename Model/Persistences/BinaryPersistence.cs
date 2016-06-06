@@ -8,23 +8,22 @@ using IO = System.IO;
 
 namespace WhereAreThem.Model.Persistences {
     public class BinaryPersistence : PersistenceBase {
-        private const char stringSeparator = '\0';
+        protected const char stringSeparator = '\0';
+        protected const char fieldSeparator = '\n';
         private const byte folderPrefix = 0;
         private const byte filePrefix = 1;
 
         public override void Save(Folder folder, IO.Stream stream) {
-            IO.BinaryWriter writer = new IO.BinaryWriter(stream);
-            Save(folder, 0, writer);
-            writer.Flush();
+            IO.BinaryWriter bw = new IO.BinaryWriter(stream);
+            Save(folder, 0, bw);
+            bw.Flush();
         }
 
         private void Save(Folder folder, byte level, IO.BinaryWriter bw) {
             bw.Write(level++);
             bw.Write(folderPrefix);
             bw.Write(folder.CreatedDateUtc.Ticks);
-            byte[] stringData = Encoding.UTF8.GetBytes(folder.Name);
-            bw.Write((byte)stringData.Length);
-            bw.Write(stringData);
+            WriteText(bw, folder.Name);
             if (folder.Folders != null)
                 foreach (Folder f in folder.Folders) {
                     Save(f, level, bw);
@@ -36,23 +35,22 @@ namespace WhereAreThem.Model.Persistences {
                     bw.Write(f.Size);
                     bw.Write(f.CreatedDateUtc.Ticks);
                     bw.Write(f.ModifiedDateUtc.Ticks);
-                    stringData = Encoding.UTF8.GetBytes(string.Join(stringSeparator.ToString(), f.Name, f.Description));
-                    bw.Write(stringData.Length);
-                    bw.Write(stringData);
+                    WriteText(bw, f.Name);
+                    WriteData(bw, f.Data);
                 }
         }
 
         public override Folder Load(IO.Stream stream) {
-            IO.BinaryReader reader = new IO.BinaryReader(stream);
+            IO.BinaryReader br = new IO.BinaryReader(stream);
             stream.Seek(2, IO.SeekOrigin.Begin);
             Dictionary<int, Folder> recentFolders = new Dictionary<int, Folder>() {
-                { 0, GetFolder(reader) }
+                { 0, GetFolder(br) }
             };
             while (stream.Position < stream.Length) {
-                byte currentLevel = reader.ReadByte();
+                byte currentLevel = br.ReadByte();
                 byte parent = (byte)(currentLevel - 1);
-                if (reader.ReadByte() == folderPrefix) {
-                    Folder f = GetFolder(reader);
+                if (br.ReadByte() == folderPrefix) {
+                    Folder f = GetFolder(br);
                     if (recentFolders[parent].Folders == null)
                         recentFolders[parent].Folders = new List<Folder>();
                     recentFolders[parent].Folders.Add(f);
@@ -65,7 +63,7 @@ namespace WhereAreThem.Model.Persistences {
                 else {
                     if (recentFolders[parent].Files == null)
                         recentFolders[parent].Files = new List<File>();
-                    recentFolders[parent].Files.Add(GetFile(reader));
+                    recentFolders[parent].Files.Add(GetFile(br));
                 }
             }
             return recentFolders[0];
@@ -73,8 +71,7 @@ namespace WhereAreThem.Model.Persistences {
 
         private Folder GetFolder(IO.BinaryReader br) {
             DateTime created = new DateTime(br.ReadInt64());
-            int strLength = br.ReadByte();
-            string name = Encoding.UTF8.GetString(br.ReadBytes(strLength));
+            string name = ReadText(br);
             return new Folder() {
                 Name = name,
                 CreatedDateUtc = created
@@ -85,15 +82,43 @@ namespace WhereAreThem.Model.Persistences {
             long size = br.ReadInt64();
             DateTime created = new DateTime(br.ReadInt64());
             DateTime modified = new DateTime(br.ReadInt64());
-            int strLength = br.ReadInt32();
-            string[] parts = Encoding.UTF8.GetString(br.ReadBytes(strLength)).Split('\0');
+            string name = ReadText(br);
+            Dictionary<string, string> data = ReadData(br);
             return new File() {
-                Name = parts[0],
+                Name = name,
                 FileSize = size,
                 CreatedDateUtc = created,
                 ModifiedDateUtc = modified,
-                Description = parts[1]
+                Data = data
             };
+        }
+
+        private void WriteData(IO.BinaryWriter bw, Dictionary<string, string> data) {
+            IEnumerable<string> plugins = data == null ? new string[0] : data.Select(p => p.Key);
+            WriteText(bw, string.Join(stringSeparator.ToString(), plugins));
+            foreach (var p in data) {
+                WriteText(bw, p.Value);
+            }
+        }
+
+        private Dictionary<string, string> ReadData(IO.BinaryReader br) {
+            string pluginText = ReadText(br);
+            if (pluginText.IsNullOrEmpty())
+                return null;
+
+            string[] plugins = pluginText.Split(stringSeparator);
+            return plugins.ToDictionary(p => p, p => ReadText(br));
+        }
+
+        private void WriteText(IO.BinaryWriter bw, string text) {
+            byte[] textData = Encoding.UTF8.GetBytes(text);
+            bw.Write(textData.Length);
+            bw.Write(textData);
+        }
+
+        private string ReadText(IO.BinaryReader br) {
+            int length = br.ReadByte();
+            return Encoding.UTF8.GetString(br.ReadBytes(length));
         }
     }
 }

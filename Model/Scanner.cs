@@ -27,7 +27,7 @@ namespace WhereAreThem.Model {
                 FileSize = fi.Length,
                 CreatedDateUtc = fi.CreationTimeUtc,
                 ModifiedDateUtc = fi.LastWriteTimeUtc,
-                Description = GetFileDescription(fi, file)
+                Data = GetFileDescription(fi, file)
             };
         }
 
@@ -139,11 +139,8 @@ namespace WhereAreThem.Model {
             return folder;
         }
 
-        private string GetFileDescription(FileInfo fi, Models.File file) {
-            if ((file == null) || (file.ModifiedDateUtc != fi.LastWriteTimeUtc) || file.Description.IsNullOrEmpty())
-                return _pluginManager.GetDescription(fi.FullName);
-            else
-                return file.Description;
+        private Dictionary<string, string> GetFileDescription(FileInfo fi, Models.File file) {
+            return _pluginManager.GetDescriptions(fi.FullName, (file == null) || (file.ModifiedDateUtc != fi.LastWriteTimeUtc), file.Data);
         }
 
         private void OnScanning(string dir) {

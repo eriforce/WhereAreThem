@@ -7,6 +7,9 @@ using WhereAreThem.Model.Models;
 
 namespace WhereAreThem.Model.Persistences {
     public abstract class PersistenceBase : IPersistence, IStreamPersistence {
+        public abstract void Save(Folder folder, Stream stream);
+        public abstract Folder Load(Stream stream);
+
         public virtual void Save(Folder folder, string path) {
             using (FileStream stream = new FileStream(path, FileMode.Create)) {
                 Save(folder, stream);
@@ -18,8 +21,5 @@ namespace WhereAreThem.Model.Persistences {
                 return Load(stream);
             }
         }
-
-        public abstract void Save(Folder folder, Stream stream);
-        public abstract Folder Load(Stream stream);
     }
 }

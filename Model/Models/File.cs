@@ -13,16 +13,13 @@ namespace WhereAreThem.Model.Models {
         [DataMember]
         public DateTime ModifiedDateUtc { get; set; }
         [DataMember]
-        public string Description { get; set; }
+        public Dictionary<string, string> Data { get; set; }
 
-        public DateTime ModifiedDate {
-            get { return ModifiedDateUtc.ToLocalTime(); }
-        }
-        public string Extension {
-            get { return Path.GetExtension(Name); }
-        }
-        public override long Size {
-            get { return FileSize; }
-        }
+        public DateTime ModifiedDate
+            => ModifiedDateUtc.ToLocalTime();
+        public string Extension
+            => Path.GetExtension(Name);
+        public override long Size
+            => FileSize;
     }
 }

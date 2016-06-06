@@ -22,12 +22,13 @@ namespace WhereAreThem.Model.Plugins {
             }
         }
 
-        public string GetDescription(string path) {
+        public Dictionary<string, string> GetDescriptions(string path, bool hasChanged, Dictionary<string, string> descriptions) {
             string ext = Path.GetExtension(path);
             if (!_plugins.ContainsKey(ext))
                 return null;
 
-            return _plugins[ext].GetDescription(path);
+            // TODO: implement plugin invocations
+            throw new NotImplementedException();
         }
     }
 }

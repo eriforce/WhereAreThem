@@ -76,7 +76,7 @@ namespace WhereAreThem.WinViewer.View {
             window.Show();
         }
 
-        private void OnOpeningDescription(object sender, EventArgs<string> e) {
+        private void OnOpeningDescription(object sender, EventArgs<Dictionary<string, string>> e) {
             DescriptionWindow window = new DescriptionWindow(e.Data);
             window.Owner = this;
             window.Show();

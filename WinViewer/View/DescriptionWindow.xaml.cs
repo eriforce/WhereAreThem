@@ -17,13 +17,14 @@ namespace WhereAreThem.WinViewer.View {
     /// Interaction logic for DescriptionWindow.xaml
     /// </summary>
     public partial class DescriptionWindow : Window {
-        public DescriptionWindow(string description) {
+        public DescriptionWindow(Dictionary<string, string> descriptions) {
             InitializeComponent();
 
             Content = new TextBox() {
                 IsReadOnly = true,
                 TextWrapping = TextWrapping.Wrap,
-                Text = description,
+                // TODO: rewrite description window
+                Text = null,
                 FontFamily = new FontFamily("Consolas"),
             };
         }
