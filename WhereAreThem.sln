@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Converter", "Converter\Conv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model.Tests", "Model.Tests\Model.Tests.csproj", "{CDDC61F8-55A6-46C5-9317-D5259C856ADD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextPlugin", "TextPlugin\TextPlugin.csproj", "{E0A33A5A-7EF3-4D13-9F84-715AF628B1A3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,18 @@ Global
 		{CDDC61F8-55A6-46C5-9317-D5259C856ADD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{CDDC61F8-55A6-46C5-9317-D5259C856ADD}.Release|x86.ActiveCfg = Release|Any CPU
 		{CDDC61F8-55A6-46C5-9317-D5259C856ADD}.Release|x86.Build.0 = Release|Any CPU
+		{E0A33A5A-7EF3-4D13-9F84-715AF628B1A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0A33A5A-7EF3-4D13-9F84-715AF628B1A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0A33A5A-7EF3-4D13-9F84-715AF628B1A3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E0A33A5A-7EF3-4D13-9F84-715AF628B1A3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E0A33A5A-7EF3-4D13-9F84-715AF628B1A3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E0A33A5A-7EF3-4D13-9F84-715AF628B1A3}.Debug|x86.Build.0 = Debug|Any CPU
+		{E0A33A5A-7EF3-4D13-9F84-715AF628B1A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0A33A5A-7EF3-4D13-9F84-715AF628B1A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0A33A5A-7EF3-4D13-9F84-715AF628B1A3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E0A33A5A-7EF3-4D13-9F84-715AF628B1A3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E0A33A5A-7EF3-4D13-9F84-715AF628B1A3}.Release|x86.ActiveCfg = Release|Any CPU
+		{E0A33A5A-7EF3-4D13-9F84-715AF628B1A3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

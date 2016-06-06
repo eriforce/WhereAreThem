@@ -10,35 +10,21 @@ using WhereAreThem.Model.Models;
 
 namespace WhereAreThem.Model.Plugins {
     public class PluginManager {
-        private Dictionary<string, IPlugin> _plugins = new Dictionary<string, IPlugin>(StringComparer.OrdinalIgnoreCase);
-
         [ImportMany]
-        private IEnumerable<IPlugin> plugins;
+        private IEnumerable<Lazy<IPlugin, IPluginDescription>> _plugins;
 
         public PluginManager() {
-            AggregateCatalog catalog = new AggregateCatalog();
-            catalog.Catalogs.Add(new DirectoryCatalog(@"."));
-            var container = new CompositionContainer(catalog);
+            var container = new CompositionContainer(new DirectoryCatalog(@"."));
             container.ComposeParts(this);
-
-            foreach (var p in plugins)
-            {
-                if(p.Extensions != null)
-                {
-                    foreach (string ext in p.Extensions)
-                    {
-                        _plugins.Add(ext, p);
-                    }
-                }
-            }
         }
 
         public string GetDescription(string path) {
             string ext = Path.GetExtension(path);
-            if (!_plugins.ContainsKey(ext))
+            var plugin = _plugins.Where(p => p.Metadata.Extensions.Contains(ext)).SingleOrDefault();
+            if (plugin != null)
+                return plugin.Value.GetDescription(path);
+            else
                 return null;
-
-            return _plugins[ext].GetDescription(path);
         }
     }
 }

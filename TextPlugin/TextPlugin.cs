@@ -12,16 +12,10 @@ using WhereAreThem.Model.Plugins;
 namespace TextPlugin
 {
     [Export(typeof(IPlugin))]
+    [ExportMetadata("Extensions", new string[] { ".txt" })]
     class TextPlugin : IPlugin
     {
         public string[] Extensions { get; }
-
-        public TextPlugin()
-        {
-            string exts = ConfigurationManager.AppSettings[this.GetType().Name];
-            if (!exts.IsNullOrEmpty())
-                Extensions = exts.Split('|');
-        }
 
         public bool Loaded
         {
