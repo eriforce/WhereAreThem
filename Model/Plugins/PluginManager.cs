@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,26 +10,21 @@ using WhereAreThem.Model.Models;
 
 namespace WhereAreThem.Model.Plugins {
     public class PluginManager {
-        private Dictionary<string, IPlugin> _plugins = new Dictionary<string, IPlugin>(StringComparer.OrdinalIgnoreCase);
+        [ImportMany]
+        private IEnumerable<Lazy<IPlugin, IPluginDescription>> _plugins;
 
         public PluginManager() {
-            Type pluginType = typeof(IPlugin);
-            foreach (IPlugin plugin in pluginType.Assembly.GetTypes()
-                    .Where(t => pluginType.IsAssignableFrom(t) && t.IsClass)
-                    .Select(t => Activator.CreateInstance(t))) {
-                if (plugin.Loaded && (plugin.Extensions != null))
-                    foreach (string ext in plugin.Extensions) {
-                        _plugins.Add(ext, plugin);
-                    }
-            }
+            var container = new CompositionContainer(new DirectoryCatalog(@"."));
+            container.ComposeParts(this);
         }
 
         public string GetDescription(string path) {
             string ext = Path.GetExtension(path);
-            if (!_plugins.ContainsKey(ext))
+            var plugin = _plugins.Where(p => p.Metadata.Extensions.Contains(ext)).SingleOrDefault();
+            if (plugin != null)
+                return plugin.Value.GetDescription(path);
+            else
                 return null;
-
-            return _plugins[ext].GetDescription(path);
         }
     }
 }
