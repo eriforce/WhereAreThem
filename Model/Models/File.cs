@@ -15,11 +15,8 @@ namespace WhereAreThem.Model.Models {
         [DataMember]
         public Dictionary<string, string> Data { get; set; }
 
-        public DateTime ModifiedDate
-            => ModifiedDateUtc.ToLocalTime();
-        public string Extension
-            => Path.GetExtension(Name);
-        public override long Size
-            => FileSize;
+        public DateTime ModifiedDate => ModifiedDateUtc.ToLocalTime();
+        public string Extension => Path.GetExtension(Name);
+        public override long Size => FileSize;
     }
 }
