@@ -8,8 +8,8 @@ using IO = System.IO;
 
 namespace WhereAreThem.Model.Persistences {
     public class BinaryPersistence : PersistenceBase {
-        protected const char stringSeparator = '\0';
-        protected const char fieldSeparator = '\n';
+        private const char stringSeparator = '\0';
+        private const char fieldSeparator = '\n';
         private const byte folderPrefix = 0;
         private const byte filePrefix = 1;
 
