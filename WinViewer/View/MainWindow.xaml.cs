@@ -104,8 +104,8 @@ namespace WhereAreThem.WinViewer.View {
             }
         }
 
-        private async void OnWindowClosing(object sender, CancelEventArgs e) {
-            await VM.SaveAsync();
+        private void OnWindowClosing(object sender, CancelEventArgs e) {
+            VM.SaveAsync().Wait();
             if (VM.Watcher != null)
                 VM.Watcher.Close();
         }
