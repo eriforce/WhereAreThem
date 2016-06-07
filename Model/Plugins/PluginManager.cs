@@ -11,20 +11,19 @@ using WhereAreThem.Model.Models;
 namespace WhereAreThem.Model.Plugins {
     public class PluginManager {
         [ImportMany]
-        IEnumerable<Lazy<IPlugin, IPluginMetaData>> _imported_plugins;
+        IEnumerable<Lazy<IPlugin, IPluginMetadata>> _importedPlugins;
 
-        private Dictionary<string, List<Lazy<IPlugin, IPluginMetaData>>> _plugins = new Dictionary<string, List<Lazy<IPlugin, IPluginMetaData>>>(StringComparer.OrdinalIgnoreCase);
+        private Dictionary<string, List<Lazy<IPlugin, IPluginMetadata>>> _plugins = new Dictionary<string, List<Lazy<IPlugin, IPluginMetadata>>>(StringComparer.OrdinalIgnoreCase);
 
         public PluginManager() {
             CompositionContainer container = new CompositionContainer(new DirectoryCatalog("."));
             container.ComposeParts(this);
 
-            foreach (var p in _imported_plugins) {
+            foreach (var p in _importedPlugins) {
                 foreach (string ext in p.Metadata.Extensions) {
-                    if (_plugins.ContainsKey(ext))
-                        _plugins[ext].Add(p);
-                    else
-                        _plugins.Add(ext, new List<Lazy<IPlugin, IPluginMetaData>>() { p });
+                    if (!_plugins.ContainsKey(ext))
+                        _plugins.Add(ext, new List<Lazy<IPlugin, IPluginMetadata>>());
+                    _plugins[ext].Add(p);
                 }
             }
         }
@@ -38,10 +37,10 @@ namespace WhereAreThem.Model.Plugins {
             Dictionary<string, string> new_descriptions = new Dictionary<string, string>();
 
             foreach (var p in _plugins[ext]) {
-                if (hasChanged || !descriptions.ContainsKey(p.Metadata.ID))
-                    new_descriptions.Add(p.Metadata.ID, p.Value.GetDescription(path));
+                if (hasChanged || !descriptions.ContainsKey(p.Metadata.Id))
+                    new_descriptions.Add(p.Metadata.Id, p.Value.GetDescription(path));
                 else
-                    new_descriptions.Add(p.Metadata.ID, descriptions[p.Metadata.ID]);
+                    new_descriptions.Add(p.Metadata.Id, descriptions[p.Metadata.Id]);
             }
 
             return new_descriptions;

@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace WhereAreThem.Model.Plugins {
-    public interface IPluginMetaData {
-        string ID { get; }
+    public interface IPluginMetadata {
+        string Id { get; }
         string[] Extensions { get; }
     }
 }

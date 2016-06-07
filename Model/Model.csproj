@@ -76,7 +76,7 @@
     <Compile Include="Persistences\XmlPersistence.cs" />
     <Compile Include="PersistenceType.cs" />
     <Compile Include="Plugins\IPlugin.cs" />
-    <Compile Include="Plugins\IPluginMetaData.cs" />
+    <Compile Include="Plugins\IPluginMetadata.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scanner.cs" />
