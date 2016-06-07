@@ -11,22 +11,22 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WhereAreThem.Model.Models;
+using WhereAreThem.WinViewer.ViewModel;
 
 namespace WhereAreThem.WinViewer.View {
     /// <summary>
     /// Interaction logic for DescriptionWindow.xaml
     /// </summary>
     public partial class DescriptionWindow : Window {
-        public DescriptionWindow(Dictionary<string, string> descriptions) {
+        public DescriptionWindowViewModel VM { get; private set; }
+
+        public DescriptionWindow(File file) {
             InitializeComponent();
 
-            Content = new TextBox() {
-                IsReadOnly = true,
-                TextWrapping = TextWrapping.Wrap,
-                // TODO: rewrite description window
-                Text = null,
-                FontFamily = new FontFamily("Consolas"),
-            };
+            VM = new DescriptionWindowViewModel(file);
+            VM.View = this;
+            DataContext = VM;
         }
     }
 }

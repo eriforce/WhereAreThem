@@ -145,7 +145,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get {
                 if (_openDescriptionCommand == null)
                     _openDescriptionCommand = new RelayCommand(p => {
-                        OpeningDescription(this, new EventArgs<Dictionary<string, string>>(((WatFile)p).Data));
+                        OpeningDescription(this, new EventArgs<WatFile>((WatFile)p));
                     }, p => (p is WatFile) && ((WatFile)p).Data != null);
                 return _openDescriptionCommand;
             }
@@ -186,7 +186,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
 
         public event ItemEventHandler LocatingItem;
         public event ItemEventHandler OpeningProperties;
-        public event EventHandler<EventArgs<Dictionary<string, string>>> OpeningDescription;
+        public event EventHandler<EventArgs<WatFile>> OpeningDescription;
 
         public MainWindowViewModel() {
             Navigation = new ExplorerNavigationService();
