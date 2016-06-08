@@ -140,17 +140,18 @@ namespace WhereAreThem.Model {
         }
 
         private Dictionary<string, string> GetFileDescription(FileInfo fi, Models.File file) {
-            return _pluginManager.GetDescriptions(fi.FullName, (file == null) || (file.ModifiedDateUtc != fi.LastWriteTimeUtc), file.Data);
+            return _pluginManager.GetDescriptions(
+                fi.FullName,
+                (file == null) || (file.ModifiedDateUtc != fi.LastWriteTimeUtc),
+                file?.Data);
         }
 
         private void OnScanning(string dir) {
-            if (Scanning != null)
-                Scanning(this, new ScanEventArgs(dir));
+            Scanning?.Invoke(this, new ScanEventArgs(dir));
         }
 
         private void OnScanned(string dir) {
-            if (Scanned != null)
-                Scanned(this, new ScanEventArgs(dir));
+            Scanned?.Invoke(this, new ScanEventArgs(dir));
         }
     }
 

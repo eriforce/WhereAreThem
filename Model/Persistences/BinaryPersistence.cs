@@ -94,10 +94,14 @@ namespace WhereAreThem.Model.Persistences {
         }
 
         private void WriteData(IO.BinaryWriter bw, Dictionary<string, string> data) {
-            IEnumerable<string> plugins = data == null ? new string[0] : data.Select(p => p.Key);
-            WriteText(bw, string.Join(stringSeparator.ToString(), plugins));
-            foreach (var p in data) {
-                WriteText(bw, p.Value);
+            if (data == null) {
+                bw.Write(0);
+            }
+            else {
+                WriteText(bw, string.Join(stringSeparator.ToString(), data.Select(p => p.Key)));
+                foreach (var p in data) {
+                    WriteText(bw, p.Value);
+                }
             }
         }
 
