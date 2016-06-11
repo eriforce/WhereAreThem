@@ -121,7 +121,7 @@ namespace WhereAreThem.Model.Persistences {
         }
 
         private string ReadText(IO.BinaryReader br) {
-            int length = br.ReadByte();
+            int length = br.ReadInt32();
             return Encoding.UTF8.GetString(br.ReadBytes(length));
         }
     }
