@@ -6,7 +6,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using PureLib.Common;
-using PureLib.WPF;
+using PureLib.Legacy.WPF;
 using WhereAreThem.Model.Models;
 using WhereAreThem.WinViewer.Model;
 using WatFile = WhereAreThem.Model.Models.File;

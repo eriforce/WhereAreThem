@@ -6,7 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
 using PureLib.Common;
-using PureLib.WPF;
+using PureLib.Legacy.WPF;
 using WhereAreThem.Model;
 
 namespace WhereAreThem.WinViewer {
