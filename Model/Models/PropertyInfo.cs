@@ -16,16 +16,14 @@ namespace WhereAreThem.Model.Models {
         public string TotalSizeString => ToNumber(TotalSize);
         public string TotalSizeFriendlyString => TotalSize.ToFriendlyString();
 
-        public PropertyInfo(Folder parent, string[] selectedItems) {
-            IEnumerable<File> files = (parent.Files == null) ? new File[0] :
-                 parent.Files.Where(i => selectedItems.Contains(i.Name));
-            IEnumerable<Folder> folders = (parent.Folders == null) ? new Folder[0] :
-                 parent.Folders.Where(i => selectedItems.Contains(i.Name));
+        public PropertyInfo(IEnumerable<FileSystemItem> items) {
+            IEnumerable<File> files = items.Where(i => i is File).Cast<File>();
+            IEnumerable<Folder> folders = items.Where(i => i is Folder).Cast<Folder>();
 
             FileCount = folders.Sum(f => GetFileCount(f)) + files.Count();
             FolderCount = folders.Sum(f => GetFolderCount(f));
             TotalSize = files.Sum(f => f.Size) + folders.Sum(f => f.Size);
-            if (selectedItems.Length > 1)
+            if (items.Count() > 1)
                 FolderCount += folders.Count();
         }
 

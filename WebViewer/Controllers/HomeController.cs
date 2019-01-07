@@ -22,8 +22,7 @@ namespace WhereAreThem.WebViewer.Controllers {
         }
 
         public ViewResult Explorer(string machineName, string path, string searchPattern) {
-            List<Folder> stack = null;
-            Folder folder = GetFolder(machineName, path, out stack);
+            Folder folder = GetFolder(machineName, path, out List<Folder> stack);
 
             if (searchPattern.IsNullOrEmpty()) {
                 if (stack != null)
@@ -37,9 +36,13 @@ namespace WhereAreThem.WebViewer.Controllers {
         }
 
         public JsonResult GetProperties(string machineName, string path, string[] selectedItems) {
-            List<Folder> stack = null;
-            Folder parent = GetFolder(machineName, path, out stack);
-            return Json(new PropertyInfo(parent, selectedItems));
+            Folder parent = GetFolder(machineName, path, out List<Folder> stack);
+            IEnumerable<FileSystemItem> items = (parent.Files ?? new List<File>())
+                .Cast<FileSystemItem>()
+                .Concat(parent.Folders ?? new List<Folder>())
+                .Where(i => selectedItems.Contains(i.Name));
+
+            return Json(new PropertyInfo(items));
         }
 
         private Folder GetFolder(string machineName, string path, out List<Folder> stack) {

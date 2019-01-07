@@ -20,9 +20,7 @@ namespace WhereAreThem.Model.Models {
         }
 
         public int CompareTo(FileSystemItem other) {
-            double xValue;
-            double yValue;
-            if (double.TryParse(Name, out xValue) && double.TryParse(other.Name, out yValue))
+            if (double.TryParse(Name, out double xValue) && double.TryParse(other.Name, out double yValue))
                 return xValue.CompareTo(yValue);
             else
                 return Name.CompareTo(other.Name);

@@ -46,7 +46,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public PropertiesWindowViewModel(FileSystemItem item, List<Folder> parentStack) {
             Item = item;
             _parentStack = parentStack;
-            _propertyInfo = new PropertyInfo(parentStack.Last(), new string[] { Item.Name });
+            _propertyInfo = new PropertyInfo(new FileSystemItem[] { Item });
         }
     }
 }

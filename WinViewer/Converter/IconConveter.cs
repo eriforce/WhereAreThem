@@ -13,12 +13,10 @@ namespace WhereAreThem.WinViewer.Converter {
         private Dictionary<string, ImageSource> _folderIconCache = new Dictionary<string, ImageSource>();
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            ItemType type;
-            if (!Enum.TryParse<ItemType>(value.GetType().Name, out type))
+            if (!Enum.TryParse(value.GetType().Name, out ItemType type))
                 return null;
 
-            IconSize size;
-            if (!Enum.TryParse<IconSize>((string)parameter, out size))
+            if (!Enum.TryParse((string)parameter, out IconSize size))
                 size = IconSize.Small;
 
             if (type == ItemType.File) {
@@ -26,7 +24,7 @@ namespace WhereAreThem.WinViewer.Converter {
                 return icon.ToImageSource();
             }
             else {
-                if ((type == ItemType.DriveModel) && !Enum.TryParse<ItemType>(((DriveModel)value).DriveType.ToString(), out type))
+                if ((type == ItemType.DriveModel) && !Enum.TryParse(((DriveModel)value).DriveType.ToString(), out type))
                     return null;
                 string key = type.ToString() + size.ToString();
                 if (!_folderIconCache.ContainsKey(key))
