@@ -124,7 +124,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             StatusBarText = string.Join(", ", statusTextParts);
                             return true;
                         }));
-                    }, p => { return !SearchPattern.IsNullOrEmpty() && (IncludeFolders || IncludeFiles); });
+                    }, p => !SearchPattern.IsNullOrEmpty() && (IncludeFolders || IncludeFiles));
                 return _searchCommand;
             }
         }
@@ -138,15 +138,9 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public ICommand LocateOnDiskCommand {
             get {
                 if (_locateOnDiskCommand == null)
-                    _locateOnDiskCommand = new RelayCommand(p => {
-                        string path = IO.Path.Combine(SelectedSearchResult.ItemPath, SelectedSearchResult.Item.Name);
-                        bool itemExists = ((SelectedSearchResult.Item is File) && IO.File.Exists(path))
-                            || ((SelectedSearchResult.Item is Folder) && IO.Directory.Exists(path));
-                        if (itemExists)
-                            Process.Start("explorer.exe", @"/select,{0}".FormatWith(path));
-                        else
-                            MessageBox.Show(View, "{0} doesn't exist on your disk.".FormatWith(path));
-                    }, p => { return RootStack.GetComputer().NameEquals(Environment.MachineName); });
+                    _locateOnDiskCommand = new RelayCommand(
+                        p => SelectedSearchResult.Item.LocateOnDisk(SelectedSearchResult.Stack, View),
+                        p => RootStack.GetComputer().NameEquals(Environment.MachineName));
                 return _locateOnDiskCommand;
             }
         }

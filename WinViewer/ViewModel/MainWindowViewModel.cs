@@ -32,6 +32,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         private ICommand _goBackCommand;
         private ICommand _goForwardCommand;
         private ICommand _goUpCommand;
+        private ICommand _locateOnDiskCommand;
         private Computer _localComputer {
             get { return Computers.SingleOrDefault(c => c.NameEquals(Environment.MachineName)); }
         }
@@ -131,22 +132,19 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get {
                 if (_openPropertiesCommand == null)
                     _openPropertiesCommand = new RelayCommand(p => {
-                        if (OpeningProperties != null) {
-                            List<Folder> parentStack = SelectedFolderStack;
-                            if (p == SelectedFolder)
-                                parentStack = SelectedFolderStack.GetParentStack().ToList();
-                            OpeningProperties(this, new ItemEventArgs((FileSystemItem)p, parentStack));
-                        }
+                        if (OpeningProperties != null)
+                            OpeningProperties(this, new ItemEventArgs((FileSystemItem)p, GetSelectedItemStack(p)));
                     }, p => !(p is Computer));
                 return _openPropertiesCommand;
             }
         }
+
         public ICommand OpenDescriptionCommand {
             get {
                 if (_openDescriptionCommand == null)
-                    _openDescriptionCommand = new RelayCommand(p => {
-                        OpeningDescription(this, new EventArgs<WatFile>((WatFile)p));
-                    }, p => (p is WatFile) && ((WatFile)p).Data != null);
+                    _openDescriptionCommand = new RelayCommand(
+                        p => OpeningDescription(this, new EventArgs<WatFile>((WatFile)p)),
+                        p => (p is WatFile) && ((WatFile)p).Data != null);
                 return _openDescriptionCommand;
             }
         }
@@ -181,6 +179,15 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             SelectedFolderStack.GetParentStack().ToList()));
                     }, p => (SelectedFolderStack != null) && !(SelectedFolder is Computer));
                 return _goUpCommand;
+            }
+        }
+        public ICommand LocateOnDiskCommand {
+            get {
+                if (_locateOnDiskCommand == null)
+                    _locateOnDiskCommand = new RelayCommand(
+                        p => ((FileSystemItem)p).LocateOnDisk(GetSelectedItemStack(p), View),
+                        p => SelectedFolderStack.GetComputer().NameEquals(Environment.MachineName));
+                return _locateOnDiskCommand;
             }
         }
 
@@ -308,6 +315,13 @@ namespace WhereAreThem.WinViewer.ViewModel {
             if (SelectedFolder.Files != null)
                 statusTextParts.Add("{0} file(s)".FormatWith(SelectedFolder.Files.Count));
             StatusBarText = string.Join(", ", statusTextParts);
+        }
+
+        private List<Folder> GetSelectedItemStack(object p) {
+            List<Folder> parentStack = SelectedFolderStack;
+            if (p == SelectedFolder)
+                parentStack = SelectedFolderStack.GetParentStack().ToList();
+            return parentStack;
         }
 
         private void OnLocatingItem(ItemEventArgs e) {

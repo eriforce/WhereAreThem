@@ -6,6 +6,8 @@
         Title="WhereAreThem WinViewer" Height="400" Width="600" WindowState="Maximized" Icon="/WhereAreThem.WinViewer;component/Resources/WhereIsIt.ico">
     <Window.Resources>
         <ContextMenu x:Key="watMenu">
+            <MenuItem Header="Locate on disk" CommandParameter="{Binding}"
+                      Command="{Binding VM.LocateOnDiskCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
             <MenuItem Header="Copy" CommandParameter="{Binding}"
                       Command="{Binding VM.CopyCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
             <MenuItem Header="Scan" CommandParameter="{Binding}"
