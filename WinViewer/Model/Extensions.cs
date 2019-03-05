@@ -7,7 +7,7 @@ using WhereAreThem.Model.Models;
 using IO = System.IO;
 
 namespace WhereAreThem.WinViewer.Model {
-    public static class Helper {
+    public static class Extensions {
         public static Computer GetComputer(this List<Folder> stack) {
             return (Computer)stack[0];
         }
