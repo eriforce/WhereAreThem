@@ -153,7 +153,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         }
 
         public event ItemEventHandler LocatingItem;
-        public event ItemEventHandler OpeningProperties;
+        public event ItemsEventHandler OpeningProperties;
 
         public void OnLocatingItem() {
             if (LocatingItem != null)
@@ -163,7 +163,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
 
         public void OnOpeningProperties() {
             if (OpeningProperties != null)
-                OpeningProperties(this, new ItemEventArgs(SelectedSearchResult.Item, SelectedSearchResult.Stack));
+                OpeningProperties(this, new ItemsEventArgs(new[] { SelectedSearchResult.Item }, SelectedSearchResult.Stack));
         }
     }
 }

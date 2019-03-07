@@ -75,6 +75,7 @@
     </ApplicationDefinition>
     <Compile Include="Converter\IconConveter.cs" />
     <Compile Include="Converter\SizeConveter.cs" />
+    <Compile Include="Event\ItemsEventArgs.cs" />
     <Compile Include="Event\ItemEventArgs.cs" />
     <Compile Include="Model\Computer.cs" />
     <Compile Include="Model\DriveModel.cs" />
@@ -84,6 +85,9 @@
     <Compile Include="Model\ItemType.cs" />
     <Compile Include="Model\RealtimeWatcher.cs" />
     <Compile Include="NativeMethods.cs" />
+    <Compile Include="ValueConverter\IListItemConverter.cs" />
+    <Compile Include="ValueConverter\MultiSelectorBehaviours.cs" />
+    <Compile Include="ValueConverter\TwoListSynchronizer.cs" />
     <Compile Include="ViewModel\DescriptionWindowViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\PropertiesWindowViewModel.cs" />

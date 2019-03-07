@@ -7,6 +7,8 @@ using PureLib.Common;
 
 namespace WhereAreThem.Model.Models {
     public class PropertyInfo {
+        public List<File> Files { get; private set; }
+        public List<Folder> Folders { get; private set; }
         public int FolderCount { get; private set; }
         public int FileCount { get; private set; }
         public long TotalSize { get; private set; }
@@ -17,14 +19,14 @@ namespace WhereAreThem.Model.Models {
         public string TotalSizeFriendlyString => TotalSize.ToFriendlyString();
 
         public PropertyInfo(IEnumerable<FileSystemItem> items) {
-            IEnumerable<File> files = items.Where(i => i is File).Cast<File>();
-            IEnumerable<Folder> folders = items.Where(i => i is Folder).Cast<Folder>();
+            Files = items.Where(i => i is File).Cast<File>().ToList();
+            Folders = items.Where(i => i is Folder).Cast<Folder>().ToList();
 
-            FileCount = folders.Sum(f => GetFileCount(f)) + files.Count();
-            FolderCount = folders.Sum(f => GetFolderCount(f));
-            TotalSize = files.Sum(f => f.Size) + folders.Sum(f => f.Size);
+            FileCount = Folders.Sum(f => GetFileCount(f)) + Files.Count();
+            FolderCount = Folders.Sum(f => GetFolderCount(f));
+            TotalSize = Files.Sum(f => f.Size) + Folders.Sum(f => f.Size);
             if (items.Count() > 1)
-                FolderCount += folders.Count();
+                FolderCount += Folders.Count();
         }
 
         private int GetFileCount(Folder folder) {

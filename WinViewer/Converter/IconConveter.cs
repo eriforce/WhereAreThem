@@ -13,6 +13,9 @@ namespace WhereAreThem.WinViewer.Converter {
         private Dictionary<string, ImageSource> _folderIconCache = new Dictionary<string, ImageSource>();
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+            if (value == null)
+                return null;
+
             if (!Enum.TryParse(value.GetType().Name, out ItemType type))
                 return null;
 

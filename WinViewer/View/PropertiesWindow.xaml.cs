@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,10 +20,10 @@ namespace WhereAreThem.WinViewer.View {
     public partial class PropertiesWindow : Window {
         public PropertiesWindowViewModel VM { get; private set; }
 
-        public PropertiesWindow(FileSystemItem item, List<Folder> parentStack) {
+        public PropertiesWindow(IEnumerable<FileSystemItem> items, List<Folder> parentStack) {
             InitializeComponent();
 
-            VM = new PropertiesWindowViewModel(item, parentStack);
+            VM = new PropertiesWindowViewModel(items, parentStack);
             VM.View = this;
             DataContext = VM;
         }

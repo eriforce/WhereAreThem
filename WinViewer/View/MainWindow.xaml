@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:p="clr-namespace:PureLib.Legacy.WPF.BusyControl;assembly=PureLib.Legacy"
         xmlns:m="clr-namespace:WhereAreThem.Model.Models;assembly=WhereAreThem.Model"
+        xmlns:vc="clr-namespace:WhereAreThem.WinViewer.ValueConverter"
         Title="WhereAreThem WinViewer" Height="400" Width="600" WindowState="Maximized" Icon="/WhereAreThem.WinViewer;component/Resources/WhereIsIt.ico">
     <Window.Resources>
         <ContextMenu x:Key="watMenu">
@@ -80,9 +81,9 @@
                 <TextBox Text="{Binding Location}" Grid.Column="1" Margin="0" IsReadOnly="True" VerticalContentAlignment="Center" />
             </Grid>
 
-            <DataGrid ItemsSource="{Binding SelectedFolder.Items}" SelectedItem="{Binding SelectedItem}" Grid.Column="1" Grid.Row="1" Margin="0,4,0,22"
+            <DataGrid ItemsSource="{Binding SelectedFolder.Items}" vc:MultiSelectorBehaviours.SynchronizedSelectedItems="{Binding SelectedItems}" Grid.Column="1" Grid.Row="1" Margin="0,4,0,22"
                   MouseDoubleClick="DataGridMouseDoubleClick" SelectionChanged="DataGridSelectionChanged" CopyingRowClipboardContent="DataGridCopyingRowClipboardContent"
-                  IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" GridLinesVisibility="None">
+                  IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" GridLinesVisibility="None">
                 <DataGrid.Resources>
                     <Style TargetType="{x:Type DataGridCell}">
                         <Setter Property="ContextMenu" Value="{StaticResource watMenu}" />

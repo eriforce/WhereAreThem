@@ -24,7 +24,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         private string _statusBarText;
         private string _location;
         private Folder _selectedFolder;
-        private FileSystemItem _selectedItem;
+        private ObservableCollection<FileSystemItem> _selectedItems;
         private ICommand _scanCommand;
         private ICommand _copyCommand;
         private ICommand _openPropertiesCommand;
@@ -69,11 +69,11 @@ namespace WhereAreThem.WinViewer.ViewModel {
                     Navigation.AddBackEntry(new ItemEventArgs(null, SelectedFolderStack));
             }
         }
-        public FileSystemItem SelectedItem {
-            get { return _selectedItem; }
+        public ObservableCollection<FileSystemItem> SelectedItems {
+            get { return _selectedItems; }
             set {
-                _selectedItem = value;
-                RaiseChange(() => SelectedItem);
+                _selectedItems = value;
+                RaiseChange(() => SelectedItems);
             }
         }
         public ICommand ScanCommand {
@@ -81,11 +81,8 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 if (_scanCommand == null) {
                     _scanCommand = new RelayCommand(async p => {
                         Folder pFolder = (Folder)p;
-                        List<Folder> folders = SelectedFolderStack;
-                        if (pFolder != SelectedFolder) {
-                            folders = new List<Folder>(SelectedFolderStack);
-                            folders.Add(pFolder);
-                        }
+                        List<Folder> folders = IsTreeItemSelected(pFolder) ?
+                            SelectedFolderStack : SelectedFolderStack.Concat(new[] { pFolder }).ToList();
 
                         string path = Path.Combine(folders.Select(f => f.Name).ToArray());
                         DriveModel drive = folders.GetDrive();
@@ -132,8 +129,11 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get {
                 if (_openPropertiesCommand == null)
                     _openPropertiesCommand = new RelayCommand(p => {
-                        if (OpeningProperties != null)
-                            OpeningProperties(this, new ItemEventArgs((FileSystemItem)p, GetSelectedItemStack(p)));
+                        if (OpeningProperties != null) {
+                            IEnumerable<FileSystemItem> selectedItems = IsTreeItemSelected(p) ?
+                                new[] { (FileSystemItem)p } : SelectedItems.AsEnumerable();
+                            OpeningProperties(this, new ItemsEventArgs(selectedItems, GetSelectedItemStack(p)));
+                        }
                     }, p => !(p is Computer));
                 return _openPropertiesCommand;
             }
@@ -192,10 +192,11 @@ namespace WhereAreThem.WinViewer.ViewModel {
         }
 
         public event ItemEventHandler LocatingItem;
-        public event ItemEventHandler OpeningProperties;
+        public event ItemsEventHandler OpeningProperties;
         public event EventHandler<EventArgs<WatFile>> OpeningDescription;
 
         public MainWindowViewModel() {
+            SelectedItems = new ObservableCollection<FileSystemItem>();
             Navigation = new ExplorerNavigationService();
             if (bool.Parse(ConfigurationManager.AppSettings["enableWatcher"]))
                 Watcher = new RealtimeWatcher();
@@ -317,11 +318,12 @@ namespace WhereAreThem.WinViewer.ViewModel {
             StatusBarText = string.Join(", ", statusTextParts);
         }
 
+        private bool IsTreeItemSelected(object p) {
+            return p == SelectedFolder;
+        }
+
         private List<Folder> GetSelectedItemStack(object p) {
-            List<Folder> parentStack = SelectedFolderStack;
-            if (p == SelectedFolder)
-                parentStack = SelectedFolderStack.GetParentStack().ToList();
-            return parentStack;
+            return IsTreeItemSelected(p) ? SelectedFolderStack.GetParentStack().ToList() : SelectedFolderStack;
         }
 
         private void OnLocatingItem(ItemEventArgs e) {

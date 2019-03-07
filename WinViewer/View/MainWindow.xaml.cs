@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -67,11 +68,12 @@ namespace WhereAreThem.WinViewer.View {
                 treeViewItem = (TreeViewItem)treeViewItem.ItemContainerGenerator.ContainerFromItem(e.Stack[i]);
             }
             treeViewItem.IsSelected = true;
-            VM.SelectedItem = e.Item;
+            VM.SelectedItems.Clear();
+            VM.SelectedItems.Add(e.Item);
         }
 
-        private void OnOpeningProperties(object sender, ItemEventArgs e) {
-            PropertiesWindow window = new PropertiesWindow(e.Item, e.Stack);
+        private void OnOpeningProperties(object sender, ItemsEventArgs e) {
+            PropertiesWindow window = new PropertiesWindow(e.Items, e.Stack);
             window.Owner = this;
             window.Show();
         }
@@ -150,8 +152,8 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void DataGridSelectionChanged(object sender, SelectionChangedEventArgs e) {
-            if (VM.SelectedItem != null)
-                ((DataGrid)sender).ScrollIntoView(VM.SelectedItem);
+            if (VM.SelectedItems != null && VM.SelectedItems.Any())
+                ((DataGrid)sender).ScrollIntoView(VM.SelectedItems.First());
         }
 
         private void DataGridCopyingRowClipboardContent(object sender, DataGridRowClipboardEventArgs e) {
