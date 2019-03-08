@@ -68,8 +68,7 @@ namespace WhereAreThem.WinViewer.View {
                 treeViewItem = (TreeViewItem)treeViewItem.ItemContainerGenerator.ContainerFromItem(e.Stack[i]);
             }
             treeViewItem.IsSelected = true;
-            VM.SelectedItems.Clear();
-            VM.SelectedItems.Add(e.Item);
+            VM.SelectedItems = new ObservableCollection<FileSystemItem>(new[] { e.Item });
         }
 
         private void OnOpeningProperties(object sender, ItemsEventArgs e) {

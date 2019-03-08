@@ -86,7 +86,7 @@ namespace WhereAreThem.WinViewer.ValueConverter {
                 IList list = GetSynchronizedSelectedItems(_multiSelector);
 
                 if (list != null) {
-                    _synchronizer = new TwoListSynchronizer(GetSelectedItemsCollection(_multiSelector), list);
+                    _synchronizer = new TwoListSynchronizer(list, GetSelectedItemsCollection(_multiSelector));
                     _synchronizer.StartSynchronizing();
                 }
             }
