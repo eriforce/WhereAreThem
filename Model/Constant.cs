@@ -12,7 +12,7 @@ namespace WhereAreThem.Model {
             { PersistenceType.Bin.ToString(), typeof(BinaryPersistence) },
             { PersistenceType.Txt.ToString(), typeof(TextPersistence) },
             { PersistenceType.Json.ToString(), typeof(JsonPersistence) },
-            { PersistenceType.Xml.ToString(), typeof(XmlPersistence) },
+            { PersistenceType.Jsv.ToString(), typeof(JsvPersistence) },
             { PersistenceType.JsonNet.ToString(), typeof(JsonNetPersistence) },
         };
         private static readonly bool enableCompression = bool.Parse(ConfigurationManager.AppSettings["enableCompression"]);

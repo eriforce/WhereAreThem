@@ -8,16 +8,16 @@ using WhereAreThem.Model.Models;
 using ServiceStack.Text;
 
 namespace WhereAreThem.Model.Persistences {
-    public class JsonPersistence : PersistenceBase {
+    public class JsvPersistence : PersistenceBase {
         public override void Save(Folder folder, Stream stream) {
             using (StreamWriter sw = new StreamWriter(stream)) {
-                JsonSerializer.SerializeToWriter(folder, sw);
+                TypeSerializer.SerializeToWriter(folder, sw);
             }
         }
 
         public override Folder Load(Stream stream) {
             using (StreamReader sr = new StreamReader(stream)) {
-                return JsonSerializer.DeserializeFromReader<Folder>(sr);
+                return TypeSerializer.DeserializeFromReader<Folder>(sr);
             }
         }
     }

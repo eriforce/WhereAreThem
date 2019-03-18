@@ -10,6 +10,6 @@ namespace WhereAreThem.Model {
         Txt,
         JsonNet,
         Json,
-        Xml,
+        Jsv,
     }
 }
