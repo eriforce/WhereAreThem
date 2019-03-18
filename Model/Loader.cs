@@ -16,6 +16,8 @@ namespace WhereAreThem.Model {
 
         public Loader(string outputPath, IPersistence persistence)
             : base(outputPath, persistence) {
+            if (!Directory.Exists(outputPath))
+                Directory.CreateDirectory(outputPath);
         }
 
         public List<string> MachineNames {
