@@ -11,8 +11,6 @@ namespace WhereAreThem.Model {
         private static readonly Dictionary<string, Type> persistenceTypes = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase) {
             { PersistenceType.Bin.ToString(), typeof(BinaryPersistence) },
             { PersistenceType.Txt.ToString(), typeof(TextPersistence) },
-            { PersistenceType.Json.ToString(), typeof(JsonPersistence) },
-            { PersistenceType.Jsv.ToString(), typeof(JsvPersistence) },
             { PersistenceType.JsonNet.ToString(), typeof(JsonNetPersistence) },
         };
         private static readonly bool enableCompression = bool.Parse(ConfigurationManager.AppSettings["enableCompression"]);

@@ -9,7 +9,5 @@ namespace WhereAreThem.Model {
         Bin,
         Txt,
         JsonNet,
-        Json,
-        Jsv,
     }
 }
