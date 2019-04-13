@@ -38,6 +38,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         }
 
         public ObservableCollection<Computer> Computers { get; private set; }
+        public ObservableCollection<FileSystemItem> SelectedFolderItems { get; private set; }
         public ExplorerNavigationService Navigation { get; private set; }
         public RealtimeWatcher Watcher { get; private set; }
         public List<Folder> SelectedFolderStack { get; set; }
@@ -61,6 +62,9 @@ namespace WhereAreThem.WinViewer.ViewModel {
             set {
                 _selectedFolder = value;
                 RaiseChange(() => SelectedFolder);
+
+                SelectedFolderItems.Clear();
+                SelectedFolderItems.AddRange(SelectedFolder.Items);
 
                 SetStatusBarOnSelectedFolderChanged();
                 Location = Path.Combine(SelectedFolderStack.Select(f => f.Name).ToArray());
@@ -196,6 +200,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public event EventHandler<EventArgs<WatFile>> OpeningDescription;
 
         public MainWindowViewModel() {
+            SelectedFolderItems = new ObservableCollection<FileSystemItem>();
             SelectedItems = new ObservableCollection<FileSystemItem>();
             Navigation = new ExplorerNavigationService();
             if (bool.Parse(ConfigurationManager.AppSettings["enableWatcher"]))

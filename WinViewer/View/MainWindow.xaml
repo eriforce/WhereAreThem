@@ -81,7 +81,7 @@
                 <TextBox Text="{Binding Location}" Grid.Column="1" Margin="0" IsReadOnly="True" VerticalContentAlignment="Center" />
             </Grid>
 
-            <DataGrid ItemsSource="{Binding SelectedFolder.Items}" vc:MultiSelectorBehaviours.SynchronizedSelectedItems="{Binding SelectedItems}" Grid.Column="1" Grid.Row="1" Margin="0,4,0,22"
+            <DataGrid ItemsSource="{Binding SelectedFolderItems}" vc:MultiSelectorBehaviours.SynchronizedSelectedItems="{Binding SelectedItems}" Grid.Column="1" Grid.Row="1" Margin="0,4,0,22"
                   MouseDoubleClick="DataGridMouseDoubleClick" SelectionChanged="DataGridSelectionChanged" CopyingRowClipboardContent="DataGridCopyingRowClipboardContent"
                   IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" GridLinesVisibility="None">
                 <DataGrid.Resources>
