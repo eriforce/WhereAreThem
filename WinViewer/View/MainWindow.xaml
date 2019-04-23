@@ -82,7 +82,7 @@
             </Grid>
 
             <DataGrid ItemsSource="{Binding SelectedFolderItems}" vc:MultiSelectorBehaviours.SynchronizedSelectedItems="{Binding SelectedItems}" Grid.Column="1" Grid.Row="1" Margin="0,4,0,22"
-                  MouseDoubleClick="DataGridMouseDoubleClick" SelectionChanged="DataGridSelectionChanged" CopyingRowClipboardContent="DataGridCopyingRowClipboardContent"
+                  MouseDoubleClick="DataGridMouseDoubleClick" SelectionChanged="DataGridSelectionChanged" CopyingRowClipboardContent="DataGridCopyingRowClipboardContent" Sorting="DataGridSorting"
                   IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" GridLinesVisibility="None">
                 <DataGrid.Resources>
                     <Style TargetType="{x:Type DataGridCell}">

@@ -162,6 +162,25 @@ namespace WhereAreThem.WinViewer.View {
             e.ClipboardRowContent.Add(content);
         }
 
+        private void DataGridSorting(object sender, DataGridSortingEventArgs e) {
+            if (e.Column.SortMemberPath.IsNullOrEmpty())
+                return;
+
+            DataGrid dataGrid = (DataGrid)sender;
+            if (!e.Column.SortDirection.HasValue || e.Column.SortDirection.Value != ListSortDirection.Descending)
+                return;
+
+            SortDescription sd = dataGrid.Items.SortDescriptions.FirstOrDefault(d => d.PropertyName == e.Column.SortMemberPath);
+            if (sd == null)
+                return;
+
+            e.Column.SortDirection = null;
+            dataGrid.Items.SortDescriptions.Remove(sd);
+            dataGrid.Items.Refresh();
+
+            e.Handled = true;
+        }
+
         private void LoadIfDrive(object item) {
             if (item is DriveModel) {
                 DriveModel drive = (DriveModel)item;
