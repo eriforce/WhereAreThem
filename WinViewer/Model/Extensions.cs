@@ -24,6 +24,19 @@ namespace WhereAreThem.WinViewer.Model {
             return stack.Take(stack.Count - 1);
         }
 
+        public static bool Exists(this List<Folder> stack) {
+            if (!stack.Any())
+                return false;
+            if (stack.Count == 1)
+                return true;
+
+            for (int i = stack.Count - 1; i > 0; i--) {
+                if (!stack[i - 1].Folders.Contains(stack[i]))
+                    return false;
+            }
+            return true;
+        }
+
         public static void LocateOnDisk(this FileSystemItem item, List<Folder> stack, Window owner) {
             string path = IO.Path.Combine(stack.Select(f => f.Name).Concat(new[] { item.Name }).ToArray());
             bool itemExists = ((item is File) && IO.File.Exists(path))

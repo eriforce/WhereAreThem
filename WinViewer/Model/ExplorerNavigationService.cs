@@ -27,7 +27,7 @@ namespace WhereAreThem.WinViewer.Model {
             _currentEntryIndex = -1;
         }
 
-        public void AddBackEntry(ItemEventArgs entry) {
+        public void AddEntry(ItemEventArgs entry) {
             if (CanGoForward)
                 _historyEntries.RemoveRange(_currentEntryIndex + 1, _historyEntries.Count - 1 - _currentEntryIndex);
 
@@ -37,6 +37,14 @@ namespace WhereAreThem.WinViewer.Model {
                 _historyEntries.RemoveAt(0);
             else
                 _currentEntryIndex++;
+        }
+
+        public void RemoveCurrentEntry() {
+            if (CurrentEntry == null)
+                return;
+
+            _historyEntries.RemoveAt(_currentEntryIndex);
+            GoBack();
         }
 
         public void GoBack() {
