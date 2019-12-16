@@ -99,7 +99,8 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             Folder parent = folders.GetParent();
                             parent.Folders.Remove(pFolder);
                             parent.RaiseItemChanges();
-                            RefreshSelectedFolderItems();
+                            if (!isFromTree)
+                                RefreshSelectedFolderItems();
                             drive.IsChanged = true;
                         }
                     }, p => {
