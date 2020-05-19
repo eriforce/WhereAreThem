@@ -8,6 +8,7 @@ using System.Windows.Threading;
 using PureLib.Common;
 using PureLib.Legacy.WPF;
 using WhereAreThem.Model;
+using WhereAreThem.Model.Persistences;
 
 namespace WhereAreThem.WinViewer {
     /// <summary>
@@ -20,14 +21,14 @@ namespace WhereAreThem.WinViewer {
         public static Loader Loader {
             get {
                 if (_loader == null)
-                    _loader = new Loader(Constant.Path, Constant.Persistence);
+                    _loader = new Loader(Constant.WatRootPath, PersistenceFactory.Persistence);
                 return _loader;
             }
         }
         public static Scanner Scanner {
             get {
                 if (_scanner == null)
-                    _scanner = new Scanner(Constant.Path, Constant.Persistence);
+                    _scanner = new Scanner(Constant.WatRootPath, PersistenceFactory.Persistence);
                 return _scanner;
             }
         }

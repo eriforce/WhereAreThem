@@ -67,6 +67,7 @@
     <Compile Include="Persistences\IStreamPersistence.cs" />
     <Compile Include="Persistences\JsonNetPersistence.cs" />
     <Compile Include="Persistences\PersistenceBase.cs" />
+    <Compile Include="Persistences\PersistenceFactory.cs" />
     <Compile Include="Persistences\TextPersistence.cs" />
     <Compile Include="PersistenceType.cs" />
     <Compile Include="Plugins\IPlugin.cs" />

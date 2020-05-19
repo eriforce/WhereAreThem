@@ -7,11 +7,11 @@ using System.Web;
 using PureLib.Common;
 using WhereAreThem.Model;
 using WhereAreThem.Model.Models;
+using WhereAreThem.Model.Persistences;
 
 namespace WhereAreThem.WebViewer.Models {
     public static class List {
-        private static Loader _loader = new Loader(
-            ConfigurationManager.AppSettings["path"].MakeFullPath(), Constant.Persistence);
+        private static Loader _loader = new Loader(Constant.WatRootPath, PersistenceFactory.Persistence);
 
         public static List<string> MachineNames {
             get {
