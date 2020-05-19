@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using WhereAreThem.Model.Models;
 using WhereAreThem.Model.Persistences;
+using Xunit;
 
 namespace Model.Tests {
-    [TestClass]
     public class PersistenceTest {
-        [TestMethod]
+        [Fact]
         public void TestJsonNetPersistence() {
             Folder folder = new Folder() { Name = "dir1", CreatedDateUtc = DateTime.UtcNow };
             JsonNetPersistence p = new JsonNetPersistence();
@@ -19,7 +22,7 @@ namespace Model.Tests {
                 using (StreamReader sr = new StreamReader(stream)) {
                     string json = sr.ReadToEnd();
 
-                    Assert.IsNotNull(json);
+                    Assert.NotNull(json);
                 }
             }
         }
