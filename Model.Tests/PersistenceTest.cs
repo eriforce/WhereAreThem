@@ -11,9 +11,9 @@ using Xunit;
 namespace Model.Tests {
     public class PersistenceTest {
         [Fact]
-        public void TestJsonNetPersistence() {
+        public void TestBinPersistence() {
             Folder folder = new Folder() { Name = "dir1", CreatedDateUtc = DateTime.UtcNow };
-            JsonNetPersistence p = new JsonNetPersistence();
+            BinaryProvider p = new BinaryProvider();
             using (MemoryStream stream = new MemoryStream()) {
                 p.Save(folder, stream);
 

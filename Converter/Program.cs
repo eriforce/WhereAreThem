@@ -11,8 +11,8 @@ using IO = System.IO;
 namespace WhereAreThem.Converter {
     class Program {
         static void Main(string[] args) {
-            IPersistence source = new CompressedPersistence<BinaryPersistence>();
-            IPersistence target = new CompressedPersistence<JsonNetPersistence>();
+            IPersistence source = new CompressedPersistence<BinaryProvider>();
+            IPersistence target = new CompressedPersistence<BinaryProvider>();
 
             string[] lists = IO.Directory.GetFiles(ConfigurationManager.AppSettings["outputPath"],
                 "*.*.wat", IO.SearchOption.AllDirectories);

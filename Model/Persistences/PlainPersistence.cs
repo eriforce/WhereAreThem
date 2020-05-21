@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using WhereAreThem.Model.Models;
 
 namespace WhereAreThem.Model.Persistences {
-    public abstract class PersistenceBase : IPersistence, IStreamPersistence {
-        public abstract void Save(Folder folder, Stream stream);
-        public abstract Folder Load(Stream stream);
+    public class PlainPersistence<T> : IPersistence where T : IFormatProvider {
+        private readonly T _streamPersistence = Activator.CreateInstance<T>();
 
-        public virtual void Save(Folder folder, string path) {
+        public void Save(Folder folder, string path) {
             using (FileStream stream = new FileStream(path, FileMode.Create)) {
-                Save(folder, stream);
+                _streamPersistence.Save(folder, stream);
             }
         }
 
-        public virtual Folder Load(string path) {
+        public Folder Load(string path) {
             using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read)) {
-                return Load(stream);
+                return _streamPersistence.Load(stream);
             }
         }
     }

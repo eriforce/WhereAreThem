@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using PureLib.Common;
 using WhereAreThem.Model.Models;
 using IO = System.IO;
 
 namespace WhereAreThem.Model.Persistences {
-    public class BinaryPersistence : PersistenceBase {
+    public class BinaryProvider : IFormatProvider {
         private const char stringSeparator = '\0';
-        private const char fieldSeparator = '\n';
         private const byte folderPrefix = 0;
         private const byte filePrefix = 1;
 
-        public override void Save(Folder folder, IO.Stream stream) {
+        public void Save(Folder folder, IO.Stream stream) {
             IO.BinaryWriter bw = new IO.BinaryWriter(stream);
             Save(folder, 0, bw);
             bw.Flush();
@@ -40,32 +40,44 @@ namespace WhereAreThem.Model.Persistences {
                 }
         }
 
-        public override Folder Load(IO.Stream stream) {
+        public Folder Load(IO.Stream stream) {
             IO.BinaryReader br = new IO.BinaryReader(stream);
-            stream.Seek(2, IO.SeekOrigin.Begin);
+
+            if (stream.CanSeek) {
+                stream.Seek(2, IO.SeekOrigin.Begin);
+            }
+            else {
+                br.ReadByte();
+                br.ReadByte();
+            }
+
             Dictionary<int, Folder> recentFolders = new Dictionary<int, Folder>() {
                 { 0, GetFolder(br) }
             };
-            while (stream.Position < stream.Length) {
-                byte currentLevel = br.ReadByte();
-                byte parent = (byte)(currentLevel - 1);
-                if (br.ReadByte() == folderPrefix) {
-                    Folder f = GetFolder(br);
-                    if (recentFolders[parent].Folders == null)
-                        recentFolders[parent].Folders = new List<Folder>();
-                    recentFolders[parent].Folders.Add(f);
+            try {
+                while (!stream.CanSeek || stream.Position < stream.Length) {
+                    byte currentLevel = br.ReadByte();
+                    byte parent = (byte)(currentLevel - 1);
+                    if (br.ReadByte() == folderPrefix) {
+                        Folder f = GetFolder(br);
+                        if (recentFolders[parent].Folders == null)
+                            recentFolders[parent].Folders = new List<Folder>();
+                        recentFolders[parent].Folders.Add(f);
 
-                    if (recentFolders.ContainsKey(currentLevel))
-                        recentFolders[currentLevel] = f;
-                    else
-                        recentFolders.Add(currentLevel, f);
-                }
-                else {
-                    if (recentFolders[parent].Files == null)
-                        recentFolders[parent].Files = new List<File>();
-                    recentFolders[parent].Files.Add(GetFile(br));
+                        if (recentFolders.ContainsKey(currentLevel))
+                            recentFolders[currentLevel] = f;
+                        else
+                            recentFolders.Add(currentLevel, f);
+                    }
+                    else {
+                        if (recentFolders[parent].Files == null)
+                            recentFolders[parent].Files = new List<File>();
+                        recentFolders[parent].Files.Add(GetFile(br));
+                    }
                 }
             }
+            catch (IO.EndOfStreamException) { }
+
             return recentFolders[0];
         }
 

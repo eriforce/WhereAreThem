@@ -12,9 +12,7 @@ namespace WhereAreThem.Model.Models {
     public class Folder : FileSystemItem, INotifyPropertyChanged {
         private IEnumerable<FileSystemItem> _items;
 
-        [DataMember]
         public List<Folder> Folders { get; set; }
-        [DataMember]
         public List<File> Files { get; set; }
 
         public IEnumerable<FileSystemItem> Items {
