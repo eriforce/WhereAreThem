@@ -1,7 +1,7 @@
 ﻿<Window x:Class="WhereAreThem.WinViewer.View.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:p="clr-namespace:PureLib.Legacy.WPF.BusyControl;assembly=PureLib.Legacy"
+        xmlns:p="clr-namespace:PureLib.WPF.BusyControl;assembly=PureLib.WPF"
         xmlns:m="clr-namespace:WhereAreThem.Model.Models;assembly=WhereAreThem.Model"
         xmlns:vc="clr-namespace:WhereAreThem.WinViewer.ValueConverter"
         Title="WhereAreThem WinViewer" Height="400" Width="600" WindowState="Maximized" Icon="/WhereAreThem.WinViewer;component/Resources/WhereIsIt.ico">

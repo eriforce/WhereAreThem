@@ -170,12 +170,12 @@ namespace WhereAreThem.WinViewer.View {
             if (!e.Column.SortDirection.HasValue || e.Column.SortDirection.Value != ListSortDirection.Descending)
                 return;
 
-            SortDescription sd = dataGrid.Items.SortDescriptions.FirstOrDefault(d => d.PropertyName == e.Column.SortMemberPath);
+            SortDescription? sd = dataGrid.Items.SortDescriptions.FirstOrDefault(d => d.PropertyName == e.Column.SortMemberPath);
             if (sd == null)
                 return;
 
             e.Column.SortDirection = null;
-            dataGrid.Items.SortDescriptions.Remove(sd);
+            dataGrid.Items.SortDescriptions.Remove(sd.Value);
             dataGrid.Items.Refresh();
 
             e.Handled = true;

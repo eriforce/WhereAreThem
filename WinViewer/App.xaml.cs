@@ -6,7 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
 using PureLib.Common;
-using PureLib.Legacy.WPF;
+using PureLib.WPF;
 using WhereAreThem.Model;
 using WhereAreThem.Model.Persistences;
 
