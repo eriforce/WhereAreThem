@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="PureLib" Version="5.*" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.*" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.*" />
   </ItemGroup>
 
 </Project>

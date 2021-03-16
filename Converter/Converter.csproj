@@ -2,13 +2,13 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AssemblyName>WhereAreThem.Model</AssemblyName>
-    <RootNamespace>WhereAreThem.Model</RootNamespace>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>WhereAreThem.Converter</AssemblyName>
+    <RootNamespace>WhereAreThem.Converter</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.*" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.*" />
   </ItemGroup>
 
   <ItemGroup>
