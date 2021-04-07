@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using PureLib.Common;
 using PureLib.WPF;
@@ -15,7 +10,6 @@ using PureLib.WPF.BusyControl;
 using WhereAreThem.Model.Models;
 using WhereAreThem.WinViewer.Event;
 using WhereAreThem.WinViewer.Model;
-using IO = System.IO;
 
 namespace WhereAreThem.WinViewer.ViewModel {
     public class SearchWindowViewModel : BusyViewModelBase {

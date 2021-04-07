@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
 using WhereAreThem.Model.Models;
-using WhereAreThem.WinViewer.Event;
 
 namespace WhereAreThem.WinViewer.Model {
     public class DriveModel : Drive {

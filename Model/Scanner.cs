@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
-using System.Text;
 using PureLib.Common;
 using WhereAreThem.Model.Models;
 using WhereAreThem.Model.Persistences;
 using WhereAreThem.Model.Plugins;
-using IO = System.IO;
 
 namespace WhereAreThem.Model {
     public class Scanner : ListBase {

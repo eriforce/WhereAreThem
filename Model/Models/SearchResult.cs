@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Linq;
 
 namespace WhereAreThem.Model.Models {
     public class SearchResult {

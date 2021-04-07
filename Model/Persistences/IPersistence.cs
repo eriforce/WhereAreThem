@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using WhereAreThem.Model.Models;
+﻿using WhereAreThem.Model.Models;
 
 namespace WhereAreThem.Model.Persistences {
     public interface IPersistence {
