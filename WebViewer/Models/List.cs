@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
-using System.Web;
 using PureLib.Common;
 using WhereAreThem.Model;
 using WhereAreThem.Model.Models;

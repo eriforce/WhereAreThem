@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
 
 namespace WhereAreThem.Model.Models {
     public class File : FileSystemItem {
