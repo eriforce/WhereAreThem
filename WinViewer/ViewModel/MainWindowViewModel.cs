@@ -227,48 +227,51 @@ namespace WhereAreThem.WinViewer.ViewModel {
             InsertLocalDrives();
         }
 
-        public async Task ScanAsync(string[] folders) {
-            if (folders != null)
-                foreach (string path in folders) {
-                    DirectoryInfo root = new DirectoryInfo(path).Root;
-                    Computer computer;
-                    bool isNetworkShare = Drive.IsNetworkPath(path);
-                    if (isNetworkShare) {
-                        string machineName = Drive.GetMachineName(path);
-                        computer = Computers.SingleOrDefault(c => c.NameEquals(machineName));
-                        if (computer == null) {
-                            computer = new Computer() { Name = machineName };
-                            computer.Folders = new List<Folder>();
-                            Computers.Add(computer);
-                        }
-                    }
-                    else
-                        computer = _localComputer;
+        public async Task<bool> ScanAsync(string[] folders) {
+            if (folders == null)
+                return false;
 
-                    bool isDrive = root.FullName.Equals(path, StringComparison.OrdinalIgnoreCase);
-                    DriveModel drive = computer.Drives.SingleOrDefault(f => f.NameEquals(root.Name));
-                    bool isNew = drive == null;
-                    if (isNew) {
-                        string name;
-                        DriveType driveType;
-                        if (isNetworkShare) {
-                            name = Drive.GetDriveLetter(path);
-                            driveType = Drive.NETWORK_SHARE;
-                        }
-                        else {
-                            name = root.Name;
-                            driveType = DriveType.Network;
-                        }
-                        drive = new DriveModel(computer, name, DateTime.UtcNow, driveType);
-                        drive.Folders.Clear();
-                        computer.Folders.Add(drive);
-                        computer.Folders = new List<Folder>(computer.Folders);
-                        computer.RaiseItemChanges();
+            foreach (string path in folders) {
+                DirectoryInfo root = new DirectoryInfo(path).Root;
+                Computer computer;
+                bool isNetworkShare = Drive.IsNetworkPath(path);
+                if (isNetworkShare) {
+                    string machineName = Drive.GetMachineName(path);
+                    computer = Computers.SingleOrDefault(c => c.NameEquals(machineName));
+                    if (computer == null) {
+                        computer = new Computer() { Name = machineName };
+                        computer.Folders = new List<Folder>();
+                        Computers.Add(computer);
                     }
-                    if (!isDrive)
-                        drive.Load();
-                    await ScanAsync(path, isDrive, drive, computer);
                 }
+                else
+                    computer = _localComputer;
+
+                bool isDrive = root.FullName.Equals(path, StringComparison.OrdinalIgnoreCase);
+                DriveModel drive = computer.Drives.SingleOrDefault(f => f.NameEquals(root.Name));
+                bool isNew = drive == null;
+                if (isNew) {
+                    string name;
+                    DriveType driveType;
+                    if (isNetworkShare) {
+                        name = Drive.GetDriveLetter(path);
+                        driveType = Drive.NETWORK_SHARE;
+                    }
+                    else {
+                        name = root.Name;
+                        driveType = DriveType.Network;
+                    }
+                    drive = new DriveModel(computer, name, DateTime.UtcNow, driveType);
+                    drive.Folders.Clear();
+                    computer.Folders.Add(drive);
+                    computer.Folders = new List<Folder>(computer.Folders);
+                    computer.RaiseItemChanges();
+                }
+                if (!isDrive)
+                    drive.Load();
+                await ScanAsync(path, isDrive, drive, computer);
+            }
+            return true;
         }
 
         public void Save() {

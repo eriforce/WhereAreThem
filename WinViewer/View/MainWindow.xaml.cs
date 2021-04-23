@@ -84,10 +84,13 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void OnWindowDrop(object sender, DragEventArgs e) {
-            Dispatcher.InvokeAsync(async () => {
-                if (!VM.IsBusy && e.Data.GetDataPresent(DataFormats.FileDrop))
-                    await VM.ScanAsync(e.Data.GetData(DataFormats.FileDrop, true) as string[]);
-            });
+            if (VM.IsBusy || !e.Data.GetDataPresent(DataFormats.FileDrop)) {
+                e.Handled = false;
+                return;
+            }
+
+            var folders = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+            VM.BusyWith("Scanning...", Task.Run(() => VM.ScanAsync(folders)));
             e.Handled = true;
         }
 
