@@ -3,10 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:WhereAreThem.WinViewer.Converter"
              xmlns:purelib="clr-namespace:PureLib.WPF;assembly=PureLib.WPF"
+             xmlns:converter="clr-namespace:PureLib.WPF.Converter;assembly=PureLib.WPF"
              StartupUri="View\MainWindow.xaml" DispatcherUnhandledException="OnDispatcherUnhandledException">
     <Application.Resources>
         <local:IconConverter x:Key="IconConverter" />
         <local:SizeConverter x:Key="SizeConverter" />
-        <purelib:BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
+        <converter:BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
     </Application.Resources>
 </purelib:SingleInstanceApp>

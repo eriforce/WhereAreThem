@@ -84,7 +84,7 @@ namespace WhereAreThem.WinViewer.View {
             }
 
             var folders = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-            VM.BusyWith("Scanning...", Task.Run(() => VM.ScanAsync(folders)));
+            VM.BusyWith("Scanning...", Task.Run(() => VM.Scan(folders)));
             e.Handled = true;
         }
 
@@ -181,7 +181,7 @@ namespace WhereAreThem.WinViewer.View {
         private void LoadIfDrive(object item) {
             if (item is DriveModel) {
                 DriveModel drive = (DriveModel)item;
-                bool loaded = VM.BusyWith("Loading {0} ...".FormatWith(drive.Name), Task.Run(() => drive.Load()));
+                bool loaded = VM.BusyWith($"Loading {drive.Name} ...", Task.Run(() => drive.Load()));
                 if (!loaded)
                     MessageBox.Show(this, "You need to scan this drive first.");
             }

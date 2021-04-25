@@ -7,6 +7,7 @@ using System.Windows.Input;
 using PureLib.Common;
 using PureLib.WPF;
 using PureLib.WPF.BusyControl;
+using PureLib.WPF.Command;
 using WhereAreThem.Model.Models;
 using WhereAreThem.WinViewer.Event;
 using WhereAreThem.WinViewer.Model;
@@ -104,15 +105,15 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get {
                 if (_searchCommand == null)
                     _searchCommand = new RelayCommand(p => {
-                        BusyWith("Searching {0} ...".FormatWith(Location), Task.Run(() => {
+                        BusyWith($"Searching {Location} ...", Task.Run(() => {
                             Results = new ObservableCollection<SearchResult>(
                                 Root.Search(RootStack.GetParentStack().ToList(), SearchPattern, IncludeFiles, IncludeFolders));
 
                             List<string> statusTextParts = new List<string>();
                             if (Results.Any(r => r.Item is Folder))
-                                statusTextParts.Add("{0} folder(s)".FormatWith(Results.Count(r => r.Item is Folder)));
+                                statusTextParts.Add($"{Results.Count(r => r.Item is Folder)} folder(s)");
                             if (Results.Any(r => r.Item is File)) {
-                                statusTextParts.Add("{0} file(s)".FormatWith(Results.Count(r => r.Item is File)));
+                                statusTextParts.Add($"{Results.Count(r => r.Item is File)} file(s)");
                                 statusTextParts.Add(Results.Sum(r => r.Item.Size).ToFriendlyString());
                             }
                             StatusBarText = string.Join(", ", statusTextParts);

@@ -11,6 +11,7 @@ using System.Windows.Input;
 using PureLib.Common;
 using PureLib.WPF;
 using PureLib.WPF.BusyControl;
+using PureLib.WPF.Command;
 using WhereAreThem.Model.Models;
 using WhereAreThem.WinViewer.Event;
 using WhereAreThem.WinViewer.Model;
@@ -79,7 +80,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public ICommand ScanCommand {
             get {
                 if (_scanCommand == null) {
-                    _scanCommand = new RelayCommand(async p => {
+                    _scanCommand = new RelayCommand(p => {
                         Folder pFolder = (Folder)p;
                         bool isFromTree = IsTreeItemSelected(pFolder);
                         List<Folder> folders = isFromTree ?
@@ -88,7 +89,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         string path = Path.Combine(folders.Select(f => f.Name).ToArray());
                         DriveModel drive = folders.GetDrive();
                         if (Directory.Exists(path)) {
-                            await ScanAsync(path, p is DriveModel, drive, folders.GetComputer());
+                            Scan(path, p is DriveModel, drive);
                             if (isFromTree)
                                 RefreshSelectedFolderItems();
                         }
@@ -211,10 +212,10 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 Watcher = new RealtimeWatcher();
 
             App.Scanner.Scanning += (s, e) => {
-                StatusBarText = "[Scanning] {0}".FormatWith(e.CurrentDirectory);
+                StatusBarText = $"[Scanning] {e.CurrentDirectory}";
             };
             App.Scanner.Scanned += (s, e) => {
-                StatusBarText = "[Scanned] {0}".FormatWith(e.CurrentDirectory);
+                StatusBarText = $"[Scanned] {e.CurrentDirectory}";
             };
             Computers = new ObservableCollection<Computer>(App.Loader.MachineNames.Select(n => new Computer() { Name = n }));
             foreach (Computer c in Computers) {
@@ -224,7 +225,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             InsertLocalDrives();
         }
 
-        public async Task<bool> ScanAsync(string[] folders) {
+        public bool Scan(string[] folders) {
             if (folders == null)
                 return false;
 
@@ -266,7 +267,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 }
                 if (!isDrive)
                     drive.Load();
-                await ScanAsync(path, isDrive, drive, computer);
+                Scan(path, isDrive, drive);
             }
             return true;
         }
@@ -276,7 +277,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 foreach (Computer computer in Computers) {
                     foreach (DriveModel drive in computer.Drives) {
                         if (drive.IsChanged) {
-                            StatusBarText = "Saving {0} of {1} ...".FormatWith(drive.Name, computer.Name);
+                            StatusBarText = $"Saving {drive.Name} of {computer.Name} ...";
                             App.Scanner.Save(drive);
                             drive.IsChanged = false;
                         }
@@ -303,9 +304,9 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 }
         }
 
-        private async Task ScanAsync(string path, bool scanDrive, DriveModel drive, Computer computer) {
+        private void Scan(string path, bool scanDrive, DriveModel drive) {
             string folderName = scanDrive ? path : Path.GetFileName(path);
-            await BusyWithAsync("Scanning {0} ...".FormatWith(folderName), Task.Run(() => {
+            BusyWith($"Scanning {folderName} ...", Task.Run(() => {
                 if (scanDrive) {
                     Drive d = App.Scanner.Scan(path);
                     drive.Load(d);
@@ -324,9 +325,9 @@ namespace WhereAreThem.WinViewer.ViewModel {
         private void SetStatusBarOnSelectedFolderChanged() {
             List<string> statusTextParts = new List<string> { SelectedFolder.Size.ToFriendlyString() };
             if (SelectedFolder.Folders != null)
-                statusTextParts.Add("{0} folder(s)".FormatWith(SelectedFolder.Folders.Count));
+                statusTextParts.Add($"{SelectedFolder.Folders.Count} folder(s)");
             if (SelectedFolder.Files != null)
-                statusTextParts.Add("{0} file(s)".FormatWith(SelectedFolder.Files.Count));
+                statusTextParts.Add($"{SelectedFolder.Files.Count} file(s)");
             StatusBarText = string.Join(", ", statusTextParts);
         }
 
