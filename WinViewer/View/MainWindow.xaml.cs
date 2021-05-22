@@ -84,7 +84,7 @@ namespace WhereAreThem.WinViewer.View {
             }
 
             var folders = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-            VM.BusyWith("Scanning...", Task.Run(() => VM.ScanAsync(folders)));
+            Task.Run(() => VM.BusyWith("Scanning...", VM.ScanAsync(folders)));
             e.Handled = true;
         }
 
