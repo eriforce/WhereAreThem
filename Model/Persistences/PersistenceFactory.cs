@@ -11,9 +11,9 @@ namespace WhereAreThem.Model.Persistences {
         public static IPersistence Persistence { get; private set; }
 
         static PersistenceFactory() {
-            Type providerType = persistenceTypes[ConfigurationManager.AppSettings["persistenceType"]];
+            Type formaterType = persistenceTypes[ConfigurationManager.AppSettings["format"]];
             bool enableCompression = bool.Parse(ConfigurationManager.AppSettings["enableCompression"]);
-            Type persistenceType = (enableCompression ? typeof(CompressedPersistence<>) : typeof(PlainPersistence<>)).MakeGenericType(providerType);
+            Type persistenceType = (enableCompression ? typeof(CompressedPersistence<>) : typeof(PlainPersistence<>)).MakeGenericType(formaterType);
 
             Persistence = Activator.CreateInstance(persistenceType) as IPersistence;
         }
