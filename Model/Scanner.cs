@@ -96,7 +96,7 @@ namespace WhereAreThem.Model {
             string directory = Path.GetDirectoryName(listPath);
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
-            _persistence.Save(drive, listPath);
+            Persistence.Save(drive, listPath);
             drive.CreatedDateUtc = new FileInfo(listPath).LastWriteTimeUtc;
         }
 
@@ -109,39 +109,37 @@ namespace WhereAreThem.Model {
             folder.CreatedDateUtc = directory.CreationTimeUtc;
 
             try {
+                if (folder.Files == null)
+                    folder.Files = new List<Models.File>();
                 folder.Files = (from fi in directory.EnumerateFiles()
                                 where fi.ShouldScan()
-                                join f in folder.Files ?? new List<Models.File>() on fi.Name equals f.Name into files
+                                join f in folder.Files on fi.Name equals f.Name into files
                                 select GetFile(fi, files.SingleOrDefault())).ToList();
                 folder.Files.Sort();
             }
             catch (UnauthorizedAccessException) { }
             catch (PathTooLongException) { }
             catch (IOException) { }
-            if (folder.Files == null)
-                folder.Files = new List<Models.File>();
 
             try {
+                if (folder.Folders == null)
+                    folder.Folders = new List<Folder>();
                 folder.Folders = (from di in directory.EnumerateDirectories()
                                   where di.ShouldScan()
-                                  join f in folder.Folders ?? new List<Folder>() on di.Name equals f.Name into folders
+                                  join f in folder.Folders on di.Name equals f.Name into folders
                                   select GetFolder(di, folders.SingleOrDefault())).ToList();
                 folder.Folders.Sort();
             }
             catch (UnauthorizedAccessException) { }
             catch (PathTooLongException) { }
             catch (IOException) { }
-            if (folder.Folders == null)
-                folder.Folders = new List<Folder>();
 
             return folder;
         }
 
         private Dictionary<string, string> GetFileDescription(FileInfo fi, Models.File file) {
-            return _pluginManager.GetDescriptions(
-                fi.FullName,
-                (file == null) || (file.ModifiedDateUtc != fi.LastWriteTimeUtc),
-                file?.Data);
+            bool hasFileChanged = (file == null) || (file.ModifiedDateUtc != fi.LastWriteTimeUtc);
+            return _pluginManager.GetDescriptions(fi.FullName, hasFileChanged, file?.Data);
         }
 
         private void OnScanning(string dir) {
@@ -161,7 +159,7 @@ namespace WhereAreThem.Model {
                 _filters = ConfigurationManager.AppSettings["scannerFilters"].ToEnum<FileAttributes>().Aggregate((r, a) => r | a);
             }
             catch {
-                _filters = (FileAttributes)0;
+                _filters = 0;
             }
         }
 

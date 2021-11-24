@@ -5,7 +5,6 @@ using System.Linq;
 
 namespace WhereAreThem.Model.Plugins {
     public class PluginManager {
-        private Dictionary<string, IPlugin> _plugins = new Dictionary<string, IPlugin>(StringComparer.OrdinalIgnoreCase);
 
         public PluginManager() {
             Type pluginType = typeof(IPlugin);
@@ -14,18 +13,15 @@ namespace WhereAreThem.Model.Plugins {
                     .Select(t => Activator.CreateInstance(t))) {
                 if (plugin.Loaded && (plugin.Extensions != null))
                     foreach (string ext in plugin.Extensions) {
-                        _plugins.Add(ext, plugin);
+                        //_plugins.Add(ext, plugin);
                     }
             }
         }
 
-        public Dictionary<string, string> GetDescriptions(string path, bool hasChanged, Dictionary<string, string> descriptions) {
+        public Dictionary<string, string> GetDescriptions(string path, bool hasFileChnaged, Dictionary<string, string> currentDescriptions) {
             string ext = Path.GetExtension(path);
-            if (!_plugins.ContainsKey(ext))
-                return null;
 
-            // TODO: implement plugin invocations
-            throw new NotImplementedException();
+            return null;
         }
     }
 }

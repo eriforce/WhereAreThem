@@ -66,7 +66,7 @@ namespace WhereAreThem.Model.Models {
 
             string regexPattern = pattern.WildcardToRegex();
             if (pattern.Contains("."))
-                regexPattern = "^{0}$".FormatWith(regexPattern);
+                regexPattern = $"^{regexPattern}$";
 
             List<SearchResult> results = new List<SearchResult>();
             Search(results, parentStack, regexPattern, includeFile, includeFolder);

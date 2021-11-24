@@ -230,7 +230,6 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 return false;
 
             foreach (string path in folders) {
-                DirectoryInfo root = new DirectoryInfo(path).Root;
                 Computer computer;
                 bool isNetworkShare = Drive.IsNetworkPath(path);
                 if (isNetworkShare) {
@@ -245,7 +244,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 else
                     computer = _localComputer;
 
-                bool isDrive = root.FullName.Equals(path, StringComparison.OrdinalIgnoreCase);
+                DirectoryInfo root = new DirectoryInfo(path).Root;
                 DriveModel drive = computer.Drives.SingleOrDefault(f => f.NameEquals(root.Name));
                 bool isNew = drive == null;
                 if (isNew) {
@@ -265,8 +264,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                     computer.Folders = new List<Folder>(computer.Folders);
                     computer.RaiseItemChanges();
                 }
-                if (!isDrive)
-                    drive.Load();
+                bool isDrive = root.FullName.Equals(path, StringComparison.OrdinalIgnoreCase);
                 Scan(path, isDrive, drive);
             }
             return true;
@@ -312,6 +310,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                     drive.Load(d);
                 }
                 else {
+                    drive.Load();
                     Folder parent = drive.GetDrive(path);
                     App.Scanner.ScanUpdate(path, drive);
                     drive.HasLoaded = true;

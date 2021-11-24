@@ -11,11 +11,7 @@ namespace WhereAreThem.WebViewer.Models {
     public static class List {
         private static Loader _loader = new Loader(Constant.WatRootPath, PersistenceFactory.Persistence);
 
-        public static List<string> MachineNames {
-            get {
-                return _loader.MachineNames;
-            }
-        }
+        public static SortedSet<string> MachineNames => _loader.MachineNames;
 
         public static Folder GetFolder(string machineName, string path, out List<Folder> stack) {
             stack = null;
