@@ -63,24 +63,26 @@ namespace WhereAreThem.Model {
                     firstFolderIndex = 1;
                     pathParts[0] += Path.DirectorySeparatorChar;
                 }
-                Folder folder = drive;
+                Folder parent = drive;
                 for (int i = firstFolderIndex; i < pathParts.Length; i++) {
-                    if (folder.Folders == null)
-                        folder.Folders = new List<Folder>();
-                    Folder current = folder.Folders.SingleOrDefault(f => f.NameEquals(pathParts[i]));
+                    if (parent.Folders == null)
+                        parent.Folders = new List<Folder>();
+                    Folder current = parent.Folders.SingleOrDefault(f => f.NameEquals(pathParts[i]));
                     if (current == null) {
                         string path = Path.Combine(pathParts.Take(i + 1).ToArray());
                         if (isNetworkShare)
                             path = Drive.NETWORK_COMPUTER_PREFIX + path;
                         current = GetFolder(new DirectoryInfo(path));
-                        folder.Folders.Add(current);
-                        folder.Folders.Sort();
+                        parent.Folders.Add(current);
+                        parent.Folders.Sort();
+                        parent.RaiseItemChanges();
                         return;
                     }
                     else
-                        folder = current;
+                        parent = current;
                 }
-                GetFolder(new DirectoryInfo(pathToUpdate), folder);
+                GetFolder(new DirectoryInfo(pathToUpdate), parent);
+                parent.RaiseItemChanges();
             }
             finally {
                 OnScanned(pathToUpdate);

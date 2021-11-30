@@ -311,10 +311,8 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 }
                 else {
                     drive.Load();
-                    Folder parent = drive.GetDrive(path);
                     App.Scanner.ScanUpdate(path, drive);
                     drive.HasLoaded = true;
-                    parent.RaiseItemChanges();
                 }
                 drive.IsChanged = true;
                 return true;
