@@ -1,29 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
-    <AssemblyName>WhereAreThem.WinViewer</AssemblyName>
-    <RootNamespace>WhereAreThem.WinViewer</RootNamespace>
-    <UseWPF>true</UseWPF>
-    <ApplicationIcon>Resources\WhereIsIt.ico</ApplicationIcon>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<AssemblyName>WhereAreThem.WinViewer</AssemblyName>
+		<RootNamespace>WhereAreThem.WinViewer</RootNamespace>
+		<UseWPF>true</UseWPF>
+		<ApplicationIcon>Resources\WhereIsIt.ico</ApplicationIcon>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Resources\WhereIsIt.ico" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Resources\WhereIsIt.ico" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="PureLib" Version="6.*" />
-    <PackageReference Include="PureLib.WPF" Version="2.*" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="PureLib" Version="6.*" />
+		<PackageReference Include="PureLib.WPF" Version="2.*" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Model\Model.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Model\Model.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Resource Include="Resources\WhereIsIt.ico" />
-  </ItemGroup>
+	<ItemGroup>
+		<Resource Include="Resources\WhereIsIt.ico" />
+	</ItemGroup>
 
 </Project>
