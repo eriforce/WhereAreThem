@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using PureLib.Common;
 
 namespace WhereAreThem.Model.Models {
@@ -33,7 +32,7 @@ namespace WhereAreThem.Model.Models {
 
         public static string GetDriveLetter(string path) {
             if (IsNetworkPath(path)) {
-                string[] parts = path.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+                string[] parts = path.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
                 return parts[1];
             }
             int i = path.IndexOf(Path.VolumeSeparatorChar);
@@ -56,7 +55,7 @@ namespace WhereAreThem.Model.Models {
         }
 
         public static string GetMachineName(string sharePath) {
-            string[] parts = sharePath.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+            string[] parts = sharePath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
             return parts[0];
         }
 

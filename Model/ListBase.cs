@@ -16,15 +16,13 @@ namespace WhereAreThem.Model {
 
             SharedPath = Path.Combine(OutputPath, SharedMachineName);
 
-            if (!Directory.Exists(OutputPath))
-                Directory.CreateDirectory(OutputPath);
-            if (!Directory.Exists(SharedPath))
-                Directory.CreateDirectory(SharedPath);
+            Directory.CreateDirectory(OutputPath);
+            Directory.CreateDirectory(SharedPath);
         }
 
         protected string GetListPath(string machineName, string driveLetter, DriveType driveType) {
             var folderName = IsShared(driveType) ? SharedMachineName : machineName;
-            return Path.Combine(OutputPath, folderName, "{0}.{1}.{2}".FormatWith(driveLetter, driveType, Constant.ListExt));
+            return Path.Combine(OutputPath, folderName, $"{driveLetter}.{driveType}.{Constant.ListExt}");
         }
 
         private bool IsShared(DriveType driveType) {

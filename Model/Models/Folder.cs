@@ -68,7 +68,7 @@ namespace WhereAreThem.Model.Models {
             if (pattern.Contains("."))
                 regexPattern = $"^{regexPattern}$";
 
-            List<SearchResult> results = new List<SearchResult>();
+            List<SearchResult> results = new();
             Search(results, parentStack, regexPattern, includeFile, includeFolder);
             return results;
         }

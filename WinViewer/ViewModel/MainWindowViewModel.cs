@@ -236,7 +236,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                     string machineName = Drive.GetMachineName(path);
                     computer = Computers.SingleOrDefault(c => c.NameEquals(machineName));
                     if (computer == null) {
-                        computer = new Computer() { Name = machineName };
+                        computer = new Computer { Name = machineName };
                         computer.Folders = new List<Folder>();
                         Computers.Add(computer);
                     }

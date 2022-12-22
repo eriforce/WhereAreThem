@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using PureLib.Common;
 using WhereAreThem.Model;
 using WhereAreThem.Model.Models;
@@ -24,7 +23,7 @@ namespace WhereAreThem.WinViewer.Model {
                 return;
 
             Drives.Add(dm.Name, dm);
-            FileSystemWatcher fileWatcher = new FileSystemWatcher(dm.Name);
+            FileSystemWatcher fileWatcher = new(dm.Name);
             fileWatcher.IncludeSubdirectories = true;
             fileWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
             fileWatcher.Created += FileChanged;
@@ -34,7 +33,7 @@ namespace WhereAreThem.WinViewer.Model {
             fileWatcher.EnableRaisingEvents = true;
             _watchers.Add(fileWatcher);
 
-            FileSystemWatcher folderWatcher = new FileSystemWatcher(dm.Name);
+            FileSystemWatcher folderWatcher = new(dm.Name);
             folderWatcher.IncludeSubdirectories = true;
             folderWatcher.NotifyFilter = NotifyFilters.DirectoryName;
             folderWatcher.Created += FolderChanged;
@@ -55,7 +54,7 @@ namespace WhereAreThem.WinViewer.Model {
 
         private void FileChanged(object sender, FileSystemEventArgs e) {
             Log(() => {
-                DirectoryInfo parent = new DirectoryInfo(Path.GetDirectoryName(e.FullPath));
+                DirectoryInfo parent = new(Path.GetDirectoryName(e.FullPath));
                 if (IsItemInFilteredFolder(parent))
                     return;
 
@@ -66,7 +65,7 @@ namespace WhereAreThem.WinViewer.Model {
                         case WatcherChangeTypes.Changed:
                             // There may be folder changed events coming in with LastWrite filter
                             IfParentFolderExists(parent, drive, folder => {
-                                FileInfo fi = new FileInfo(e.FullPath);
+                                FileInfo fi = new(e.FullPath);
                                 if (fi.Exists) {
                                     WatFile file = folder.Files.SingleOrDefault(f => f.NameEquals(fi.Name));
                                     if (file != null)
@@ -90,7 +89,7 @@ namespace WhereAreThem.WinViewer.Model {
                             IfParentFolderExists(parent, drive, folder => {
                                 RenamedEventArgs rea = (RenamedEventArgs)e;
                                 WatFile oldFile = folder.Files.SingleOrDefault(f => f.NameEquals(Path.GetFileName(rea.OldName)));
-                                FileInfo fi = new FileInfo(e.FullPath);
+                                FileInfo fi = new(e.FullPath);
                                 if (oldFile != null)
                                     folder.Files.Remove(oldFile);
                                 if (fi.ShouldScan()) {
@@ -158,7 +157,7 @@ namespace WhereAreThem.WinViewer.Model {
                 action();
             }
             catch (Exception ex) {
-                using StreamWriter sw = new StreamWriter(PathWrapper.GetAppPath("watcher.log"), true);
+                using StreamWriter sw = new(PathWrapper.GetAppPath("watcher.log"), true);
                 sw.WriteLine(DateTime.Now.ToIso8601());
                 sw.WriteLine($"Name: {e.Name}, FullPath: {e.FullPath}, ChangeType: {e.ChangeType}");
                 sw.WriteLine(ex.GetExceptionText());
@@ -187,7 +186,7 @@ namespace WhereAreThem.WinViewer.Model {
         }
 
         private Folder GetFolder(DirectoryInfo parent, DriveModel drive) {
-            string[] folders = parent.FullName.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+            string[] folders = parent.FullName.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
             Folder folder = drive;
             for (int i = 1; i < folders.Length; i++) {
                 folder = folder.Folders.SingleOrDefault(f => f.NameEquals(folders[i]));

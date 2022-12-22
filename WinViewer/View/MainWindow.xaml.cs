@@ -122,7 +122,7 @@ namespace WhereAreThem.WinViewer.View {
 
             Folder selectedFolder = (Folder)_selectedTreeViewItem.Header;
             LoadIfDrive(selectedFolder);
-            List<Folder> stack = new List<Folder>();
+            List<Folder> stack = new();
             GetFolderStack(_selectedTreeViewItem, stack);
             stack.Add(selectedFolder);
             VM.SelectedFolderStack = stack;
@@ -156,7 +156,7 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void DataGridCopyingRowClipboardContent(object sender, DataGridRowClipboardEventArgs e) {
-            DataGridClipboardCellContent content = new DataGridClipboardCellContent(
+            DataGridClipboardCellContent content = new(
                 e.Item, e.ClipboardRowContent[0].Column, ((FileSystemItem)e.Item).Name);
             e.ClipboardRowContent.Clear();
             e.ClipboardRowContent.Add(content);

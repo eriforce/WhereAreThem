@@ -4,7 +4,7 @@ using System.Configuration;
 
 namespace WhereAreThem.Model.Persistences {
     public class PersistenceFactory {
-        private static readonly Dictionary<string, Type> persistenceTypes = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase) {
+        private static readonly Dictionary<string, Type> persistenceTypes = new(StringComparer.OrdinalIgnoreCase) {
             { PersistenceType.Bin.ToString(), typeof(BinaryProvider) },
         };
 

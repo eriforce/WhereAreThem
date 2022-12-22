@@ -13,7 +13,7 @@ namespace WhereAreThem.Model.Persistences {
         private const byte filePrefix = 1;
 
         public void Save(Folder folder, IO.Stream stream) {
-            IO.BinaryWriter bw = new IO.BinaryWriter(stream);
+            IO.BinaryWriter bw = new(stream);
             Save(folder, 0, bw);
             bw.Flush();
         }
@@ -40,7 +40,7 @@ namespace WhereAreThem.Model.Persistences {
         }
 
         public Folder Load(IO.Stream stream) {
-            IO.BinaryReader br = new IO.BinaryReader(stream);
+            IO.BinaryReader br = new(stream);
 
             if (stream.CanSeek) {
                 stream.Seek(2, IO.SeekOrigin.Begin);
@@ -50,7 +50,7 @@ namespace WhereAreThem.Model.Persistences {
                 br.ReadByte();
             }
 
-            Dictionary<int, Folder> recentFolders = new Dictionary<int, Folder>() {
+            Dictionary<int, Folder> recentFolders = new() {
                 { 0, GetFolder(br) }
             };
             try {
@@ -81,9 +81,9 @@ namespace WhereAreThem.Model.Persistences {
         }
 
         private Folder GetFolder(IO.BinaryReader br) {
-            DateTime created = new DateTime(br.ReadInt64());
+            DateTime created = new(br.ReadInt64());
             string name = ReadText(br);
-            return new Folder() {
+            return new Folder {
                 Name = name,
                 CreatedDateUtc = created
             };
@@ -91,11 +91,11 @@ namespace WhereAreThem.Model.Persistences {
 
         private File GetFile(IO.BinaryReader br) {
             long size = br.ReadInt64();
-            DateTime created = new DateTime(br.ReadInt64());
-            DateTime modified = new DateTime(br.ReadInt64());
+            DateTime created = new(br.ReadInt64());
+            DateTime modified = new(br.ReadInt64());
             string name = ReadText(br);
             Dictionary<string, string> data = ReadData(br);
-            return new File() {
+            return new File {
                 Name = name,
                 FileSize = size,
                 CreatedDateUtc = created,

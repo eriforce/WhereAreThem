@@ -24,7 +24,7 @@ namespace WhereAreThem.WinViewer.Model {
             CreatedDateUtc = createdDateUtc;
             DriveType = driveType;
 
-            Folders = new List<Folder>() { new Folder() { Name = "Loading ..." } };
+            Folders = new List<Folder> { new Folder() { Name = "Loading ..." } };
         }
 
         public bool Load() {

@@ -6,10 +6,11 @@ using System.Linq;
 using PureLib.Common;
 using WhereAreThem.Model.Models;
 using WhereAreThem.Model.Persistences;
+using IOFile = System.IO.File;
 
 namespace WhereAreThem.Model {
     public class Loader : ListBase {
-        private readonly ConcurrentDictionary<(string MachineName, string DrivePath), Drive> _driveCache = new ConcurrentDictionary<(string, string), Drive>();
+        private readonly ConcurrentDictionary<(string MachineName, string DrivePath), Drive> _driveCache = new();
 
         public Loader(string outputPath, IPersistence persistence)
             : base(outputPath, persistence) {
@@ -18,7 +19,7 @@ namespace WhereAreThem.Model {
         public SortedSet<string> MachineNames {
             get {
                 SortedSet<string> machines = new SortedSet<string>(
-                    Directory.GetDirectories(OutputPath).Select(p => Path.GetFileName(p)),
+                    Directory.GetDirectories(OutputPath).Select(Path.GetFileName),
                     StringComparer.OrdinalIgnoreCase);
 
                 machines.Remove(SharedMachineName);
@@ -62,7 +63,7 @@ namespace WhereAreThem.Model {
 
             DriveType driveType = (DriveType)Enum.Parse(typeof(DriveType), Path.GetFileName(listPath).Split('.')[1]);
             string drivePath = Drive.GetDrivePath(driveLetter, driveType, machineName);
-            DateTime listTimestamp = new FileInfo(listPath).LastWriteTimeUtc;
+            DateTime listTimestamp = IOFile.GetLastWriteTimeUtc(listPath);
 
             var cacheKey = (isShared ? SharedMachineName : machineName, drivePath);
             if (!_driveCache.TryGetValue(cacheKey, out Drive drive) || drive.CreatedDateUtc != listTimestamp) {

@@ -54,7 +54,7 @@ namespace WhereAreThem.Model {
 
         public void ScanUpdate(string pathToUpdate, Drive drive) {
             try {
-                string[] pathParts = pathToUpdate.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+                string[] pathParts = pathToUpdate.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
                 bool isNetworkShare = drive.DriveType == Drive.NETWORK_SHARE;
                 int firstFolderIndex;
                 if (isNetworkShare)
