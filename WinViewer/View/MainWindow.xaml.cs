@@ -26,8 +26,9 @@ namespace WhereAreThem.WinViewer.View {
         public SearchWindow SearchWindow {
             get {
                 if (_searchWindow == null) {
-                    _searchWindow = new SearchWindow();
-                    _searchWindow.Owner = this;
+                    _searchWindow = new() {
+                        Owner = this,
+                    };
                     _searchWindow.VM.LocatingItem += OnLocatingItem;
                     _searchWindow.Closing += (s, e) => {
                         _searchWindow.Hide();
@@ -66,14 +67,16 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void OnOpeningProperties(object sender, ItemsEventArgs e) {
-            PropertiesWindow window = new PropertiesWindow(e.Items, e.Stack);
-            window.Owner = this;
+            PropertiesWindow window = new(e.Items, e.Stack) {
+                Owner = this,
+            };
             window.Show();
         }
 
         private void OnOpeningDescription(object sender, EventArgs<File> e) {
-            DescriptionWindow window = new DescriptionWindow(e.Data);
-            window.Owner = this;
+            DescriptionWindow window = new(e.Data) {
+                Owner = this,
+            };
             window.Show();
         }
 
@@ -90,7 +93,7 @@ namespace WhereAreThem.WinViewer.View {
 
         private void OnWindowKeyDown(object sender, KeyEventArgs e) {
             if ((e.Key == Key.F) && (Keyboard.Modifiers == ModifierKeys.Control)) {
-                if ((VM.SelectedFolder != null) && !(VM.SelectedFolder is Computer)) {
+                if ((VM.SelectedFolder != null) && VM.SelectedFolder is not Computer) {
                     if ((SearchWindow.VM.RootStack != null) && !SearchWindow.VM.RootStack.SequenceEqual(VM.SelectedFolderStack))
                         SearchWindow.VM.Results = null;
                     SearchWindow.VM.RootStack = VM.SelectedFolderStack;
@@ -132,7 +135,7 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void DataGridMouseDoubleClick(object sender, MouseButtonEventArgs e) {
-            DataGridRow row = MainWindow.GetParent<DataGridRow>((DependencyObject)e.OriginalSource);
+            DataGridRow row = GetParent<DataGridRow>((DependencyObject)e.OriginalSource);
             if (row != null) {
                 DataGrid dataGrid = (DataGrid)sender;
                 FileSystemItem item = (FileSystemItem)dataGrid.SelectedItem;

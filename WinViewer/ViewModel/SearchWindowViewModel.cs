@@ -24,10 +24,10 @@ namespace WhereAreThem.WinViewer.ViewModel {
         private bool _includeFiles = true;
         private string _location;
         private string _machineName;
-        private ICommand _searchCommand;
-        private ICommand _locateCommand;
-        private ICommand _locateOnDiskCommand;
-        private ICommand _openPropertiesCommand;
+        private RelayCommand _searchCommand;
+        private RelayCommand _locateCommand;
+        private RelayCommand _locateOnDiskCommand;
+        private RelayCommand _openPropertiesCommand;
 
         public Folder Root {
             get { return _root; }
@@ -101,10 +101,10 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 RaiseChange(() => MachineName);
             }
         }
-        public ICommand SearchCommand {
+        public RelayCommand SearchCommand {
             get {
                 if (_searchCommand == null)
-                    _searchCommand = new RelayCommand(p => {
+                    _searchCommand = new(p => {
                         BusyWith($"Searching {Location} ...", Task.Run(() => {
                             Results = new ObservableCollection<SearchResult>(
                                 Root.Search(RootStack.GetParentStack().ToList(), SearchPattern, IncludeFiles, IncludeFolders));
@@ -123,26 +123,26 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 return _searchCommand;
             }
         }
-        public ICommand LocateCommand {
+        public RelayCommand LocateCommand {
             get {
                 if (_locateCommand == null)
-                    _locateCommand = new RelayCommand(p => OnLocatingItem());
+                    _locateCommand = new(p => OnLocatingItem());
                 return _locateCommand;
             }
         }
-        public ICommand LocateOnDiskCommand {
+        public RelayCommand LocateOnDiskCommand {
             get {
                 if (_locateOnDiskCommand == null)
-                    _locateOnDiskCommand = new RelayCommand(
+                    _locateOnDiskCommand = new(
                         p => SelectedSearchResult.Item.LocateOnDisk(SelectedSearchResult.Stack, View),
                         p => RootStack.GetComputer().NameEquals(Environment.MachineName));
                 return _locateOnDiskCommand;
             }
         }
-        public ICommand OpenPropertiesCommand {
+        public RelayCommand OpenPropertiesCommand {
             get {
                 if (_openPropertiesCommand == null)
-                    _openPropertiesCommand = new RelayCommand(p => OnOpeningProperties());
+                    _openPropertiesCommand = new(p => OnOpeningProperties());
                 return _openPropertiesCommand;
             }
         }

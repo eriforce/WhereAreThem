@@ -158,13 +158,11 @@ namespace WhereAreThem.WinViewer.Model {
                 action();
             }
             catch (Exception ex) {
-                StringBuilder logger = new StringBuilder();
-                logger.AppendLine(DateTime.Now.ToIso8601());
-                logger.AppendLine($"Name: {e.Name}, FullPath: {e.FullPath}, ChangeType: {e.ChangeType}");
-                logger.AppendLine(ex.GetTraceText());
-                logger.AppendLine();
-
-                PathWrapper.GetAppPath("watcher.log").WriteText(logger.ToString(), Encoding.UTF8, FileMode.Append);
+                using StreamWriter sw = new StreamWriter(PathWrapper.GetAppPath("watcher.log"), true);
+                sw.WriteLine(DateTime.Now.ToIso8601());
+                sw.WriteLine($"Name: {e.Name}, FullPath: {e.FullPath}, ChangeType: {e.ChangeType}");
+                sw.WriteLine(ex.GetExceptionText());
+                sw.WriteLine();
             }
         }
 

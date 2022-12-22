@@ -32,8 +32,9 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void OnOpeningProperties(object sender, ItemsEventArgs e) {
-            PropertiesWindow window = new PropertiesWindow(e.Items, e.Stack);
-            window.Owner = this;
+            PropertiesWindow window = new(e.Items, e.Stack) {
+                Owner = this,
+            };
             window.Show();
         }
     }
