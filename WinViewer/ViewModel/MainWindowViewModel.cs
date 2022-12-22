@@ -23,14 +23,14 @@ namespace WhereAreThem.WinViewer.ViewModel {
         private string _location;
         private Folder _selectedFolder;
         private ObservableCollection<FileSystemItem> _selectedItems;
-        private ICommand _scanCommand;
-        private ICommand _copyCommand;
-        private ICommand _openPropertiesCommand;
-        private ICommand _openDescriptionCommand;
-        private ICommand _goBackCommand;
-        private ICommand _goForwardCommand;
-        private ICommand _goUpCommand;
-        private ICommand _locateOnDiskCommand;
+        private RelayCommand _scanCommand;
+        private RelayCommand _copyCommand;
+        private RelayCommand _openPropertiesCommand;
+        private RelayCommand _openDescriptionCommand;
+        private RelayCommand _goBackCommand;
+        private RelayCommand _goForwardCommand;
+        private RelayCommand _goUpCommand;
+        private RelayCommand _locateOnDiskCommand;
         private Computer _localComputer {
             get { return Computers.SingleOrDefault(c => c.NameEquals(Environment.MachineName)); }
         }
@@ -77,10 +77,10 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 RaiseChange(() => SelectedItems);
             }
         }
-        public ICommand ScanCommand {
+        public RelayCommand ScanCommand {
             get {
                 if (_scanCommand == null) {
-                    _scanCommand = new RelayCommand(p => {
+                    _scanCommand = new(p => {
                         Folder pFolder = (Folder)p;
                         bool isFromTree = IsTreeItemSelected(pFolder);
                         List<Folder> folders = isFromTree ?
@@ -116,10 +116,10 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 return _scanCommand;
             }
         }
-        public ICommand CopyCommand {
+        public RelayCommand CopyCommand {
             get {
                 if (_copyCommand == null)
-                    _copyCommand = new RelayCommand(p => {
+                    _copyCommand = new(p => {
                         FileSystemItem item = p as FileSystemItem;
                         try {
                             Clipboard.SetText(item.Name);
@@ -131,10 +131,10 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 return _copyCommand;
             }
         }
-        public ICommand OpenPropertiesCommand {
+        public RelayCommand OpenPropertiesCommand {
             get {
                 if (_openPropertiesCommand == null)
-                    _openPropertiesCommand = new RelayCommand(p => {
+                    _openPropertiesCommand = new(p => {
                         if (OpeningProperties != null) {
                             IEnumerable<FileSystemItem> selectedItems = IsTreeItemSelected(p) ?
                                 new[] { (FileSystemItem)p } : SelectedItems.AsEnumerable();
@@ -145,19 +145,19 @@ namespace WhereAreThem.WinViewer.ViewModel {
             }
         }
 
-        public ICommand OpenDescriptionCommand {
+        public RelayCommand OpenDescriptionCommand {
             get {
                 if (_openDescriptionCommand == null)
-                    _openDescriptionCommand = new RelayCommand(
+                    _openDescriptionCommand = new(
                         p => OpeningDescription(this, new EventArgs<WatFile>((WatFile)p)),
                         p => (p is WatFile) && ((WatFile)p).Data != null);
                 return _openDescriptionCommand;
             }
         }
-        public ICommand GoBackCommand {
+        public RelayCommand GoBackCommand {
             get {
                 if (_goBackCommand == null)
-                    _goBackCommand = new RelayCommand(p => {
+                    _goBackCommand = new(p => {
                         List<Folder> current = Navigation.CurrentEntry.Stack;
                         Navigation.GoBack();
                         while (!Navigation.CurrentEntry.Stack.Exists()) {
@@ -170,30 +170,30 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 return _goBackCommand;
             }
         }
-        public ICommand GoForwardCommand {
+        public RelayCommand GoForwardCommand {
             get {
                 if (_goForwardCommand == null)
-                    _goForwardCommand = new RelayCommand(p => {
+                    _goForwardCommand = new(p => {
                         Navigation.GoForward();
                         OnLocatingItem(Navigation.CurrentEntry);
                     }, p => Navigation.CanGoForward);
                 return _goForwardCommand;
             }
         }
-        public ICommand GoUpCommand {
+        public RelayCommand GoUpCommand {
             get {
                 if (_goUpCommand == null)
-                    _goUpCommand = new RelayCommand(p => {
+                    _goUpCommand = new(p => {
                         OnLocatingItem(new ItemEventArgs(SelectedFolder,
                             SelectedFolderStack.GetParentStack().ToList()));
                     }, p => (SelectedFolderStack != null) && !(SelectedFolder is Computer));
                 return _goUpCommand;
             }
         }
-        public ICommand LocateOnDiskCommand {
+        public RelayCommand LocateOnDiskCommand {
             get {
                 if (_locateOnDiskCommand == null)
-                    _locateOnDiskCommand = new RelayCommand(
+                    _locateOnDiskCommand = new(
                         p => ((FileSystemItem)p).LocateOnDisk(GetSelectedItemStack(p), View),
                         p => SelectedFolderStack.GetComputer().NameEquals(Environment.MachineName));
                 return _locateOnDiskCommand;
@@ -323,7 +323,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         }
 
         private void SetStatusBarOnSelectedFolderChanged() {
-            List<string> statusTextParts = new List<string> { SelectedFolder.Size.ToFriendlyString() };
+            List<string> statusTextParts = new() { SelectedFolder.Size.ToFriendlyString() };
             if (SelectedFolder.Folders != null)
                 statusTextParts.Add($"{SelectedFolder.Folders.Count} folder(s)");
             if (SelectedFolder.Files != null)

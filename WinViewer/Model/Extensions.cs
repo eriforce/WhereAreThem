@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using PureLib.Common;
 using WhereAreThem.Model.Models;
@@ -45,6 +47,20 @@ namespace WhereAreThem.WinViewer.Model {
                 Process.Start("explorer.exe", @"/select,{0}".FormatWith(path));
             else
                 MessageBox.Show(owner, "{0} doesn't exist on your disk.".FormatWith(path));
+        }
+
+        public static string GetExceptionText(this Exception ex) {
+            StringBuilder sb = new();
+            while (ex != null) {
+                if (sb.Length > 0)
+                    sb.AppendLine($"{Environment.NewLine}-: Inner Exception :-");
+                sb.AppendLine(ex.GetType().AssemblyQualifiedName);
+                sb.AppendLine(ex.Message);
+                sb.AppendLine(ex.StackTrace);
+
+                ex = ex.InnerException;
+            }
+            return sb.ToString();
         }
     }
 }

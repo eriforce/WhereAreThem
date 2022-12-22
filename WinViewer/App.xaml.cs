@@ -1,15 +1,17 @@
-﻿using System.Windows;
+﻿using PureLib.WPF;
+using System;
+using System.Text;
+using System.Windows;
 using System.Windows.Threading;
-using PureLib.Common;
-using PureLib.WPF;
 using WhereAreThem.Model;
 using WhereAreThem.Model.Persistences;
+using WhereAreThem.WinViewer.Model;
 
 namespace WhereAreThem.WinViewer {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : SingleInstanceApp {
+    public partial class App : SingletonApp {
         private static Loader _loader;
         private static Scanner _scanner;
 
@@ -30,9 +32,9 @@ namespace WhereAreThem.WinViewer {
 
         private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
             if (MainWindow == null)
-                MessageBox.Show(e.Exception.GetTraceText());
+                MessageBox.Show(e.Exception.GetExceptionText());
             else
-                MessageBox.Show(MainWindow, e.Exception.GetTraceText());
+                MessageBox.Show(MainWindow, e.Exception.GetExceptionText());
             e.Handled = false;
         }
     }

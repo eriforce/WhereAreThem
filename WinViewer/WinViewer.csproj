@@ -14,8 +14,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="PureLib" Version="6.*" />
-		<PackageReference Include="PureLib.WPF" Version="2.*" />
+		<PackageReference Include="PureLib" Version="7.*" />
+		<PackageReference Include="PureLib.WPF" Version="3.*" />
 	</ItemGroup>
 
 	<ItemGroup>

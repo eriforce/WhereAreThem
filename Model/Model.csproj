@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
+		<TargetFramework>net7.0</TargetFramework>
 		<AssemblyName>WhereAreThem.Model</AssemblyName>
 		<RootNamespace>WhereAreThem.Model</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="PureLib" Version="6.*" />
-		<PackageReference Include="System.Configuration.ConfigurationManager" Version="6.*" />
+		<PackageReference Include="PureLib" Version="7.*" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="7.*" />
 	</ItemGroup>
 
 </Project>
