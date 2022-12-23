@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using WhereAreThem.Model.Models;
 using IO = System.IO;
@@ -108,8 +109,9 @@ namespace WhereAreThem.Model.Persistences {
 
         private string ReadText(IO.BinaryReader br) {
             int length = br.ReadInt16();
-            br.Read(_textBuffer, 0, length);
-            return Encoding.UTF8.GetString(_textBuffer, 0, length);
+            Span<byte> data = _textBuffer.AsSpan()[..length];
+            br.BaseStream.ReadExactly(data);
+            return Encoding.UTF8.GetString(data);
         }
     }
 }
