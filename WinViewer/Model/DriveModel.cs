@@ -5,7 +5,7 @@ using WhereAreThem.Model.Models;
 
 namespace WhereAreThem.WinViewer.Model {
     public class DriveModel : Drive {
-        private bool _isLocalDrive;
+        private readonly bool _isLocalDrive;
 
         public Computer Computer { get; private set; }
         public bool HasLoaded { get; set; }
@@ -24,7 +24,7 @@ namespace WhereAreThem.WinViewer.Model {
             CreatedDateUtc = createdDateUtc;
             DriveType = driveType;
 
-            Folders = new List<Folder> { new Folder() { Name = "Loading ..." } };
+            Folders = new List<Folder> { new Folder { Name = "Loading ..." } };
         }
 
         public bool Load() {

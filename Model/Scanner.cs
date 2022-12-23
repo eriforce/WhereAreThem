@@ -6,12 +6,9 @@ using System.Linq;
 using PureLib.Common;
 using WhereAreThem.Model.Models;
 using WhereAreThem.Model.Persistences;
-using WhereAreThem.Model.Plugins;
 
 namespace WhereAreThem.Model {
-    public class Scanner : ListBase {
-        private PluginManager _pluginManager = new PluginManager();
-
+    public sealed class Scanner : ListBase {
         public event ScanEventHandler Scanning;
         public event ScanEventHandler Scanned;
 
@@ -25,7 +22,7 @@ namespace WhereAreThem.Model {
                 FileSize = fi.Length,
                 CreatedDateUtc = fi.CreationTimeUtc,
                 ModifiedDateUtc = fi.LastWriteTimeUtc,
-                Data = GetFileDescription(fi, file)
+                Data = GetFileDescription(fi, file),
             };
         }
 
@@ -140,8 +137,7 @@ namespace WhereAreThem.Model {
         }
 
         private Dictionary<string, string> GetFileDescription(FileInfo fi, Models.File file) {
-            bool hasFileChanged = (file == null) || (file.ModifiedDateUtc != fi.LastWriteTimeUtc);
-            return _pluginManager.GetDescriptions(fi.FullName, hasFileChanged, file?.Data);
+            return null;
         }
 
         private void OnScanning(string dir) {

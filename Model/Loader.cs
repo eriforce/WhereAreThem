@@ -9,7 +9,7 @@ using WhereAreThem.Model.Persistences;
 using IOFile = System.IO.File;
 
 namespace WhereAreThem.Model {
-    public class Loader : ListBase {
+    public sealed class Loader : ListBase {
         private readonly ConcurrentDictionary<(string MachineName, string DrivePath), Drive> _driveCache = new();
 
         public Loader(string outputPath, IPersistence persistence)

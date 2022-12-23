@@ -3,18 +3,16 @@ using System.Collections.Generic;
 using System.Configuration;
 
 namespace WhereAreThem.Model.Persistences {
-    public class PersistenceFactory {
+    public static class PersistenceFactory {
         private static readonly Dictionary<string, Type> persistenceTypes = new(StringComparer.OrdinalIgnoreCase) {
-            { PersistenceType.Bin.ToString(), typeof(BinaryProvider) },
+            { PersistenceType.Bin.ToString(), typeof(CompressedPersistence<>).MakeGenericType(typeof(BinaryProvider)) },
         };
 
-        public static IPersistence Persistence { get; private set; }
+        public static IPersistence Persistence { get; }
 
         static PersistenceFactory() {
-            Type formaterType = persistenceTypes[ConfigurationManager.AppSettings["format"]];
-            Type persistenceType = typeof(CompressedPersistence<>).MakeGenericType(formaterType);
-
-            Persistence = Activator.CreateInstance(persistenceType) as IPersistence;
+            Type persistenceType = persistenceTypes[ConfigurationManager.AppSettings["format"]];
+            Persistence = (IPersistence)Activator.CreateInstance(persistenceType);
         }
     }
 }
