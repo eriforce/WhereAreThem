@@ -43,8 +43,8 @@ namespace WhereAreThem.WebViewer.Controllers {
         }
 
         private Folder GetFolder(string machineName, string path, out List<Folder> stack) {
-            if (!List.MachineNames.Any(n => n == machineName))
-                throw new ArgumentException("Machine name '{0}' cannot be found.".FormatWith(machineName));
+            if (!List.MachineNames.Contains(machineName))
+                throw new ArgumentException($"Machine name '{machineName}' cannot be found.");
 
             ViewBag.MachineName = machineName;
             return List.GetFolder(machineName, path, out stack);

@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using PureLib.Common;
 using WhereAreThem.Model.Models;
 using IO = System.IO;
 
 namespace WhereAreThem.Model.Persistences {
-    public class BinaryProvider : IFormatProvider {
-        private const char stringSeparator = '\0';
+    public sealed class BinaryProvider : IFormatProvider {
         private const byte folderPrefix = 0;
         private const byte filePrefix = 1;
 
+        private readonly byte[] _textBuffer = new byte[short.MaxValue];
+
         public void Save(Folder folder, IO.Stream stream) {
-            IO.BinaryWriter bw = new IO.BinaryWriter(stream);
+            IO.BinaryWriter bw = new(stream);
             Save(folder, 0, bw);
             bw.Flush();
         }
@@ -35,22 +35,21 @@ namespace WhereAreThem.Model.Persistences {
                     bw.Write(f.CreatedDateUtc.Ticks);
                     bw.Write(f.ModifiedDateUtc.Ticks);
                     WriteText(bw, f.Name);
-                    WriteData(bw, f.Data);
                 }
         }
 
         public Folder Load(IO.Stream stream) {
-            IO.BinaryReader br = new IO.BinaryReader(stream);
+            IO.BinaryReader br = new(stream);
 
             if (stream.CanSeek) {
-                stream.Seek(2, IO.SeekOrigin.Begin);
+                stream.Seek(2, IO.SeekOrigin.Current);
             }
             else {
                 br.ReadByte();
                 br.ReadByte();
             }
 
-            Dictionary<int, Folder> recentFolders = new Dictionary<int, Folder>() {
+            Dictionary<int, Folder> recentFolders = new() {
                 { 0, GetFolder(br) }
             };
             try {
@@ -81,9 +80,9 @@ namespace WhereAreThem.Model.Persistences {
         }
 
         private Folder GetFolder(IO.BinaryReader br) {
-            DateTime created = new DateTime(br.ReadInt64());
+            DateTime created = new(br.ReadInt64());
             string name = ReadText(br);
-            return new Folder() {
+            return new Folder {
                 Name = name,
                 CreatedDateUtc = created
             };
@@ -91,49 +90,28 @@ namespace WhereAreThem.Model.Persistences {
 
         private File GetFile(IO.BinaryReader br) {
             long size = br.ReadInt64();
-            DateTime created = new DateTime(br.ReadInt64());
-            DateTime modified = new DateTime(br.ReadInt64());
+            DateTime created = new(br.ReadInt64());
+            DateTime modified = new(br.ReadInt64());
             string name = ReadText(br);
-            Dictionary<string, string> data = ReadData(br);
-            return new File() {
+            return new File {
                 Name = name,
                 FileSize = size,
                 CreatedDateUtc = created,
                 ModifiedDateUtc = modified,
-                Data = data
             };
         }
 
-        private void WriteData(IO.BinaryWriter bw, Dictionary<string, string> data) {
-            if (data == null) {
-                bw.Write(0);
-            }
-            else {
-                WriteText(bw, string.Join(stringSeparator.ToString(), data.Select(p => p.Key)));
-                foreach (var p in data) {
-                    WriteText(bw, p.Value);
-                }
-            }
-        }
-
-        private Dictionary<string, string> ReadData(IO.BinaryReader br) {
-            string pluginText = ReadText(br);
-            if (pluginText.IsNullOrEmpty())
-                return null;
-
-            string[] plugins = pluginText.Split(stringSeparator);
-            return plugins.ToDictionary(p => p, p => ReadText(br));
-        }
-
         private void WriteText(IO.BinaryWriter bw, string text) {
-            byte[] textData = Encoding.UTF8.GetBytes(text);
-            bw.Write(textData.Length);
-            bw.Write(textData);
+            int length = Encoding.UTF8.GetBytes(text, 0, text.Length, _textBuffer, 0);
+            bw.Write((short)length);
+            bw.Write(_textBuffer, 0, length);
         }
 
         private string ReadText(IO.BinaryReader br) {
-            int length = br.ReadInt32();
-            return Encoding.UTF8.GetString(br.ReadBytes(length));
+            int length = br.ReadInt16();
+            Span<byte> data = _textBuffer.AsSpan()[..length];
+            br.BaseStream.ReadExactly(data);
+            return Encoding.UTF8.GetString(data);
         }
     }
 }

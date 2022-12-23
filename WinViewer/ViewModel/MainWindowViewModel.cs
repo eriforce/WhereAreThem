@@ -230,14 +230,13 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 return false;
 
             foreach (string path in folders) {
-                DirectoryInfo root = new DirectoryInfo(path).Root;
                 Computer computer;
                 bool isNetworkShare = Drive.IsNetworkPath(path);
                 if (isNetworkShare) {
                     string machineName = Drive.GetMachineName(path);
                     computer = Computers.SingleOrDefault(c => c.NameEquals(machineName));
                     if (computer == null) {
-                        computer = new Computer() { Name = machineName };
+                        computer = new Computer { Name = machineName };
                         computer.Folders = new List<Folder>();
                         Computers.Add(computer);
                     }
@@ -245,7 +244,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 else
                     computer = _localComputer;
 
-                bool isDrive = root.FullName.Equals(path, StringComparison.OrdinalIgnoreCase);
+                DirectoryInfo root = new DirectoryInfo(path).Root;
                 DriveModel drive = computer.Drives.SingleOrDefault(f => f.NameEquals(root.Name));
                 bool isNew = drive == null;
                 if (isNew) {
@@ -265,8 +264,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                     computer.Folders = new List<Folder>(computer.Folders);
                     computer.RaiseItemChanges();
                 }
-                if (!isDrive)
-                    drive.Load();
+                bool isDrive = root.FullName.Equals(path, StringComparison.OrdinalIgnoreCase);
                 Scan(path, isDrive, drive);
             }
             return true;
@@ -312,10 +310,9 @@ namespace WhereAreThem.WinViewer.ViewModel {
                     drive.Load(d);
                 }
                 else {
-                    Folder parent = drive.GetDrive(path);
+                    drive.Load();
                     App.Scanner.ScanUpdate(path, drive);
                     drive.HasLoaded = true;
-                    parent.RaiseItemChanges();
                 }
                 drive.IsChanged = true;
                 return true;

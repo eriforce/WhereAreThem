@@ -6,12 +6,9 @@ using System.Linq;
 using PureLib.Common;
 using WhereAreThem.Model.Models;
 using WhereAreThem.Model.Persistences;
-using WhereAreThem.Model.Plugins;
 
 namespace WhereAreThem.Model {
-    public class Scanner : ListBase {
-        private PluginManager _pluginManager = new PluginManager();
-
+    public sealed class Scanner : ListBase {
         public event ScanEventHandler Scanning;
         public event ScanEventHandler Scanned;
 
@@ -25,7 +22,7 @@ namespace WhereAreThem.Model {
                 FileSize = fi.Length,
                 CreatedDateUtc = fi.CreationTimeUtc,
                 ModifiedDateUtc = fi.LastWriteTimeUtc,
-                Data = GetFileDescription(fi, file)
+                Data = GetFileDescription(fi, file),
             };
         }
 
@@ -54,7 +51,7 @@ namespace WhereAreThem.Model {
 
         public void ScanUpdate(string pathToUpdate, Drive drive) {
             try {
-                string[] pathParts = pathToUpdate.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+                string[] pathParts = pathToUpdate.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
                 bool isNetworkShare = drive.DriveType == Drive.NETWORK_SHARE;
                 int firstFolderIndex;
                 if (isNetworkShare)
@@ -63,24 +60,26 @@ namespace WhereAreThem.Model {
                     firstFolderIndex = 1;
                     pathParts[0] += Path.DirectorySeparatorChar;
                 }
-                Folder folder = drive;
+                Folder parent = drive;
                 for (int i = firstFolderIndex; i < pathParts.Length; i++) {
-                    if (folder.Folders == null)
-                        folder.Folders = new List<Folder>();
-                    Folder current = folder.Folders.SingleOrDefault(f => f.NameEquals(pathParts[i]));
+                    if (parent.Folders == null)
+                        parent.Folders = new List<Folder>();
+                    Folder current = parent.Folders.SingleOrDefault(f => f.NameEquals(pathParts[i]));
                     if (current == null) {
                         string path = Path.Combine(pathParts.Take(i + 1).ToArray());
                         if (isNetworkShare)
                             path = Drive.NETWORK_COMPUTER_PREFIX + path;
                         current = GetFolder(new DirectoryInfo(path));
-                        folder.Folders.Add(current);
-                        folder.Folders.Sort();
+                        parent.Folders.Add(current);
+                        parent.Folders.Sort();
+                        parent.RaiseItemChanges();
                         return;
                     }
                     else
-                        folder = current;
+                        parent = current;
                 }
-                GetFolder(new DirectoryInfo(pathToUpdate), folder);
+                GetFolder(new DirectoryInfo(pathToUpdate), parent);
+                parent.RaiseItemChanges();
             }
             finally {
                 OnScanned(pathToUpdate);
@@ -96,7 +95,7 @@ namespace WhereAreThem.Model {
             string directory = Path.GetDirectoryName(listPath);
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
-            _persistence.Save(drive, listPath);
+            Persistence.Save(drive, listPath);
             drive.CreatedDateUtc = new FileInfo(listPath).LastWriteTimeUtc;
         }
 
@@ -109,39 +108,36 @@ namespace WhereAreThem.Model {
             folder.CreatedDateUtc = directory.CreationTimeUtc;
 
             try {
+                if (folder.Files == null)
+                    folder.Files = new List<Models.File>();
                 folder.Files = (from fi in directory.EnumerateFiles()
                                 where fi.ShouldScan()
-                                join f in folder.Files ?? new List<Models.File>() on fi.Name equals f.Name into files
+                                join f in folder.Files on fi.Name equals f.Name into files
                                 select GetFile(fi, files.SingleOrDefault())).ToList();
                 folder.Files.Sort();
             }
             catch (UnauthorizedAccessException) { }
             catch (PathTooLongException) { }
             catch (IOException) { }
-            if (folder.Files == null)
-                folder.Files = new List<Models.File>();
 
             try {
+                if (folder.Folders == null)
+                    folder.Folders = new List<Folder>();
                 folder.Folders = (from di in directory.EnumerateDirectories()
                                   where di.ShouldScan()
-                                  join f in folder.Folders ?? new List<Folder>() on di.Name equals f.Name into folders
+                                  join f in folder.Folders on di.Name equals f.Name into folders
                                   select GetFolder(di, folders.SingleOrDefault())).ToList();
                 folder.Folders.Sort();
             }
             catch (UnauthorizedAccessException) { }
             catch (PathTooLongException) { }
             catch (IOException) { }
-            if (folder.Folders == null)
-                folder.Folders = new List<Folder>();
 
             return folder;
         }
 
         private Dictionary<string, string> GetFileDescription(FileInfo fi, Models.File file) {
-            return _pluginManager.GetDescriptions(
-                fi.FullName,
-                (file == null) || (file.ModifiedDateUtc != fi.LastWriteTimeUtc),
-                file?.Data);
+            return null;
         }
 
         private void OnScanning(string dir) {
@@ -161,7 +157,7 @@ namespace WhereAreThem.Model {
                 _filters = ConfigurationManager.AppSettings["scannerFilters"].ToEnum<FileAttributes>().Aggregate((r, a) => r | a);
             }
             catch {
-                _filters = (FileAttributes)0;
+                _filters = 0;
             }
         }
 

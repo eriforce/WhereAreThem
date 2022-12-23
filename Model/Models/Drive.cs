@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using PureLib.Common;
 
 namespace WhereAreThem.Model.Models {
@@ -18,27 +17,6 @@ namespace WhereAreThem.Model.Models {
             MachineName = machineName;
         }
 
-        public Folder GetDrive(string path) {
-            int shouldSkip = IsNetworkPath(path) ? 1 : 0;
-            string[] parts = path.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries)
-                .Skip(shouldSkip).ToArray();
-            if (parts.Length == 1)
-                return this;
-
-            Folder parent = this;
-            for (int i = 1; i < parts.Length; i++) {
-                if (parent.Folders == null)
-                    break;
-
-                Folder folder = parent.Folders.SingleOrDefault(f => f.NameEquals(parts[i]));
-                if (folder == null)
-                    break;
-
-                parent = folder;
-            }
-            return parent;
-        }
-
         public Folder ToFolder() {
             return new Folder() {
                 Name = Name,
@@ -54,7 +32,7 @@ namespace WhereAreThem.Model.Models {
 
         public static string GetDriveLetter(string path) {
             if (IsNetworkPath(path)) {
-                string[] parts = path.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+                string[] parts = path.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
                 return parts[1];
             }
             int i = path.IndexOf(Path.VolumeSeparatorChar);
@@ -77,7 +55,7 @@ namespace WhereAreThem.Model.Models {
         }
 
         public static string GetMachineName(string sharePath) {
-            string[] parts = sharePath.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+            string[] parts = sharePath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
             return parts[0];
         }
 

@@ -4,18 +4,29 @@ using WhereAreThem.Model.Persistences;
 
 namespace WhereAreThem.Model {
     public abstract class ListBase {
-        protected string _outputPath;
-        protected IPersistence _persistence;
+        protected const string SharedMachineName = "[Shared]";
+
+        protected IPersistence Persistence { get; private set; }
+        protected string OutputPath { get; private set; }
+        protected string SharedPath { get; private set; }
 
         public ListBase(string outputPath, IPersistence persistence) {
-            _outputPath = outputPath;
-            _persistence = persistence;
+            OutputPath = outputPath;
+            Persistence = persistence;
+
+            SharedPath = Path.Combine(OutputPath, SharedMachineName);
+
+            Directory.CreateDirectory(OutputPath);
+            Directory.CreateDirectory(SharedPath);
         }
 
         protected string GetListPath(string machineName, string driveLetter, DriveType driveType) {
-            if (driveType == DriveType.Network)
-                return Path.Combine(_outputPath, "{0}.{1}.{2}".FormatWith(driveLetter, driveType, Constant.ListExt));
-            return Path.Combine(_outputPath, machineName, "{0}.{1}.{2}".FormatWith(driveLetter, driveType, Constant.ListExt));
+            var folderName = IsShared(driveType) ? SharedMachineName : machineName;
+            return Path.Combine(OutputPath, folderName, $"{driveLetter}.{driveType}.{Constant.ListExt}");
+        }
+
+        private bool IsShared(DriveType driveType) {
+            return driveType == DriveType.Network;
         }
     }
 }

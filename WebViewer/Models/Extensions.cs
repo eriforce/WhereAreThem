@@ -4,7 +4,6 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Web;
-using PureLib.Common;
 using WhereAreThem.Model.Models;
 
 namespace WhereAreThem.WebViewer.Models {
@@ -15,14 +14,14 @@ namespace WhereAreThem.WebViewer.Models {
         public const string ActionSearchResult = "SearchResult";
         public const string ExplorerViewSessionName = "ExplorerView";
 
+        public static string ToExplorerString(this DateTime time) => time.ToString("yyyy-MM-dd HH:mm:ss");
+
+        public static string GetTitle(this string titleName, string path, string machineName) => $"{titleName} - {path} | {machineName}";
+
         public static ExplorerView GetExplorerView(this HttpSessionStateBase session) {
             return (ExplorerView)((session[ExplorerViewSessionName] == null)
                 ? Enum.Parse(typeof(ExplorerView), ConfigurationManager.AppSettings["explorerView"])
                 : session[ExplorerViewSessionName]);
-        }
-
-        public static string ToExplorerString(this DateTime time) {
-            return time.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
         public static string GetFullPath(this Folder folder, List<Folder> stack) {
@@ -31,10 +30,6 @@ namespace WhereAreThem.WebViewer.Models {
             List<string> parts = stack.Select(f => f.Name).ToList();
             parts.Add(folder.Name);
             return Path.Combine(parts.ToArray());
-        }
-
-        public static string GetTitle(this string titleName, string path, string machineName) {
-            return "{0} - {1} | {2}".FormatWith(titleName, path, machineName);
         }
     }
 }

@@ -1,41 +1,41 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using PureLib.Common;
 using WhereAreThem.Model.Models;
 using WhereAreThem.Model.Persistences;
+using IOFile = System.IO.File;
 
 namespace WhereAreThem.Model {
-    public class Loader : ListBase {
-        private Dictionary<string, Folder> _machineCache = new Dictionary<string, Folder>();
-        private Folder _networkMachine = new Folder() { Folders = new List<Folder>() };
-        private object _listLock = new object();
+    public sealed class Loader : ListBase {
+        private readonly ConcurrentDictionary<(string MachineName, string DrivePath), Drive> _driveCache = new();
 
         public Loader(string outputPath, IPersistence persistence)
             : base(outputPath, persistence) {
-            if (!Directory.Exists(outputPath))
-                Directory.CreateDirectory(outputPath);
         }
 
-        public List<string> MachineNames {
+        public SortedSet<string> MachineNames {
             get {
-                List<string> machines = new List<string>();
-                if (Directory.Exists(_outputPath))
-                    machines.AddRange(Directory.GetDirectories(_outputPath).Select(p => Path.GetFileName(p)));
+                SortedSet<string> machines = new SortedSet<string>(
+                    Directory.GetDirectories(OutputPath).Select(Path.GetFileName),
+                    StringComparer.OrdinalIgnoreCase);
+
+                machines.Remove(SharedMachineName);
                 if (!machines.Contains(Environment.MachineName, StringComparer.OrdinalIgnoreCase))
                     machines.Add(Environment.MachineName);
-                machines.Sort();
+
                 return machines;
             }
         }
 
         public List<Drive> GetDrives(string machineName) {
-            IEnumerable<string> lists = Directory.GetFiles(_outputPath, "*.*.{0}".FormatWith(Constant.ListExt));
+            IEnumerable<string> lists = Directory.GetFiles(SharedPath, $"*.*.{Constant.ListExt}");
 
-            string machinePath = Path.Combine(_outputPath, machineName);
+            string machinePath = Path.Combine(OutputPath, machineName);
             if (Directory.Exists(machinePath))
-                lists = lists.Concat(Directory.GetFiles(machinePath, "*.*.{0}".FormatWith(Constant.ListExt)));
+                lists = lists.Concat(Directory.GetFiles(machinePath, $"*.*.{Constant.ListExt}"));
 
             List<Drive> drives = (from file in lists
                                   let nameParts = Path.GetFileNameWithoutExtension(file).Split('.')
@@ -51,36 +51,28 @@ namespace WhereAreThem.Model {
         }
 
         public Drive GetDrive(string machineName, string path) {
-            string machinePath = Path.Combine(_outputPath, machineName);
             string driveLetter = Drive.GetDriveLetter(path);
-            string listPath = Directory.GetFiles(_outputPath, "{0}.*.{1}".FormatWith(driveLetter, Constant.ListExt)).SingleOrDefault();
-            bool isNetwork = !listPath.IsNullOrEmpty();
-            if (!isNetwork) {
-                listPath = Directory.GetFiles(machinePath, "{0}.*.{1}".FormatWith(driveLetter, Constant.ListExt)).SingleOrDefault();
+            string listPath = Directory.GetFiles(SharedPath, $"{driveLetter}.*.{Constant.ListExt}").SingleOrDefault();
+            bool isShared = !listPath.IsNullOrEmpty();
+            if (!isShared) {
+                string machinePath = Path.Combine(OutputPath, machineName);
+                listPath = Directory.GetFiles(machinePath, $"{driveLetter}.*.{Constant.ListExt}").SingleOrDefault();
                 if (listPath.IsNullOrEmpty())
-                    throw new FileNotFoundException("Drive {0} of {1} cannot be found.".FormatWith(driveLetter, machineName));
-
-                if (!_machineCache.ContainsKey(machineName))
-                    _machineCache.Add(machineName, new Folder() { Name = machineName, Folders = new List<Folder>() });
+                    throw new FileNotFoundException($"Drive {driveLetter} of {machineName} cannot be found.");
             }
 
-            DriveType driveType = (DriveType)Enum.Parse(typeof(DriveType), listPath.Split('.')[1]);
-            Folder machine = isNetwork ? _networkMachine : _machineCache[machineName];
-            Folder driveFolder;
-            lock (_listLock) {
-                DateTime listTimestamp = new FileInfo(listPath).LastWriteTimeUtc;
-                string drivePath = Drive.GetDrivePath(driveLetter, driveType, machineName);
-                driveFolder = machine.Folders.SingleOrDefault(d => d.NameEquals(drivePath));
-                if ((driveFolder == null) || (driveFolder.CreatedDateUtc != listTimestamp)) {
-                    if (driveFolder != null)
-                        machine.Folders.Remove(driveFolder);
-                    driveFolder = Drive.FromFolder(_persistence.Load(listPath), driveType, machineName);
-                    driveFolder.Name = Drive.GetDriveName(driveLetter, driveType);
-                    driveFolder.CreatedDateUtc = listTimestamp;
-                    machine.Folders.Add(driveFolder);
-                }
+            DriveType driveType = (DriveType)Enum.Parse(typeof(DriveType), Path.GetFileName(listPath).Split('.')[1]);
+            string drivePath = Drive.GetDrivePath(driveLetter, driveType, machineName);
+            DateTime listTimestamp = IOFile.GetLastWriteTimeUtc(listPath);
+
+            var cacheKey = (isShared ? SharedMachineName : machineName, drivePath);
+            if (!_driveCache.TryGetValue(cacheKey, out Drive drive) || drive.CreatedDateUtc != listTimestamp) {
+                drive = Drive.FromFolder(Persistence.Load(listPath), driveType, machineName);
+                drive.Name = Drive.GetDriveName(driveLetter, driveType);
+                drive.CreatedDateUtc = listTimestamp;
+                _driveCache[cacheKey] = drive;
             }
-            return (Drive)driveFolder;
+            return drive;
         }
     }
 }
