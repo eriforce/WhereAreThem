@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using PureLib.Common;
 using PureLib.WPF;
@@ -27,6 +29,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         private RelayCommand _searchCommand;
         private RelayCommand _locateCommand;
         private RelayCommand _locateOnDiskCommand;
+        private RelayCommand _copyCommand;
         private RelayCommand _openPropertiesCommand;
 
         public Folder Root {
@@ -137,6 +140,20 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         p => SelectedSearchResult.Item.LocateOnDisk(SelectedSearchResult.Stack, View),
                         p => RootStack.GetComputer().NameEquals(Environment.MachineName));
                 return _locateOnDiskCommand;
+            }
+        }
+        public RelayCommand CopyCommand {
+            get {
+                if (_copyCommand == null)
+                    _copyCommand = new(p => {
+                        try {
+                            Clipboard.SetText(SelectedSearchResult.Item.Name);
+                        }
+                        catch (COMException) {
+                            MessageBox.Show(View, "Cannot access the clipboard.");
+                        }
+                    });
+                return _copyCommand;
             }
         }
         public RelayCommand OpenPropertiesCommand {

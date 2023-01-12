@@ -13,6 +13,7 @@
         <ContextMenu x:Key="searchMenu">
             <MenuItem Header="Locate" Command="{Binding VM.LocateCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
             <MenuItem Header="Locate on disk" Command="{Binding VM.LocateOnDiskCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+            <MenuItem Header="Copy" Command="{Binding VM.CopyCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
             <MenuItem Header="Properties" Command="{Binding VM.OpenPropertiesCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
         </ContextMenu>
     </Window.Resources>
@@ -64,7 +65,7 @@
                     <DataGridTextColumn Header="Modified" Binding="{Binding Item.ModifiedDate, StringFormat={}{0:yyyy/MM/dd HH:mm:ss}}" SortMemberPath="Item.ModifiedDate"/>
                 </DataGrid.Columns>
             </DataGrid>
-            
+
             <StatusBar Grid.Row="1" VerticalAlignment="Bottom">
                 <StatusBarItem Content="{Binding StatusBarText}" />
             </StatusBar>
