@@ -9,6 +9,7 @@
 	<ItemGroup>
 		<PackageReference Include="PureLib" Version="7.*" />
 		<PackageReference Include="System.Configuration.ConfigurationManager" Version="7.*" />
+		<PackageReference Include="ZstdSharp.Port" Version="0.7.2" />
 	</ItemGroup>
 
 </Project>
