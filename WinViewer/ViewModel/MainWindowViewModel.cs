@@ -31,12 +31,13 @@ namespace WhereAreThem.WinViewer.ViewModel {
         private RelayCommand _goForwardCommand;
         private RelayCommand _goUpCommand;
         private RelayCommand _locateOnDiskCommand;
+        private RelayCommand _excludeCommand;
         private Computer _localComputer {
             get { return Computers.SingleOrDefault(c => c.NameEquals(Environment.MachineName)); }
         }
 
         public ObservableCollection<Computer> Computers { get; private set; }
-        public ObservableCollection<FileSystemItem> SelectedFolderItems { get; private set; }
+        public ObservableCollection<FileSystemItem> ItemsInSelectedFolder { get; private set; }
         public ExplorerNavigationService Navigation { get; private set; }
         public RealtimeWatcher Watcher { get; private set; }
         public List<Folder> SelectedFolderStack { get; set; }
@@ -61,7 +62,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 _selectedFolder = value;
                 RaiseChange(() => SelectedFolder);
 
-                RefreshSelectedFolderItems();
+                RefreshItemsInSelectedFolder();
                 SetStatusBarOnSelectedFolderChanged();
                 Location = Path.Combine(SelectedFolderStack.Select(f => f.Name).ToArray());
 
@@ -83,26 +84,26 @@ namespace WhereAreThem.WinViewer.ViewModel {
                     _scanCommand = new(p => {
                         Folder pFolder = (Folder)p;
                         bool isFromTree = IsTreeItemSelected(pFolder);
-                        List<Folder> folders = isFromTree ?
+                        List<Folder> folderStack = isFromTree ?
                             SelectedFolderStack : SelectedFolderStack.Concat(new[] { pFolder }).ToList();
 
-                        string path = Path.Combine(folders.Select(f => f.Name).ToArray());
-                        DriveModel drive = folders.GetDrive();
+                        string path = Path.Combine(folderStack.Select(f => f.Name).ToArray());
+                        DriveModel drive = folderStack.GetDrive();
                         if (Directory.Exists(path)) {
                             Scan(path, p is DriveModel, drive);
                             if (isFromTree)
-                                RefreshSelectedFolderItems();
+                                RefreshItemsInSelectedFolder();
                         }
                         else {
-                            Folder parent = folders.GetParent();
+                            Folder parent = folderStack.GetParent();
                             parent.Folders.Remove(pFolder);
                             parent.RaiseItemChanges();
                             if (!isFromTree)
-                                RefreshSelectedFolderItems();
+                                RefreshItemsInSelectedFolder();
                             drive.IsChanged = true;
                         }
                     }, p => {
-                        if (!(p is Folder))
+                        if (p is not Folder)
                             return false;
                         else if (p is Computer)
                             return false;
@@ -199,13 +200,32 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 return _locateOnDiskCommand;
             }
         }
+        public RelayCommand ExcludeCommand {
+            get {
+                if (_excludeCommand == null)
+                    _excludeCommand = new(p => {
+                        foreach (FileSystemItem item in SelectedItems) {
+                            if (item is Folder)
+                                SelectedFolder.Folders.Remove((Folder)item);
+                            else
+                                SelectedFolder.Files.Remove((WatFile)item);
+                        }
+
+                        SelectedFolder.RaiseItemChanges();
+                        SelectedFolderStack.GetDrive().IsChanged = true;
+
+                        RefreshItemsInSelectedFolder();
+                    }, p => SelectedFolder is not Computer);
+                return _excludeCommand;
+            }
+        }
 
         public event ItemEventHandler LocatingItem;
         public event ItemsEventHandler OpeningProperties;
         public event EventHandler<EventArgs<WatFile>> OpeningDescription;
 
         public MainWindowViewModel() {
-            SelectedFolderItems = new ObservableCollection<FileSystemItem>();
+            ItemsInSelectedFolder = new ObservableCollection<FileSystemItem>();
             SelectedItems = new ObservableCollection<FileSystemItem>();
             Navigation = new ExplorerNavigationService();
             if (bool.Parse(ConfigurationManager.AppSettings["enableWatcher"]))
@@ -336,10 +356,10 @@ namespace WhereAreThem.WinViewer.ViewModel {
             return IsTreeItemSelected(p) ? SelectedFolderStack.GetParentStack().ToList() : SelectedFolderStack;
         }
 
-        private void RefreshSelectedFolderItems() {
-            SelectedFolderItems.Clear();
+        private void RefreshItemsInSelectedFolder() {
+            ItemsInSelectedFolder.Clear();
             if (SelectedFolder.Items != null)
-                SelectedFolderItems.AddRange(SelectedFolder.Items);
+                ItemsInSelectedFolder.AddRange(SelectedFolder.Items);
         }
 
         private void OnLocatingItem(ItemEventArgs e) {

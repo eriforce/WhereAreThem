@@ -13,10 +13,10 @@
                       Command="{Binding VM.CopyCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
             <MenuItem Header="Scan" CommandParameter="{Binding}"
                       Command="{Binding VM.ScanCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+            <MenuItem Header="Exclude" CommandParameter="{Binding}"
+                      Command="{Binding VM.ExcludeCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
             <MenuItem Header="Properties" CommandParameter="{Binding}"
                       Command="{Binding VM.OpenPropertiesCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
-            <MenuItem Header="Description" CommandParameter="{Binding}"
-                      Command="{Binding VM.OpenDescriptionCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
         </ContextMenu>
         <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{x:Static SystemColors.HighlightColor}" />
         <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{x:Static SystemColors.HighlightTextColor}" />
@@ -77,11 +77,11 @@
                     <Button Content="→" Command="{Binding GoForwardCommand}" Style="{StaticResource NavigationButton}" />
                     <Button Content="↑" Command="{Binding GoUpCommand}" Style="{StaticResource NavigationButton}" />
                 </StackPanel>
-                
+
                 <TextBox Text="{Binding Location}" Grid.Column="1" Margin="0" IsReadOnly="True" VerticalContentAlignment="Center" />
             </Grid>
 
-            <DataGrid ItemsSource="{Binding SelectedFolderItems}" vc:MultiSelectorBehaviours.SynchronizedSelectedItems="{Binding SelectedItems}" Grid.Column="1" Grid.Row="1" Margin="0,4,0,22"
+            <DataGrid ItemsSource="{Binding ItemsInSelectedFolder}" vc:MultiSelectorBehaviours.SynchronizedSelectedItems="{Binding SelectedItems}" Grid.Column="1" Grid.Row="1" Margin="0,4,0,22"
                   MouseDoubleClick="DataGridMouseDoubleClick" SelectionChanged="DataGridSelectionChanged" CopyingRowClipboardContent="DataGridCopyingRowClipboardContent" Sorting="DataGridSorting"
                   IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Extended" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False" GridLinesVisibility="None">
                 <DataGrid.Resources>
