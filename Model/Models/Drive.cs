@@ -36,7 +36,7 @@ namespace WhereAreThem.Model.Models {
                 return parts[1];
             }
             int i = path.IndexOf(Path.VolumeSeparatorChar);
-            return (i >= 0) ? path.Substring(0, i).ToUpper() : path;
+            return (i >= 0) ? path[..i].ToUpper() : path;
         }
 
         public static string GetDrivePath(string letter) {

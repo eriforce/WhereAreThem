@@ -18,7 +18,7 @@ namespace WhereAreThem.Model {
 
         public SortedSet<string> MachineNames {
             get {
-                SortedSet<string> machines = new SortedSet<string>(
+                SortedSet<string> machines = new(
                     Directory.GetDirectories(OutputPath).Select(Path.GetFileName),
                     StringComparer.OrdinalIgnoreCase);
 
@@ -50,18 +50,17 @@ namespace WhereAreThem.Model {
             return drives;
         }
 
-        public Drive GetDrive(string machineName, string path) {
+        public Drive GetDrive(string machineName, string path, DriveType driveType) {
             string driveLetter = Drive.GetDriveLetter(path);
-            string listPath = Directory.GetFiles(SharedPath, $"{driveLetter}.*.{Constant.ListExt}").SingleOrDefault();
+            string listPath = Directory.GetFiles(SharedPath, $"{driveLetter}.{driveType}.{Constant.ListExt}").SingleOrDefault();
             bool isShared = !listPath.IsNullOrEmpty();
             if (!isShared) {
                 string machinePath = Path.Combine(OutputPath, machineName);
-                listPath = Directory.GetFiles(machinePath, $"{driveLetter}.*.{Constant.ListExt}").SingleOrDefault();
+                listPath = Directory.GetFiles(machinePath, $"{driveLetter}.{driveType}.{Constant.ListExt}").SingleOrDefault();
                 if (listPath.IsNullOrEmpty())
                     throw new FileNotFoundException($"Drive {driveLetter} of {machineName} cannot be found.");
             }
 
-            DriveType driveType = (DriveType)Enum.Parse(typeof(DriveType), Path.GetFileName(listPath).Split('.')[1]);
             string drivePath = Drive.GetDrivePath(driveLetter, driveType, machineName);
             DateTime listTimestamp = IOFile.GetLastWriteTimeUtc(listPath);
 

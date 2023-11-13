@@ -62,8 +62,7 @@ namespace WhereAreThem.Model {
                 }
                 Folder parent = drive;
                 for (int i = firstFolderIndex; i < pathParts.Length; i++) {
-                    if (parent.Folders == null)
-                        parent.Folders = new List<Folder>();
+                    parent.Folders ??= new List<Folder>();
                     Folder current = parent.Folders.SingleOrDefault(f => f.NameEquals(pathParts[i]));
                     if (current == null) {
                         string path = Path.Combine(pathParts.Take(i + 1).ToArray());
@@ -101,15 +100,13 @@ namespace WhereAreThem.Model {
 
         private Folder GetFolder(DirectoryInfo directory, Folder folder = null) {
             OnScanning(directory.FullName);
-            if (folder == null)
-                folder = new Folder() {
-                    Name = directory.Name,
-                };
+            folder ??= new Folder() {
+                Name = directory.Name,
+            };
             folder.CreatedDateUtc = directory.CreationTimeUtc;
 
             try {
-                if (folder.Files == null)
-                    folder.Files = new List<Models.File>();
+                folder.Files ??= new List<Models.File>();
                 folder.Files = (from fi in directory.EnumerateFiles()
                                 where fi.ShouldScan()
                                 join f in folder.Files on fi.Name equals f.Name into files
@@ -121,8 +118,7 @@ namespace WhereAreThem.Model {
             catch (IOException) { }
 
             try {
-                if (folder.Folders == null)
-                    folder.Folders = new List<Folder>();
+                folder.Folders ??= new List<Folder>();
                 folder.Folders = (from di in directory.EnumerateDirectories()
                                   where di.ShouldScan()
                                   join f in folder.Folders on di.Name equals f.Name into folders

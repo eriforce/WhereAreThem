@@ -30,7 +30,7 @@ namespace WhereAreThem.WinViewer.Model {
         public bool Load() {
             try {
                 if (!HasLoaded) {
-                    Drive drive = App.Loader.GetDrive(Computer.Name, Name);
+                    Drive drive = App.Loader.GetDrive(Computer.Name, Name, DriveType);
                     Load(drive);
                     if (_isLocalDrive && (LocalDriveLoaded != null))
                         LocalDriveLoaded(this, EventArgs.Empty);

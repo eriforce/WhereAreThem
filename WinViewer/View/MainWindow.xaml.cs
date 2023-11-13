@@ -107,8 +107,7 @@ namespace WhereAreThem.WinViewer.View {
 
         private void OnWindowClosing(object sender, CancelEventArgs e) {
             VM.Save();
-            if (VM.Watcher != null)
-                VM.Watcher.Close();
+            VM.Watcher?.Close();
         }
 
         private void FolderTreeMouseRightClick(object sender, MouseButtonEventArgs e) {
@@ -182,9 +181,8 @@ namespace WhereAreThem.WinViewer.View {
         }
 
         private void LoadIfDrive(object item) {
-            if (item is DriveModel) {
-                DriveModel drive = (DriveModel)item;
-                bool loaded = VM.BusyWith($"Loading {drive.Name} ...", Task.Run(() => drive.Load()));
+            if (item is DriveModel drive) {
+                bool loaded = VM.BusyWith($"Loading {drive.Name} ...", Task.Run(drive.Load));
                 if (!loaded)
                     MessageBox.Show(this, "You need to scan this drive first.");
             }
@@ -203,7 +201,7 @@ namespace WhereAreThem.WinViewer.View {
             do {
                 parent = VisualTreeHelper.GetParent(parent);
             }
-            while ((parent != null) && !(parent is T));
+            while ((parent != null) && parent is not T);
             return parent as T;
         }
     }

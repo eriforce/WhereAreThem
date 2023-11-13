@@ -32,15 +32,15 @@ namespace WhereAreThem.WinViewer.ViewModel {
         private RelayCommand _goUpCommand;
         private RelayCommand _locateOnDiskCommand;
         private RelayCommand _excludeCommand;
-        private Computer _localComputer {
-            get { return Computers.SingleOrDefault(c => c.NameEquals(Environment.MachineName)); }
-        }
 
         public ObservableCollection<Computer> Computers { get; private set; }
         public ObservableCollection<FileSystemItem> ItemsInSelectedFolder { get; private set; }
         public ExplorerNavigationService Navigation { get; private set; }
         public RealtimeWatcher Watcher { get; private set; }
         public List<Folder> SelectedFolderStack { get; set; }
+        private Computer LocalComputer {
+            get { return Computers.SingleOrDefault(c => c.NameEquals(Environment.MachineName)); }
+        }
 
         public string StatusBarText {
             get { return _statusBarText; }
@@ -80,121 +80,112 @@ namespace WhereAreThem.WinViewer.ViewModel {
         }
         public RelayCommand ScanCommand {
             get {
-                if (_scanCommand == null) {
-                    _scanCommand = new(p => {
-                        Folder pFolder = (Folder)p;
-                        bool isFromTree = IsTreeItemSelected(pFolder);
-                        List<Folder> folderStack = isFromTree ?
-                            SelectedFolderStack : SelectedFolderStack.Concat(new[] { pFolder }).ToList();
+                _scanCommand ??= new(p => {
+                    Folder pFolder = (Folder)p;
+                    bool isFromTree = IsTreeItemSelected(pFolder);
+                    List<Folder> folderStack = isFromTree ?
+                        SelectedFolderStack : SelectedFolderStack.Concat(new[] { pFolder }).ToList();
 
-                        string path = Path.Combine(folderStack.Select(f => f.Name).ToArray());
-                        DriveModel drive = folderStack.GetDrive();
-                        if (Directory.Exists(path)) {
-                            Scan(path, p is DriveModel, drive);
-                            if (isFromTree)
-                                RefreshItemsInSelectedFolder();
-                        }
-                        else {
-                            Folder parent = folderStack.GetParent();
-                            parent.Folders.Remove(pFolder);
-                            parent.RaiseItemChanges();
-                            if (!isFromTree)
-                                RefreshItemsInSelectedFolder();
-                            drive.IsChanged = true;
-                        }
-                    }, p => {
-                        if (p is not Folder)
-                            return false;
-                        else if (p is Computer)
-                            return false;
-                        else if (p is DriveModel && ((DriveModel)p).IsNetworkDrive)
-                            return true;
-                        else
-                            return SelectedFolderStack.GetComputer().NameEquals(Environment.MachineName)
-                                || (SelectedFolderStack.GetDrive() != null && SelectedFolderStack.GetDrive().IsNetworkDrive);
-                    });
-                }
+                    string path = Path.Combine(folderStack.Select(f => f.Name).ToArray());
+                    DriveModel drive = folderStack.GetDrive();
+                    if (Directory.Exists(path)) {
+                        Scan(path, p is DriveModel, drive);
+                        if (isFromTree)
+                            RefreshItemsInSelectedFolder();
+                    }
+                    else {
+                        Folder parent = folderStack.GetParent();
+                        parent.Folders.Remove(pFolder);
+                        parent.RaiseItemChanges();
+                        if (!isFromTree)
+                            RefreshItemsInSelectedFolder();
+                        drive.IsChanged = true;
+                    }
+                }, p => {
+                    if (p is not Folder)
+                        return false;
+                    else if (p is Computer)
+                        return false;
+                    else if (p is DriveModel && ((DriveModel)p).IsNetworkDrive)
+                        return true;
+                    else
+                        return SelectedFolderStack.GetComputer().NameEquals(Environment.MachineName)
+                            || (SelectedFolderStack.GetDrive() != null && SelectedFolderStack.GetDrive().IsNetworkDrive);
+                });
                 return _scanCommand;
             }
         }
         public RelayCommand CopyCommand {
             get {
-                if (_copyCommand == null)
-                    _copyCommand = new(p => {
-                        FileSystemItem item = p as FileSystemItem;
-                        try {
-                            Clipboard.SetText(item.Name);
-                        }
-                        catch (COMException) {
-                            MessageBox.Show(View, "Cannot access the clipboard.");
-                        }
-                    });
+                _copyCommand ??= new(p => {
+                    FileSystemItem item = p as FileSystemItem;
+                    try {
+                        Clipboard.SetText(item.Name);
+                    }
+                    catch (COMException) {
+                        MessageBox.Show(View, "Cannot access the clipboard.");
+                    }
+                });
                 return _copyCommand;
             }
         }
         public RelayCommand OpenPropertiesCommand {
             get {
-                if (_openPropertiesCommand == null)
-                    _openPropertiesCommand = new(p => {
-                        if (OpeningProperties != null) {
-                            IEnumerable<FileSystemItem> selectedItems = IsTreeItemSelected(p) ?
-                                new[] { (FileSystemItem)p } : SelectedItems.AsEnumerable();
-                            OpeningProperties(this, new ItemsEventArgs(selectedItems, GetSelectedItemStack(p)));
-                        }
-                    }, p => !(p is Computer));
+                _openPropertiesCommand ??= new(p => {
+                    if (OpeningProperties != null) {
+                        IEnumerable<FileSystemItem> selectedItems = IsTreeItemSelected(p) ?
+                            new[] { (FileSystemItem)p } : SelectedItems.AsEnumerable();
+                        OpeningProperties(this, new ItemsEventArgs(selectedItems, GetSelectedItemStack(p)));
+                    }
+                }, p => p is not Computer);
                 return _openPropertiesCommand;
             }
         }
 
         public RelayCommand OpenDescriptionCommand {
             get {
-                if (_openDescriptionCommand == null)
-                    _openDescriptionCommand = new(
+                _openDescriptionCommand ??= new(
                         p => OpeningDescription(this, new EventArgs<WatFile>((WatFile)p)),
-                        p => (p is WatFile) && ((WatFile)p).Data != null);
+                        p => (p is WatFile file) && file.Data != null);
                 return _openDescriptionCommand;
             }
         }
         public RelayCommand GoBackCommand {
             get {
-                if (_goBackCommand == null)
-                    _goBackCommand = new(p => {
-                        List<Folder> current = Navigation.CurrentEntry.Stack;
-                        Navigation.GoBack();
-                        while (!Navigation.CurrentEntry.Stack.Exists()) {
-                            Navigation.RemoveCurrentEntry();
-                        }
-                        List<Folder> prev = Navigation.CurrentEntry.Stack;
-                        OnLocatingItem(new ItemEventArgs(
-                            prev.SequenceEqual(current.GetParentStack()) ? current.Last() : null, prev));
-                    }, p => Navigation.CanGoBack);
+                _goBackCommand ??= new(p => {
+                    List<Folder> current = Navigation.CurrentEntry.Stack;
+                    Navigation.GoBack();
+                    while (!Navigation.CurrentEntry.Stack.Exists()) {
+                        Navigation.RemoveCurrentEntry();
+                    }
+                    List<Folder> prev = Navigation.CurrentEntry.Stack;
+                    OnLocatingItem(new ItemEventArgs(
+                        prev.SequenceEqual(current.GetParentStack()) ? current.Last() : null, prev));
+                }, p => Navigation.CanGoBack);
                 return _goBackCommand;
             }
         }
         public RelayCommand GoForwardCommand {
             get {
-                if (_goForwardCommand == null)
-                    _goForwardCommand = new(p => {
-                        Navigation.GoForward();
-                        OnLocatingItem(Navigation.CurrentEntry);
-                    }, p => Navigation.CanGoForward);
+                _goForwardCommand ??= new(p => {
+                    Navigation.GoForward();
+                    OnLocatingItem(Navigation.CurrentEntry);
+                }, p => Navigation.CanGoForward);
                 return _goForwardCommand;
             }
         }
         public RelayCommand GoUpCommand {
             get {
-                if (_goUpCommand == null)
-                    _goUpCommand = new(p => {
-                        OnLocatingItem(new ItemEventArgs(SelectedFolder,
-                            SelectedFolderStack.GetParentStack().ToList()));
-                    }, p => (SelectedFolderStack != null) && !(SelectedFolder is Computer));
+                _goUpCommand ??= new(p => {
+                    OnLocatingItem(new ItemEventArgs(SelectedFolder,
+                        SelectedFolderStack.GetParentStack().ToList()));
+                }, p => (SelectedFolderStack != null) && SelectedFolder is not Computer);
                 return _goUpCommand;
             }
         }
         public RelayCommand LocateOnDiskCommand {
             get {
-                if (_locateOnDiskCommand == null)
-                    _locateOnDiskCommand = new(
+                _locateOnDiskCommand ??= new(
                         p => ((FileSystemItem)p).LocateOnDisk(GetSelectedItemStack(p), View),
                         p => SelectedFolderStack.GetComputer().NameEquals(Environment.MachineName));
                 return _locateOnDiskCommand;
@@ -202,20 +193,19 @@ namespace WhereAreThem.WinViewer.ViewModel {
         }
         public RelayCommand ExcludeCommand {
             get {
-                if (_excludeCommand == null)
-                    _excludeCommand = new(p => {
-                        foreach (FileSystemItem item in SelectedItems) {
-                            if (item is Folder)
-                                SelectedFolder.Folders.Remove((Folder)item);
-                            else
-                                SelectedFolder.Files.Remove((WatFile)item);
-                        }
+                _excludeCommand ??= new(p => {
+                    foreach (FileSystemItem item in SelectedItems) {
+                        if (item is Folder)
+                            SelectedFolder.Folders.Remove((Folder)item);
+                        else
+                            SelectedFolder.Files.Remove((WatFile)item);
+                    }
 
-                        SelectedFolder.RaiseItemChanges();
-                        SelectedFolderStack.GetDrive().IsChanged = true;
+                    SelectedFolder.RaiseItemChanges();
+                    SelectedFolderStack.GetDrive().IsChanged = true;
 
-                        RefreshItemsInSelectedFolder();
-                    }, p => SelectedFolder is not Computer);
+                    RefreshItemsInSelectedFolder();
+                }, p => SelectedFolder is not Computer);
                 return _excludeCommand;
             }
         }
@@ -256,13 +246,15 @@ namespace WhereAreThem.WinViewer.ViewModel {
                     string machineName = Drive.GetMachineName(path);
                     computer = Computers.SingleOrDefault(c => c.NameEquals(machineName));
                     if (computer == null) {
-                        computer = new Computer { Name = machineName };
-                        computer.Folders = new List<Folder>();
+                        computer = new Computer {
+                            Name = machineName,
+                            Folders = new List<Folder>()
+                        };
                         Computers.Add(computer);
                     }
                 }
                 else
-                    computer = _localComputer;
+                    computer = LocalComputer;
 
                 DirectoryInfo root = new DirectoryInfo(path).Root;
                 DriveModel drive = computer.Drives.SingleOrDefault(f => f.NameEquals(root.Name));
@@ -306,7 +298,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         }
 
         private void InsertLocalDrives() {
-            Computer localComputer = _localComputer;
+            Computer localComputer = LocalComputer;
             DriveType[] driveTypes = ConfigurationManager.AppSettings["driveTypes"].ToEnum<DriveType>();
             foreach (DriveInfo drive in DriveInfo.GetDrives()) {
                 if (driveTypes.Contains(drive.DriveType) && !localComputer.Folders.Any(f => f.NameEquals(drive.Name)))
@@ -363,8 +355,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
         }
 
         private void OnLocatingItem(ItemEventArgs e) {
-            if (LocatingItem != null)
-                LocatingItem(this, e);
+            LocatingItem?.Invoke(this, e);
         }
     }
 }
