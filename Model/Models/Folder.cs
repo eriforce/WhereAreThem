@@ -54,9 +54,9 @@ namespace WhereAreThem.Model.Models {
             _items = null;
 
             if (PropertyChanged != null) {
-                PropertyChanged(this, new PropertyChangedEventArgs("Folders"));
-                PropertyChanged(this, new PropertyChangedEventArgs("Files"));
-                PropertyChanged(this, new PropertyChangedEventArgs("Items"));
+                PropertyChanged(this, new PropertyChangedEventArgs(nameof(Folders)));
+                PropertyChanged(this, new PropertyChangedEventArgs(nameof(Files)));
+                PropertyChanged(this, new PropertyChangedEventArgs(nameof(Items)));
             }
         }
 

@@ -5,20 +5,16 @@ using WhereAreThem.Model.Models;
 
 namespace WhereAreThem.WinViewer.Model {
     public class DriveModel : Drive {
-        private readonly bool _isLocalDrive;
-
         public Computer Computer { get; private set; }
         public bool HasLoaded { get; set; }
         public bool IsChanged { get; set; }
 
-        public bool IsNetworkDrive {
-            get { return DriveType == DriveType.Network || DriveType == Drive.NETWORK_SHARE; }
-        }
+        public bool IsNetworkDrive => DriveType is DriveType.Network or NETWORK_SHARE;
+        public bool IsLocalDrive => Computer.IsLocal;
 
         public event EventHandler LocalDriveLoaded;
 
         public DriveModel(Computer computer, string driveName, DateTime createdDateUtc, DriveType driveType) : base(computer.Name) {
-            _isLocalDrive = computer.NameEquals(Environment.MachineName);
             Computer = computer;
             Name = driveName;
             CreatedDateUtc = createdDateUtc;
@@ -32,7 +28,7 @@ namespace WhereAreThem.WinViewer.Model {
                 if (!HasLoaded) {
                     Drive drive = App.Loader.GetDrive(Computer.Name, Name, DriveType);
                     Load(drive);
-                    if (_isLocalDrive && (LocalDriveLoaded != null))
+                    if (IsLocalDrive && (LocalDriveLoaded != null))
                         LocalDriveLoaded(this, EventArgs.Empty);
                 }
                 return true;

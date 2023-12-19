@@ -138,7 +138,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 if (_locateOnDiskCommand == null)
                     _locateOnDiskCommand = new(
                         p => SelectedSearchResult.Item.LocateOnDisk(SelectedSearchResult.Stack, View),
-                        p => RootStack.GetComputer().NameEquals(Environment.MachineName));
+                        p => RootStack.GetComputer().IsLocal);
                 return _locateOnDiskCommand;
             }
         }

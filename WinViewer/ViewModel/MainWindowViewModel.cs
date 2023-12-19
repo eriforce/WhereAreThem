@@ -19,6 +19,7 @@ using WatFile = WhereAreThem.Model.Models.File;
 
 namespace WhereAreThem.WinViewer.ViewModel {
     public class MainWindowViewModel : BusyViewModelBase {
+        private Computer _localComputer;
         private string _statusBarText;
         private string _location;
         private Folder _selectedFolder;
@@ -38,9 +39,6 @@ namespace WhereAreThem.WinViewer.ViewModel {
         public ExplorerNavigationService Navigation { get; private set; }
         public RealtimeWatcher Watcher { get; private set; }
         public List<Folder> SelectedFolderStack { get; set; }
-        private Computer LocalComputer {
-            get { return Computers.SingleOrDefault(c => c.NameEquals(Environment.MachineName)); }
-        }
 
         public string StatusBarText {
             get { return _statusBarText; }
@@ -90,8 +88,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
                     DriveModel drive = folderStack.GetDrive();
                     if (Directory.Exists(path)) {
                         Scan(path, p is DriveModel, drive);
-                        if (isFromTree)
-                            RefreshItemsInSelectedFolder();
+                        RefreshItemsInSelectedFolder();
                     }
                     else {
                         Folder parent = folderStack.GetParent();
@@ -106,10 +103,10 @@ namespace WhereAreThem.WinViewer.ViewModel {
                         return false;
                     else if (p is Computer)
                         return false;
-                    else if (p is DriveModel && ((DriveModel)p).IsNetworkDrive)
+                    else if (p is DriveModel d && d.IsNetworkDrive)
                         return true;
                     else
-                        return SelectedFolderStack.GetComputer().NameEquals(Environment.MachineName)
+                        return SelectedFolderStack.GetComputer().IsLocal
                             || (SelectedFolderStack.GetDrive() != null && SelectedFolderStack.GetDrive().IsNetworkDrive);
                 });
                 return _scanCommand;
@@ -187,7 +184,7 @@ namespace WhereAreThem.WinViewer.ViewModel {
             get {
                 _locateOnDiskCommand ??= new(
                         p => ((FileSystemItem)p).LocateOnDisk(GetSelectedItemStack(p), View),
-                        p => SelectedFolderStack.GetComputer().NameEquals(Environment.MachineName));
+                        p => SelectedFolderStack.GetComputer().IsLocal);
                 return _locateOnDiskCommand;
             }
         }
@@ -231,6 +228,8 @@ namespace WhereAreThem.WinViewer.ViewModel {
             foreach (Computer c in Computers) {
                 c.Folders = App.Loader.GetDrives(c.Name).Select(
                     d => (Folder)new DriveModel(c, d.Name, d.CreatedDateUtc, d.DriveType)).ToList();
+                if (c.IsLocal)
+                    _localComputer = c;
             }
             InsertLocalDrives();
         }
@@ -250,11 +249,11 @@ namespace WhereAreThem.WinViewer.ViewModel {
                             Name = machineName,
                             Folders = new List<Folder>()
                         };
-                        Computers.Add(computer);
+                        RunOnUIThread(() => Computers.Add(computer));
                     }
                 }
                 else
-                    computer = LocalComputer;
+                    computer = _localComputer;
 
                 DirectoryInfo root = new DirectoryInfo(path).Root;
                 DriveModel drive = computer.Drives.SingleOrDefault(f => f.NameEquals(root.Name));
@@ -279,6 +278,8 @@ namespace WhereAreThem.WinViewer.ViewModel {
                 bool isDrive = root.FullName.Equals(path, StringComparison.OrdinalIgnoreCase);
                 Scan(path, isDrive, drive);
             }
+            if (SelectedFolderStack != null)
+                RunOnUIThread(RefreshItemsInSelectedFolder);
             return true;
         }
 
@@ -298,16 +299,15 @@ namespace WhereAreThem.WinViewer.ViewModel {
         }
 
         private void InsertLocalDrives() {
-            Computer localComputer = LocalComputer;
             DriveType[] driveTypes = ConfigurationManager.AppSettings["driveTypes"].ToEnum<DriveType>();
             foreach (DriveInfo drive in DriveInfo.GetDrives()) {
-                if (driveTypes.Contains(drive.DriveType) && !localComputer.Folders.Any(f => f.NameEquals(drive.Name)))
-                    localComputer.Folders.Add(new DriveModel(
-                        localComputer, drive.Name, DateTime.UtcNow, drive.DriveType) { Folders = null });
+                if (driveTypes.Contains(drive.DriveType) && !_localComputer.Folders.Any(f => f.NameEquals(drive.Name)))
+                    _localComputer.Folders.Add(new DriveModel(
+                        _localComputer, drive.Name, DateTime.UtcNow, drive.DriveType) { Folders = null });
             }
-            localComputer.Folders.Sort();
+            _localComputer.Folders.Sort();
             if (Watcher != null)
-                foreach (DriveModel dm in localComputer.Drives) {
+                foreach (DriveModel dm in _localComputer.Drives) {
                     dm.LocalDriveLoaded += (s, e) => {
                         Watcher.WatchDrive((DriveModel)s);
                     };
