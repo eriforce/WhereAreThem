@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<AssemblyName>WhereAreThem.Model</AssemblyName>
 		<RootNamespace>WhereAreThem.Model</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="PureLib" Version="7.*" />
-		<PackageReference Include="System.Configuration.ConfigurationManager" Version="7.*" />
-		<PackageReference Include="ZstdSharp.Port" Version="0.7.2" />
+		<PackageReference Include="PureLib" Version="8.0.*" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="8.*" />
+		<PackageReference Include="ZstdSharp.Port" Version="0.7.*" />
 	</ItemGroup>
 
 </Project>
